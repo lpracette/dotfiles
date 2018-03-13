@@ -1,4 +1,5 @@
-set nocompatible               " be iMproved
+set nocompatible                   " be iMproved
+set runtimepath=~/.vim,$VIMRUNTIME " or else windows uses $HOME/vimfiles
 
 " ====================================
 " First time load, install plugins
@@ -16,6 +17,7 @@ endif
 " ====================================
 call plug#begin()
 Plug 'chriskempson/base16-vim'
+Plug 'altercation/vim-colors-solarized'
 Plug 'vim-airline/vim-airline'          " nice status bar
 Plug 'vim-airline/vim-airline-themes'   " nice status bar colors
 Plug 'nathanaelkane/vim-indent-guides'  " toggle: \-ig
@@ -33,13 +35,16 @@ Plug 'scrooloose/nerdtree',                                       " File explore
 Plug 'Xuyuanp/nerdtree-git-plugin',                               " git status symbole in NERDTree
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-scripts/DrawIt'                                         " draw boxes and arrows
+Plug 'nathanalderson/yang.vim'
 
 function! BuildYCM(info)
     if a:info.status == 'installed' || a:info.force
         !./install.py --clang-completer --gocode-completer
     endif
 endfunction
-" Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }
+Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }
+Plug 'jeaye/color_coded'
+" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 
 call plug#end()
 
@@ -150,9 +155,12 @@ set scrolloff=10
 
 " Gvim options
 if has("gui_running")
+    set go=
+    colorscheme solarized
+    set mouse=a
     try
         if has('gui_win32')
-            set guifont=Inconsolata-dz_for_Powerline:h10:cANSI
+            set guifont=DejaVuSansMonoForPowerline_NF:h10:cANSI 
         else
             set guifont=Inconsolata-dz\ for\ Powerline\ Medium\ 10
         endif
@@ -277,6 +285,10 @@ command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 noremap <leader>e :Files<CR>
 
+
+" YCM
+" -----------
+let g:ycm_confirm_extra_conf = 0
 
 
 " ====================================
