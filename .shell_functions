@@ -96,3 +96,8 @@ function wttr() {
     fi
 
 }
+
+
+funciton what() {
+    ps --no-headers -eo user,rss,%CPU | awk '{arr[$1]+=$2;arr2[$1]+=$3}; END {print "USER RSS %CPU"; for (i in arr) {print i,arr[i],arr2[i]|"sort -rnk2"}}'  | column -t
+}
