@@ -1,0 +1,5 @@
+-R
+--exclude=.git
+--exclude=*/obj/*
+--python-kinds=-i
+--totals=yes
