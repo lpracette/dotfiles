@@ -13,7 +13,6 @@ zplug "zsh-users/zsh-autosuggestions"                   # suggest commands from 
 # zplug "yous/lime"                                       # Simple prompt
 zplug "nojhan/liquidprompt"                             # more complexe prompt
 zplug "chriskempson/base16-shell"                       # Color palette
-zplug "plugins/command-not-found.plugin.zsh", from:oh-my-zsh # Suggest to install if command not found
 zplug "zsh-users/zsh-syntax-highlighting", defer:2       # Syntax highlighting
 zplug "zsh-users/zsh-history-substring-search", defer:3  # ZSH port of Fish shell's history search feature
 
@@ -36,6 +35,10 @@ setopt RM_STAR_WAIT
 
 # # Zsh has a spelling corrector
 setopt CORRECT
+
+# instead of cloning all of oh-my-zsh for ony command-not-found.plugin.zsh
+# from https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/command-not-found/command-not-found.plugin.zsh
+[[ -e /etc/zsh_command_not_found ]] && source /etc/zsh_command_not_found
 
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
