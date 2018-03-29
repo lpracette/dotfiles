@@ -9,7 +9,7 @@
     prompt = false
 [alias]
     d = difftool
-    l = log --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ci) %C(cyan)<%an>%Creset' --abbrev-commit
+    l = log --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ci) %C(cyan bold)<%an>%Creset' --abbrev-commit
     lg = log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ci) %C(cyan)<%an>%Creset' --abbrev-commit
     graph = log --decorate --oneline --graph
     delete-branch = "!f() {git branch -d $1 && git push origin --delete $1 git && fetch --all --prune} f;"
