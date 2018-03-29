@@ -39,12 +39,23 @@ Plug 'nathanalderson/yang.vim'
 
 function! BuildYCM(info)
     if a:info.status == 'installed' || a:info.force
-        !./install.py --clang-completer --gocode-completer
+        !./install.py --clang-completer --js-completer
     endif
 endfunction
+
+function! BuildCC(info)
+    if a:info.status == 'installed' || a:info.force
+        !mkdir build
+        !cd build && cmake ..
+        !cd build && make && make install
+        !cd build && make clean && make clean_clang
+    endif
+endfunction
+
+
 Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }
-Plug 'jeaye/color_coded'
-" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') }
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 
 call plug#end()
 
