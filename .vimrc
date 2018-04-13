@@ -15,28 +15,6 @@ endif
 " ====================================
 " Plugin Management with vim-plug
 " ====================================
-call plug#begin()
-Plug 'chriskempson/base16-vim'
-Plug 'altercation/vim-colors-solarized'
-Plug 'vim-airline/vim-airline'          " nice status bar
-Plug 'vim-airline/vim-airline-themes'   " nice status bar colors
-Plug 'nathanaelkane/vim-indent-guides'  " toggle: \-ig
-Plug 'kshenoy/vim-signature'            " show marks beside line no
-Plug 'tpope/vim-fugitive'               " git plugin
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
-Plug 'christoomey/vim-tmux-navigator'   " navigate seamlessly between vim and tmux splits
-Plug 'majutsushi/tagbar'                " Code navigation
-Plug 'python-mode/python-mode'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " fuzy seach
-Plug 'junegunn/fzf.vim'                                           " key bindings
-Plug 'scrooloose/nerdtree',                                       " File explorer
-Plug 'Xuyuanp/nerdtree-git-plugin',                               " git status symbole in NERDTree
-Plug 'ryanoasis/vim-devicons'
-Plug 'vim-scripts/DrawIt'                                         " draw boxes and arrows
-Plug 'nathanalderson/yang.vim'
-
 function! BuildYCM(info)
     if a:info.status == 'installed' || a:info.force
         !./install.py --clang-completer --js-completer
@@ -52,10 +30,39 @@ function! BuildCC(info)
     endif
 endfunction
 
+call plug#begin()
 
-Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }
-Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') }
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+" Appearance: colors, status bar, icons
+Plug 'chriskempson/base16-vim'          "
+Plug 'altercation/vim-colors-solarized' " precision colorscheme for the vim text editor 
+Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
+Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
+Plug 'nathanaelkane/vim-indent-guides'  " A Vim plugin for visually displaying indent levels in code, toggle: \-ig
+Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
+Plug 'Xuyuanp/nerdtree-git-plugin',     " A plugin of NERDTree showing git status
+Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
+
+" Coding: tags, git, C\C++
+Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
+Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
+Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope 
+Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }  " A code-completion engine for Vim
+Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') } " libclang-based highlighting of C, C++
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'} " Generates config files for YouCompleteMe
+
+" Fuzy search: buffers, files, tags
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
+Plug 'junegunn/fzf.vim'                                           " key bindings
+
+" File browsing
+Plug 'scrooloose/nerdtree',            " File explorer
+
+" Keybinding 
+Plug 'vim-scripts/DrawIt'              " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
+Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple 
+Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
+Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line 
+Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
 
 call plug#end()
 
@@ -294,7 +301,10 @@ command! -bang -nargs=* Ag
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
-noremap <leader>e :Files<CR>
+  
+nnoremap <leader>e :Files<CR>
+nnoremap <leader>d :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
+nnoremap <leader>b :Buffers<CR>
 
 
 " YCM
