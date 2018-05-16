@@ -1,20 +1,12 @@
 # ft=zsh
 
-# colored GCC warnings and errors
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-eval `dircolors ~/.dircolors.256dark`
-
-# if [ -e ~/.vim/plugged/gruvbox/gruvbox_256palette.sh ]; then 
-#     ~/.vim/plugged/gruvbox/gruvbox_256palette.sh
-# fi
-
-
 #####
 # Environment
 export EDITOR=`which vim`
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
+
+export BASE16_SHELL_HOOKS=$HOME/.config/base16-shell/hooks
 
 if [ -e ~/.pythonrc ]; then 
     export PYTHONSTARTUP=~/.pythonrc

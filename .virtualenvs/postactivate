@@ -1,6 +1,0 @@
-#!/usr/bin/zsh
-# This hook is sourced after every virtualenv is activated.
-PS1="$_OLD_VIRTUAL_PS1"
-_OLD_RPROMPT="$RPROMPT"
-RPROMPT="%F{239}%K{239}%F{246}env: `basename \"$VIRTUAL_ENV\"` $RPROMPT"
-

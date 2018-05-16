@@ -46,9 +46,9 @@ Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope 
-Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }  " A code-completion engine for Vim
-Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') } " libclang-based highlighting of C, C++
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'} " Generates config files for YouCompleteMe
+"Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }  " A code-completion engine for Vim
+"Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') } " libclang-based highlighting of C, C++
+"Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'} " Generates config files for YouCompleteMe
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
