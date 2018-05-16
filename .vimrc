@@ -121,6 +121,9 @@ set omnifunc=ccomplete#Complete
 " Show more information while completing tags.
 set showfulltag
 
+" Add /usr/include tags to the tag search
+set tags+=/usr/include/tags
+
 " Always show status line
 set laststatus=2
 
