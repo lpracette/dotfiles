@@ -1,6 +1,15 @@
 # My dot files
 
-## setup
+## Quick install 
+```
+curl -sL https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh | bash
+```
+
+
+
+
+
+# i3 setup
 
 *Ubuntu 16.04.1 LTS (Xenial Xerus) Server minimal install*
 
