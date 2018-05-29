@@ -2,7 +2,7 @@
 
 ## Quick install 
 ```
-curl -sL https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh | bash
+mkdir -p ~/.dotfiles && pushd ~/.dotfiles && bash -c "$(curl -sL  --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)" && popd
 ```
 
 
