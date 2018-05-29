@@ -130,6 +130,9 @@ set laststatus=2
 " mode is shown in the status line
 set noshowmode
 
+" Shows the number of chars/lines selected in visualmode
+set showcmd
+
 " Open splits more naturally
 set splitright
 
@@ -166,7 +169,7 @@ endif
 
 "  highlight the current line in every window and update the highlight as the
 "  cursor moves.
-set cursorline
+"set cursorline
 
 " Let cursor move past the last char in <C-v> mode
 set virtualedit=block
