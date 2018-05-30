@@ -1,30 +1,30 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-BPLUG_DIR=~/.bplug/repos
-function bplug() {
-    REPO_NAME=$1
-    FILE_TO_SOURCE=$2
-
-    [ ! -d $BPLUG_DIR ] && mkdir -p $BPLUG_DIR
-    [ ! -d $BPLUG_DIR/$REPO_NAME ] && git clone http://github.com/$REPO_NAME $BPLUG_DIR/$REPO_NAME
-    [ ! -z "$FILE_TO_SOURCE" ] && source $BPLUG_DIR/$REPO_NAME/$FILE_TO_SOURCE
+# bplug: bash plugin manager
+BPLUG_REPO_DIR=~/.bplug/repos
+BPLUG_BIN_DIR=~/.bplug/bin
+function bplug_init() {
+    [ ! -d $BPLUG_REPO_DIR ] && mkdir -p $BPLUG_REPO_DIR
+    [ ! -d $BPLUG_BIN_DIR ] && mkdir -p $BPLUG_BIN_DIR
+    export PATH=$BPLUG_BIN_DIR:$PATH
 }
-
-# Install fzf
-if [ ! -e ~/bin/fzf ]; then
-    cd ~/bin
-    wget https://github.com/junegunn/fzf-bin/releases/download/0.17.1/fzf-0.17.1-linux_amd64.tgz
-    tar -xf fzf-*.tgz
-    rm fzf-*.tgz
-    cd -
-fi
+function bplug() {
+    [ ! -d $BPLUG_REPO_DIR/${1} ] && git clone http://github.com/${1} $BPLUG_REPO_DIR/${1}
+    [ ! -z "${2}" ] && source $BPLUG_REPO_DIR/${1}/${2}
+}
+function bplug_bin() {
+    [ ! -e $BPLUG_BIN_DIR/${3} ] && wget -qO- $(curl -s "https://api.github.com/repos/${1}/releases/latest" | awk  "/browser_download_url.*${2}/{print \$2}"|tr -d \") | tar -xz -C $BPLUG_BIN_DIR
+}
+# /bplug
 
 # Plugins
-bplug 'mrzool/bash-sensible'      'sensible.bash'
-bplug 'nojhan/liquidprompt'       'liquidprompt'
-bplug 'junegunn/fzf'              'shell/key-bindings.bash'
-bplug 'chriskempson/base16-shell' ''
+bplug_init
+bplug     'mrzool/bash-sensible'      'sensible.bash'
+bplug     'nojhan/liquidprompt'       'liquidprompt'
+bplug_bin 'junegunn/fzf-bin'          'linux_amd64'             'fzf'
+bplug     'junegunn/fzf'              'shell/key-bindings.bash'
+bplug     'chriskempson/base16-shell' ''
 
 # Select color palette
 eval "$(~/.bplug/repos/chriskempson/base16-shell/profile_helper.sh)"
