@@ -3,7 +3,9 @@
 ## Quick install of console only dotfiles
 
 ```console
-mkdir -p ~/.dotfiles && pushd ~/.dotfiles && bash -c "$(curl -sL  --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)" && popd
+mkdir -p ~/.dotfiles && pushd ~/.dotfiles && \
+bash -c "$(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)" && \
+popd
 ```
 
 will install configuration files for:
