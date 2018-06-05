@@ -7,7 +7,7 @@ BPLUG_BIN_DIR=~/.bplug/bin
 function bplug_init() {
     [ ! -d $BPLUG_REPO_DIR ] && mkdir -p $BPLUG_REPO_DIR
     [ ! -d $BPLUG_BIN_DIR ] && mkdir -p $BPLUG_BIN_DIR
-    export PATH=$BPLUG_BIN_DIR:$PATH
+    [[ ":$PATH:" == *":$BPLUG_BIN_DIR:"* ]] || export PATH=$BPLUG_BIN_DIR:$PATH
 }
 function bplug() {
     [ ! -d $BPLUG_REPO_DIR/${1} ] && git clone http://github.com/${1} $BPLUG_REPO_DIR/${1}
