@@ -196,13 +196,13 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Set background as solid color
-exec --no-startup-id xsetroot -solid $base00
+exec --no-startup-id xsetroot -solid $base01
 
 # Basic bar configuration using the Base16 variables.
 bar {
     position top
     status_command $HOME/.config/i3/conky-wrapper
-    separator_symbol ""
+    separator_symbol "|"
 
     colors {
         background $base00
