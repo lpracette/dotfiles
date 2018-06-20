@@ -28,7 +28,7 @@ will install configuration files for:
 |``set pt=<F2>``       |Specifies the key sequence that toggles the 'paste' option.                             |
 |``inoremap jk <esc>`` |Remap jk to <esc> in insert mode.                                                       |
 ```console
-echo "colo desert |set nu|set et|set ts=4|set nowrap|set hls|set is|set pt=<F2>|inoremap jk <esc>" > ~/.vimrc
+echo "colo desert|set nu|set et|set ts=4|set nowrap|set hls|set is|set pt=<F2>|inoremap jk <esc>" > ~/.vimrc
 ```
 
 
