@@ -1,22 +1,22 @@
 {
     "docs": [
         {
-            "location": "/../../../README/",
+            "location": "/README/",
             "text": "My dot files\n\n\nQuick install of console only dotfiles\n\n\nmkdir -p ~/.dotfiles \n pushd ~/.dotfiles \n \\\nbash -c \n$(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)\n \n \\\npopd\n\n\n\n\nwill install configuration files for:\n\n git \n.gitconfig\n\n\n tmux \n.tmux.conf\n\n\n vim \n.vimrc\n\n\n ctags \n.ctags\n\n\n zsh \n.zshrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\n bash \n.bashrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\ni3 setup\n\n\nsee \ni3.md",
-            "title": "Home"
+            "title": "My dot files"
         },
         {
-            "location": "/../../../README/#my-dot-files",
+            "location": "/README/#my-dot-files",
             "text": "",
             "title": "My dot files"
         },
         {
-            "location": "/../../../README/#quick-install-of-console-only-dotfiles",
+            "location": "/README/#quick-install-of-console-only-dotfiles",
             "text": "mkdir -p ~/.dotfiles   pushd ~/.dotfiles   \\\nbash -c  $(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)    \\\npopd  will install configuration files for:  git  .gitconfig   tmux  .tmux.conf   vim  .vimrc   ctags  .ctags   zsh  .zshrc   .shell_alias   .shell_env   .shell_functions   bash  .bashrc   .shell_alias   .shell_env   .shell_functions",
             "title": "Quick install of console only dotfiles"
         },
         {
-            "location": "/../../../README/#i3-setup",
+            "location": "/README/#i3-setup",
             "text": "see  i3.md",
             "title": "i3 setup"
         }
