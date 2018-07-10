@@ -1,0 +1,4 @@
+site_name: My Dotfiles
+docs_dir: doc
+theme: material
+
