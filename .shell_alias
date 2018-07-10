@@ -12,6 +12,10 @@ alias screen='echo $SSH_CLIENT | cut -d" " -f1 >~/.screen_last_ssh_client && scr
 alias tmux='echo $SSH_CLIENT | cut -d" " -f1 >~/.tmux_last_ssh_client && tmux'
 alias p='ps aux|awk '"'"'$11!~/^\[/{print $0}'"'"
 alias vimf='vim $(fzf)'
+alias less='less -R'
+
+alias prettyJson='python -mjson.tool | pygmentize -l json'
+
 
 # k8s completion
 [ $commands[kubectl] ] && alias k='kubectl'
