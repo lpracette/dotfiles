@@ -1,24 +1,114 @@
 {
     "docs": [
         {
-            "location": "/README/",
+            "location": "/",
             "text": "My dot files\n\n\nQuick install of console only dotfiles\n\n\nmkdir -p ~/.dotfiles \n pushd ~/.dotfiles \n \\\nbash -c \n$(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)\n \n \\\npopd\n\n\n\n\nwill install configuration files for:\n\n git \n.gitconfig\n\n\n tmux \n.tmux.conf\n\n\n vim \n.vimrc\n\n\n ctags \n.ctags\n\n\n zsh \n.zshrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\n bash \n.bashrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\ni3 setup\n\n\nsee \ni3.md",
             "title": "My dot files"
         },
         {
-            "location": "/README/#my-dot-files",
+            "location": "/#my-dot-files",
             "text": "",
             "title": "My dot files"
         },
         {
-            "location": "/README/#quick-install-of-console-only-dotfiles",
+            "location": "/#quick-install-of-console-only-dotfiles",
             "text": "mkdir -p ~/.dotfiles   pushd ~/.dotfiles   \\\nbash -c  $(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)    \\\npopd  will install configuration files for:  git  .gitconfig   tmux  .tmux.conf   vim  .vimrc   ctags  .ctags   zsh  .zshrc   .shell_alias   .shell_env   .shell_functions   bash  .bashrc   .shell_alias   .shell_env   .shell_functions",
             "title": "Quick install of console only dotfiles"
         },
         {
-            "location": "/README/#i3-setup",
+            "location": "/#i3-setup",
             "text": "see  i3.md",
             "title": "i3 setup"
+        },
+        {
+            "location": "/i3/",
+            "text": "i3 setup\n\n\nUbuntu 16.04.1 LTS (Xenial Xerus) Server minimal install\n\n\nwith the following packages:\n\n\ni3 rxvt-unicode-256color lightdm x11-xserver-utils\nrofi compton conky\nfonts-inconsolata fonts-powerline fonts-font-awesome\n\n\n\nother software\n\n\npackages\n\n\ncurl feh libxml2-utils\nusbmount vpnc firefox remmina cryptsetup uzbl gnome-calculator \nranger zathura poppler-utils w3m\n\n\n\nArc GTK Theme\n\n\nwget http://download.opensuse.org/repositories/home:Horst3180/xUbuntu_16.04/Release.key\nsudo apt-key add - \n Release.key\nsudo sh -c \"echo 'deb http://download.opensuse.org/repositories/home:/Horst3180/xUbuntu_16.04/ /' \n /etc/apt/sources.list.d/arc-theme.list\"\nsudo apt-get update \n sudo apt-get install arc-theme lxappearance\n\n\n\nThen choose Arc-Darker in lxappearance.\nFrom http://www.omgubuntu.co.uk/2016/06/install-latest-arc-gtk-theme-ubuntu-16-04\n\n\nPowerline fonts\n\n\ngit clone https://github.com/powerline/fonts\ncd fonts\n./install.sh\n\n\n\nchrome\n\n\n wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -\n sudo add-apt-repository -y \"deb http://dl.google.com/linux/chrome/deb/ stable main\"\n sudo apt-get install google-chrome-stable\n\n\n\natom\n\n\nwget https://github.com/atom/atom/releases/download/v1.9.8/atom-amd64.deb\nsudo dpkg --install atom-amd64.deb\nsudo apt-get -f install\n\n\n\nsteam\n\n\nsudo apt-get install steam\ncd $HOME/.steam/ubuntu12_32/steam-runtime/i386/usr/lib/i386-linux-gnu\nmv libstdc++.so.6 libstdc++.so.6.bak\ncd $HOME/.steam/ubuntu12_32/steam-runtime/amd64/usr/lib/x86_64-linux-gnu\nmv libstdc++.so.6 libstdc++.so.6.bak\n\n\n\niphone\n\n\nCommunicate with iPhone using http://www.libimobiledevice.org/. The 16.04.1 repo pacakage are out of date, we need to install from source.\n\n\nInstall from source\n\n\nsudo apt install build-essential automake libxml++2.6-dev libtool python-dev libssl-dev libfuse-dev libzip-de\ngit clone https://github.com/libimobiledevice/ideviceinstaller\ngit clone https://github.com/libimobiledevice/ifuse\ngit clone https://github.com/libimobiledevice/libimobiledevice\ngit clone https://github.com/libimobiledevice/libplist\ngit clone https://github.com/libimobiledevice/libusbmuxd\n\n\n\nPair device\n\n\nidevicepair -u $(idevice_id -l) pair\n\n\n\nmount iphone\n\n\nchmod 775 /media/iphone\nifuse /media/iphone -u  $(idevice_id -l)\n\n\n\nmount application data\n\n\nifuse --documents $(ideviceinstaller -l | awk -F, '/Mercury/ {print $1}') /media/iphone_mercury/\n\n\n\ncredits\n\n\n.conky\n\n\nhttps://github.com/ThatJames/Conky\n\n\nconky for i3Bar\n\n\nhttp://pastebin.com/h1g6FTD6\n\n\n3wm: How To\n\n\nhttps://www.youtube.com/playlist?list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf",
+            "title": "i3 setup"
+        },
+        {
+            "location": "/i3/#i3-setup",
+            "text": "Ubuntu 16.04.1 LTS (Xenial Xerus) Server minimal install  with the following packages:  i3 rxvt-unicode-256color lightdm x11-xserver-utils\nrofi compton conky\nfonts-inconsolata fonts-powerline fonts-font-awesome",
+            "title": "i3 setup"
+        },
+        {
+            "location": "/i3/#other-software",
+            "text": "",
+            "title": "other software"
+        },
+        {
+            "location": "/i3/#packages",
+            "text": "curl feh libxml2-utils\nusbmount vpnc firefox remmina cryptsetup uzbl gnome-calculator \nranger zathura poppler-utils w3m",
+            "title": "packages"
+        },
+        {
+            "location": "/i3/#arc-gtk-theme",
+            "text": "wget http://download.opensuse.org/repositories/home:Horst3180/xUbuntu_16.04/Release.key\nsudo apt-key add -   Release.key\nsudo sh -c \"echo 'deb http://download.opensuse.org/repositories/home:/Horst3180/xUbuntu_16.04/ /'   /etc/apt/sources.list.d/arc-theme.list\"\nsudo apt-get update   sudo apt-get install arc-theme lxappearance  Then choose Arc-Darker in lxappearance.\nFrom http://www.omgubuntu.co.uk/2016/06/install-latest-arc-gtk-theme-ubuntu-16-04",
+            "title": "Arc GTK Theme"
+        },
+        {
+            "location": "/i3/#powerline-fonts",
+            "text": "git clone https://github.com/powerline/fonts\ncd fonts\n./install.sh",
+            "title": "Powerline fonts"
+        },
+        {
+            "location": "/i3/#chrome",
+            "text": "wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -\n sudo add-apt-repository -y \"deb http://dl.google.com/linux/chrome/deb/ stable main\"\n sudo apt-get install google-chrome-stable",
+            "title": "chrome"
+        },
+        {
+            "location": "/i3/#atom",
+            "text": "wget https://github.com/atom/atom/releases/download/v1.9.8/atom-amd64.deb\nsudo dpkg --install atom-amd64.deb\nsudo apt-get -f install",
+            "title": "atom"
+        },
+        {
+            "location": "/i3/#steam",
+            "text": "sudo apt-get install steam\ncd $HOME/.steam/ubuntu12_32/steam-runtime/i386/usr/lib/i386-linux-gnu\nmv libstdc++.so.6 libstdc++.so.6.bak\ncd $HOME/.steam/ubuntu12_32/steam-runtime/amd64/usr/lib/x86_64-linux-gnu\nmv libstdc++.so.6 libstdc++.so.6.bak",
+            "title": "steam"
+        },
+        {
+            "location": "/i3/#iphone",
+            "text": "Communicate with iPhone using http://www.libimobiledevice.org/. The 16.04.1 repo pacakage are out of date, we need to install from source.",
+            "title": "iphone"
+        },
+        {
+            "location": "/i3/#install-from-source",
+            "text": "sudo apt install build-essential automake libxml++2.6-dev libtool python-dev libssl-dev libfuse-dev libzip-de\ngit clone https://github.com/libimobiledevice/ideviceinstaller\ngit clone https://github.com/libimobiledevice/ifuse\ngit clone https://github.com/libimobiledevice/libimobiledevice\ngit clone https://github.com/libimobiledevice/libplist\ngit clone https://github.com/libimobiledevice/libusbmuxd",
+            "title": "Install from source"
+        },
+        {
+            "location": "/i3/#pair-device",
+            "text": "idevicepair -u $(idevice_id -l) pair",
+            "title": "Pair device"
+        },
+        {
+            "location": "/i3/#mount-iphone",
+            "text": "chmod 775 /media/iphone\nifuse /media/iphone -u  $(idevice_id -l)",
+            "title": "mount iphone"
+        },
+        {
+            "location": "/i3/#mount-application-data",
+            "text": "ifuse --documents $(ideviceinstaller -l | awk -F, '/Mercury/ {print $1}') /media/iphone_mercury/",
+            "title": "mount application data"
+        },
+        {
+            "location": "/i3/#credits",
+            "text": "",
+            "title": "credits"
+        },
+        {
+            "location": "/i3/#conky",
+            "text": "https://github.com/ThatJames/Conky",
+            "title": ".conky"
+        },
+        {
+            "location": "/i3/#conky-for-i3bar",
+            "text": "http://pastebin.com/h1g6FTD6",
+            "title": "conky for i3Bar"
+        },
+        {
+            "location": "/i3/#3wm-how-to",
+            "text": "https://www.youtube.com/playlist?list=PL5ze0DjYv5DbCv9vNEzFmP6sU7ZmkGzcf",
+            "title": "3wm: How To"
         }
     ]
 }
