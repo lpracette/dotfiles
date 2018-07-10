@@ -32,6 +32,12 @@ eval "$(~/.bplug/repos/chriskempson/base16-shell/profile_helper.sh)"
 # if command isn't found, suggests a likely package to install
 export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
 
+# k8s completion
+[ $commands[kubectl] ] && source <(kubectl completion bash)
+[ $commands[helm] ] && source <(helm completion bash)
+
 [ -e ~/.shell_alias ] && source ~/.shell_alias        
 [ -e ~/.shell_env ] && source ~/.shell_env            
 [ -e ~/.shell_functions ] && source ~/.shell_functions
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
