@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/",
-            "text": "My dot files\n\n\nQuick install of console only dotfiles\n\n\nmkdir -p ~/.dotfiles \n pushd ~/.dotfiles \n \\\nbash -c \n$(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)\n \n \\\npopd\n\n\n\n\nwill install configuration files for:\n\n git \n.gitconfig\n\n\n tmux \n.tmux.conf\n\n\n vim \n.vimrc\n\n\n ctags \n.ctags\n\n\n zsh \n.zshrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\n bash \n.bashrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\ni3 setup\n\n\nsee \ni3.md",
+            "text": "My dot files\n\n\nQuick install of console only dotfiles\n\n\nmkdir -p ~/.dotfiles \n pushd ~/.dotfiles \n \\\nbash -c \n$(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)\n \n \\\npopd\n\n\n\n\nwill install configuration files for:\n\n git \n.gitconfig\n\n\n tmux \n.tmux.conf\n\n\n vim \n.vimrc\n\n\n ctags \n.ctags\n\n\n zsh \n.zshrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\n bash \n.bashrc\n \n.shell_alias\n \n.shell_env\n \n.shell_functions\n\n\nQuick oneliner for a very basic vim config\n\n\n\n\n\n\n\n\nCommand\n\n\nExplanation\n\n\n\n\n\n\n\n\n\n\ncolo desert\n\n\nLoad color scheme 'desert'.\n\n\n\n\n\n\nset nu\n\n\nPrecede each line with its line number.\n\n\n\n\n\n\nset et\n\n\nUse the appropriate number of spaces to insert a \\\n.\n\n\n\n\n\n\nset ts=4\n\n\nNumber of spaces that a \\\n in the file counts for.\n\n\n\n\n\n\nset nowrap\n\n\nLines longer than the width of the window will not wrap.\n\n\n\n\n\n\nset hls\n\n\nWhen there is a previous search pattern, highlight all its matches.\n\n\n\n\n\n\nset is\n\n\nWhile typing a search command, show where the pattern, as it was typed so far, matches.\n\n\n\n\n\n\nset pt=\nF2\n\n\nSpecifies the key sequence that toggles the 'paste' option.\n\n\n\n\n\n\ninoremap jk \nesc\n\n\nRemap jk to \n in insert mode.\n\n\n\n\n\n\n\n\necho \ncolo desert|set nu|set et|set ts=4|set nowrap|set hls|set is|set pt=\nF2\n|inoremap jk \nesc\n \n ~/.vimrc\n\n\n\n\ni3 setup\n\n\nsee \ni3.md",
             "title": "My dot files"
         },
         {
@@ -14,6 +14,11 @@
             "location": "/#quick-install-of-console-only-dotfiles",
             "text": "mkdir -p ~/.dotfiles   pushd ~/.dotfiles   \\\nbash -c  $(curl -sL --proto-redir -all,https https://raw.githubusercontent.com/lpracette/dotfiles/master/install.sh)    \\\npopd  will install configuration files for:  git  .gitconfig   tmux  .tmux.conf   vim  .vimrc   ctags  .ctags   zsh  .zshrc   .shell_alias   .shell_env   .shell_functions   bash  .bashrc   .shell_alias   .shell_env   .shell_functions",
             "title": "Quick install of console only dotfiles"
+        },
+        {
+            "location": "/#quick-oneliner-for-a-very-basic-vim-config",
+            "text": "Command  Explanation      colo desert  Load color scheme 'desert'.    set nu  Precede each line with its line number.    set et  Use the appropriate number of spaces to insert a \\ .    set ts=4  Number of spaces that a \\  in the file counts for.    set nowrap  Lines longer than the width of the window will not wrap.    set hls  When there is a previous search pattern, highlight all its matches.    set is  While typing a search command, show where the pattern, as it was typed so far, matches.    set pt= F2  Specifies the key sequence that toggles the 'paste' option.    inoremap jk  esc  Remap jk to   in insert mode.     echo  colo desert|set nu|set et|set ts=4|set nowrap|set hls|set is|set pt= F2 |inoremap jk  esc    ~/.vimrc",
+            "title": "Quick oneliner for a very basic vim config"
         },
         {
             "location": "/#i3-setup",

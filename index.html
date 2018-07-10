@@ -202,6 +202,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-oneliner-for-a-very-basic-vim-config" title="Quick oneliner for a very basic vim config" class="md-nav__link">
+    Quick oneliner for a very basic vim config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#i3-setup" title="i3 setup" class="md-nav__link">
     i3 setup
   </a>
@@ -259,6 +266,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-oneliner-for-a-very-basic-vim-config" title="Quick oneliner for a very basic vim config" class="md-nav__link">
+    Quick oneliner for a very basic vim config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#i3-setup" title="i3 setup" class="md-nav__link">
     i3 setup
   </a>
@@ -296,6 +310,56 @@ popd
 </em> ctags <a href="https://github.com/lpracette/dotfiles/blob/master/.ctags">.ctags</a>
 <em> zsh <a href="https://github.com/lpracette/dotfiles/blob/master/.zshrc">.zshrc</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_alias">.shell_alias</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_env">.shell_env</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_functions">.shell_functions</a>
 </em> bash <a href="https://github.com/lpracette/dotfiles/blob/master/.bashrc">.bashrc</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_alias">.shell_alias</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_env">.shell_env</a> <a href="https://github.com/lpracette/dotfiles/blob/master/.shell_functions">.shell_functions</a></p>
+<h2 id="quick-oneliner-for-a-very-basic-vim-config">Quick oneliner for a very basic vim config</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>colo desert</code></td>
+<td>Load color scheme 'desert'.</td>
+</tr>
+<tr>
+<td><code>set nu</code></td>
+<td>Precede each line with its line number.</td>
+</tr>
+<tr>
+<td><code>set et</code></td>
+<td>Use the appropriate number of spaces to insert a \<Tab>.</td>
+</tr>
+<tr>
+<td><code>set ts=4</code></td>
+<td>Number of spaces that a \<Tab> in the file counts for.</td>
+</tr>
+<tr>
+<td><code>set nowrap</code></td>
+<td>Lines longer than the width of the window will not wrap.</td>
+</tr>
+<tr>
+<td><code>set hls</code></td>
+<td>When there is a previous search pattern, highlight all its matches.</td>
+</tr>
+<tr>
+<td><code>set is</code></td>
+<td>While typing a search command, show where the pattern, as it was typed so far, matches.</td>
+</tr>
+<tr>
+<td><code>set pt=&lt;F2&gt;</code></td>
+<td>Specifies the key sequence that toggles the 'paste' option.</td>
+</tr>
+<tr>
+<td><code>inoremap jk &lt;esc&gt;</code></td>
+<td>Remap jk to <esc> in insert mode.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="console">echo &quot;colo desert|set nu|set et|set ts=4|set nowrap|set hls|set is|set pt=&lt;F2&gt;|inoremap jk &lt;esc&gt;&quot; &gt; ~/.vimrc
+</code></pre>
+
 <h2 id="i3-setup">i3 setup</h2>
 <p>see <a href="https://github.com/lpracette/dotfiles/blob/master/i3.md">i3.md</a></p>
                 
