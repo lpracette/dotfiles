@@ -4,8 +4,8 @@ PATCH_DIR=$(pwd)/${1:-tmp_patch}
 mkdir -p PATCH_DIR
 
 # Local commits
-git format-patch -p origin/HEAD -o $PATCH_DIR
-git submodule --quiet foreach --recursive "git format-patch -p origin/HEAD -o $PATCH_DIR"
+git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}` -o $PATCH_DIR
+git submodule --quiet foreach --recursive "git format-patch -p \$(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR"
 
 # Work in Progress
 if ! git diff --exit-code  --ignore-submodules --quiet; then
