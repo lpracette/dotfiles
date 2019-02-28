@@ -18,6 +18,10 @@ function bplug_bin() {
 }
 # /bplug
 
+[ -e ~/.shell_alias ] && source ~/.shell_alias        
+[ -e ~/.shell_env ] && source ~/.shell_env            
+[ -e ~/.shell_functions ] && source ~/.shell_functions
+
 # Plugins
 bplug_init
 bplug     'mrzool/bash-sensible'      'sensible.bash'
@@ -32,12 +36,6 @@ eval "$(~/.bplug/repos/chriskempson/base16-shell/profile_helper.sh)"
 # if command isn't found, suggests a likely package to install
 export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
 
-# k8s completion
-[ $commands[kubectl] ] && source <(kubectl completion bash)
-[ $commands[helm] ] && source <(helm completion bash)
-
-[ -e ~/.shell_alias ] && source ~/.shell_alias        
-[ -e ~/.shell_env ] && source ~/.shell_env            
-[ -e ~/.shell_functions ] && source ~/.shell_functions
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+# # k8s completion
+command -v kubectl >/dev/null 2>&1 && source <(kubectl completion bash)
+command -v helm >/dev/null 2>&1 && source <(helm completion bash)

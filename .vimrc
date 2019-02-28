@@ -58,11 +58,12 @@ Plug 'junegunn/fzf.vim'                                           " key bindings
 Plug 'scrooloose/nerdtree',            " File explorer
 
 " Keybinding 
-Plug 'vim-scripts/DrawIt'              " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
+Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
 Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple 
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line 
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
+Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
 
 call plug#end()
 
@@ -177,11 +178,11 @@ set virtualedit=block
 " Keep 10 lines above and below the cursor
 set scrolloff=10
 
+set mouse=a
 " Gvim options
 if has("gui_running")
     set go=
     colorscheme solarized
-    set mouse=a
     try
         if has('gui_win32')
             set guifont=DejaVuSansMonoForPowerline_NF:h10:cANSI 
@@ -252,6 +253,9 @@ autocmd FileType python set colorcolumn=120
 let g:airline#extensions#tabline#enabled = 1 " Enable the list of buffers
 let g:airline#extensions#tabline#fnamemod = ':t' " Show just the filename
 let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#show_splits = 0
+let g:airline#extensions#tabline#show_tab_nr = 1
 
 "special characters
 let DISABLE_POWERLINE_FONT=$DISABLE_POWERLINE_FONT 
@@ -383,4 +387,9 @@ else
     noremap <leader>t :make TEST=<C-R>=expand("<cword>")<CR><CR>
 endif
 
-
+function! RebuildCtags()
+    echo "Regenerating tags..."
+    execute "!sudo rm -f tags"
+    execute "!ctags 2>/dev/null"
+endfunction
+noremap <leader>c :call RebuildCtags()<CR>

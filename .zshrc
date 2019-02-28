@@ -1,5 +1,10 @@
 export LC_ALL="en_US.UTF-8"
 
+
+[ -e ~/.shell_alias ] && source ~/.shell_alias 
+[ -e ~/.shell_env ] && source ~/.shell_env
+[ -e ~/.shell_functions ] && source ~/.shell_functions
+
 #install zplug
 [ ! -d ~/.zplug ] && curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
 
@@ -49,9 +54,3 @@ bindkey '^x^e' edit-command-line
 # k8s completion
 [ $commands[kubectl] ] && source <(kubectl completion zsh)
 [ $commands[helm] ] && source <(helm completion zsh)
-
-[ -e ~/.shell_alias ] && source ~/.shell_alias 
-[ -e ~/.shell_env ] && source ~/.shell_env
-[ -e ~/.shell_functions ] && source ~/.shell_functions
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -6,8 +6,13 @@ export EDITOR=`which vim`
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 
+# chriskempson/base16-shell
 export BASE16_SHELL_HOOKS=$HOME/.config/base16-shell/hooks
 
+# nojhan/liquidprompt
+export LP_ENABLE_TIME=1
+
+# Python options
 if [ -e ~/.pythonrc ]; then 
     export PYTHONSTARTUP=~/.pythonrc
     export PYTHONDONTWRITEBYTECODE=1 # don't write .pyc files to disk
@@ -21,6 +26,5 @@ fi
 # set PATH so it includes user's private bin if it exists
 [ -d "$HOME/bin" ] && export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-
-[ $commands[pygmentize] ] && export LESSOPEN='|pygmentize %s' 
-
+# # colorize less
+command -v pygmentize >/dev/null 2>&1 && export LESSOPEN='|pygmentize %s' 
