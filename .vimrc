@@ -46,8 +46,8 @@ Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope 
+Plug 'jsfaint/gen_tags.vim'             " Async plugin for vim and neovim to ease the use of ctags/gtags 
 "Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }  " A code-completion engine for Vim
-"Plug 'jeaye/color_coded', { 'for': ['c', 'cpp'], 'do': function('BuildCC') } " libclang-based highlighting of C, C++
 "Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'} " Generates config files for YouCompleteMe
 
 " Fuzy search: buffers, files, tags
@@ -194,56 +194,11 @@ if has("gui_running")
     endtry
 endif
 
-
-" ====================================
-" Key Maps
-" ====================================
-"cscope config
-if has('cscope')
-    set cscopetag
-
-    if has('quickfix')
-        set cscopequickfix=s-,c-,d-,i-,t-,e-
-    endif
-
-    if filereadable("cscope.out")
-        try
-            cs add cscope.out
-        catch /^Vim\%((\a\+)\)\=:E568/
-        endtry
-    endif
-
-    nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
-endif
-
-" Toggle line numbers and special characters with <F3>
-noremap <F3> :set nu!<CR>
-inoremap <F3> <C-o>:set nu!<CR>
-
-" Toggle paste mode
-set pastetoggle=<F2>
-
-" switch back to last buffer
-cmap bb b#
-
     
 
 " ====================================
 " Plugin Configuration
 " ====================================
-
-" python-mode
-" -----------
-let g:pymode_options_max_line_length=120
-autocmd FileType python set colorcolumn=120
- 
 
 " vim-airline
 " ------------
@@ -293,7 +248,14 @@ let NERDTreeShowHidden=1
 " Tagbar
 " ------------
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
+nnoremap <leader>t :TagbarToggle<CR>
 
+
+
+" GenTags
+" ------------
+let g:gen_tags#statusline=1
+ 
 
 " fzf
 " ------------
@@ -320,6 +282,24 @@ nnoremap <leader>b :Buffers<CR>
 " YCM
 " -----------
 let g:ycm_confirm_extra_conf = 0
+
+
+
+
+" ====================================
+" Key Maps
+" ====================================
+" Toggle line numbers and special characters with <F3>
+noremap <F3> :set nu!<CR>
+inoremap <F3> <C-o>:set nu!<CR>
+
+" Toggle paste mode
+set pastetoggle=<F2>
+
+" switch back to last buffer
+cmap bb b#
+
+
 
 
 " ====================================
@@ -380,12 +360,12 @@ function! Random(n) abort
 endfunction
 
 
-if !empty(glob("~/.vim/plugged/tagbar/plugin/tagbar.vim"))
-    noremap <leader>t :make TEST=<C-R>=substitute(tagbar#currenttag("%s",""),"()","","")<CR><CR>
-else
-    echom "Using <cword> for <leader>t"
-    noremap <leader>t :make TEST=<C-R>=expand("<cword>")<CR><CR>
-endif
+" if !empty(glob("~/.vim/plugged/tagbar/plugin/tagbar.vim"))
+"     noremap <leader>t :make TEST=<C-R>=substitute(tagbar#currenttag("%s",""),"()","","")<CR><CR>
+" else
+"     echom "Using <cword> for <leader>t"
+"     noremap <leader>t :make TEST=<C-R>=expand("<cword>")<CR><CR>
+" endif
 
 function! RebuildCtags()
     echo "Regenerating tags..."
