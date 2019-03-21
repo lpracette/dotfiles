@@ -178,7 +178,9 @@ set virtualedit=block
 " Keep 10 lines above and below the cursor
 set scrolloff=10
 
+" Mouse all
 set mouse=a
+
 " Gvim options
 if has("gui_running")
     set go=
@@ -194,6 +196,11 @@ if has("gui_running")
     endtry
 endif
 
+" To disable beeping
+set noerrorbells visualbell t_vb=
+if has('autocmd')
+    autocmd GUIEnter * set visualbell t_vb=
+endif
     
 
 " ====================================
