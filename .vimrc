@@ -57,6 +57,9 @@ Plug 'junegunn/fzf.vim'                                           " key bindings
 " File browsing
 Plug 'scrooloose/nerdtree',            " File explorer
 
+" Persistent sessions
+Plug 'tpope/vim-obsession'              " continuously updated session files 
+
 " Keybinding 
 Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
 Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple 
@@ -255,7 +258,6 @@ let NERDTreeShowHidden=1
 " Tagbar
 " ------------
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
-nnoremap <leader>t :TagbarToggle<CR>
 
 
 
@@ -268,7 +270,9 @@ let g:gen_tags#statusline=1
 " ------------
 " git grep
 command! -bang -nargs=* GGrep
-      \ call fzf#vim#grep('git grep --line-number '.shellescape(<q-args>), 0, <bang>0)
+  \ call fzf#vim#grep(
+  \   'git grep --line-number '.shellescape(<q-args>), 0,
+  \   fzf#vim#with_preview({ 'dir': systemlist('git rev-parse --show-toplevel')[0] }), <bang>0)
 
 " Augmenting Ag command using fzf#vim#with_preview function
 command! -bang -nargs=* Ag
@@ -281,9 +285,6 @@ command! -bang -nargs=* Ag
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
   
-nnoremap <leader>e :Files<CR>
-nnoremap <leader>d :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
-nnoremap <leader>b :Buffers<CR>
 
 
 " YCM
@@ -306,57 +307,87 @@ set pastetoggle=<F2>
 " switch back to last buffer
 cmap bb b#
 
+" Tagbar
+nnoremap <leader>t :TagbarToggle<CR>
+
+" FZF
+vnoremap <leader>g :<C-U>GGrep GetVisualSelection()<CR>
+nnoremap <leader>g :GGrep<CR>
+nnoremap <leader>e :Files<CR>
+nnoremap <leader>d :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
+nnoremap <leader>b :Buffers<CR>
+
+function! SearchGoogleW3m(str,extra)
+    let l:sCmd="w3m -M www.google.com/search\\?q=".UrlEncode(a:str).a:extra
+    "echom l:sCmd
+    execute "!" . l:sCmd
+endfunction
+vnoremap <leader>s :call SearchGoogleW3m(GetVisualSelection(), "")<CR>
 
 
 
 " ====================================
 " Funcitons
 " ====================================
-function! GetVisualSelection() " from http://stackoverflow.com/a/6271254
-    let [lnum1, col1] = getpos("'<")[1:2]
-    let [lnum2, col2] = getpos("'>")[1:2]
-    let lines = getline(lnum1, lnum2)
-    let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ?  1 : 2)]
-    let lines[0] = lines[0][col1 - 1:]
+" from http://stackoverflow.com/a/6271254
+function! GetVisualSelection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
     return join(lines, "\n")
 endfunction
 
-function! EncodeUrl(url) " Add characters as needed
-    let l:encoded=substitute(a:url,     " ",  "\\\\%20", "g") " Space
-    let l:encoded=substitute(l:encoded, "&",  "\\\\%26", "g") " Ampersand 
-    let l:encoded=substitute(l:encoded, "+",  "\\\\%2B", "g") " Plus 
-    let l:encoded=substitute(l:encoded, ",",  "\\\\%2C", "g") " Comma 
-    let l:encoded=substitute(l:encoded, "/",  "\\\\%2F", "g") " Forward slash/Virgule 
-    let l:encoded=substitute(l:encoded, ":",  "\\\\%3A", "g") " Colon 
-    let l:encoded=substitute(l:encoded, ";",  "\\\\%3B", "g") " Semi-colon 
-    let l:encoded=substitute(l:encoded, "=",  "\\\\%3D", "g") " Equals 
-    let l:encoded=substitute(l:encoded, "?",  "\\\\%3F", "g") " Question mark 
-    let l:encoded=substitute(l:encoded, "@",  "\\\\%40", "g") " 'At' symbol 
-    let l:encoded=substitute(l:encoded, "?",  "\\\\%22", "g") " Quotation marks
-    let l:encoded=substitute(l:encoded, "<",  "\\\\%3C", "g") " 'Less Than' symbol
-    let l:encoded=substitute(l:encoded, ">",  "\\\\%3E", "g") " 'Greater Than' symbol
-    let l:encoded=substitute(l:encoded, "{",  "\\\\%7B", "g") " Left Curly Brace 
-    let l:encoded=substitute(l:encoded, "}",  "\\\\%7D", "g") " Right Curly Brace 
-    let l:encoded=substitute(l:encoded, "|",  "\\\\%7C", "g") " Vertical Bar/Pipe 
-    let l:encoded=substitute(l:encoded, "~",  "\\\\%7E", "g") " Tilde 
-    let l:encoded=substitute(l:encoded, "[",  "\\\\%5B", "g") " Left Square Bracket 
-    let l:encoded=substitute(l:encoded, "]",  "\\\\%5D", "g") " Right Square Bracket 
-    let l:encoded=substitute(l:encoded, "`",  "\\\\%60", "g") " Grave Accent 
-    let l:encoded=substitute(l:encoded, "#",  "\\\\%23", "g") " 'Pound' character
-    " let l:encoded=substitute(a:url, %,  \\\\%25, g)     " Percent character
-    " let l:encoded=substitute(l:encoded, \\, \\\\%5C, g) " Backslash 
-    " let l:encoded=substitute(l:encoded, $,  \\\\%24, g) " Dollar 
-    " let l:encoded=substitute(l:encoded, ^,  \\\\%5E, g) " Caret 
-    return encoded
+"from http://www.danielbigham.ca/cgi-bin/document.pl?mode=Display&DocumentID=1053
+" URL encode a string. ie. Percent-encode characters as necessary.
+function! UrlEncode(string)
+
+    let result = ""
+
+    let characters = split(a:string, '.\zs')
+    for character in characters
+        if character == " "
+            let result = result . "+"
+        elseif CharacterRequiresUrlEncoding(character)
+            let i = 0
+            while i < strlen(character)
+                let byte = strpart(character, i, 1)
+                let decimal = char2nr(byte)
+                let result = result . "\\\\%" . printf("%02x", decimal)
+                let i += 1
+            endwhile
+        else
+            let result = result . character
+        endif
+    endfor
+
+    return result
+
 endfunction
 
-function! SearchGoogleW3m(str,extra)
-    let l:sCmd="w3m -M www.google.com/search\\?q=".EncodeUrl(a:str).a:extra
-    "echom l:sCmd
-    execute "!" . l:sCmd
-endfunction
+" Returns 1 if the given character should be percent-encoded in a URL encoded
+" string.
+function! CharacterRequiresUrlEncoding(character)
 
-vnoremap <leader>g :call SearchGoogleW3m(GetVisualSelection(), "")<CR>
+    let ascii_code = char2nr(a:character)
+    if ascii_code >= 48 && ascii_code <= 57
+        return 0
+    elseif ascii_code >= 65 && ascii_code <= 90
+        return 0
+    elseif ascii_code >= 97 && ascii_code <= 122
+        return 0
+    elseif a:character == "-" || a:character == "_" || a:character == "." || a:character == "~"
+        return 0
+    endif
+
+    return 1
+
+endfunction
 
 
 " https://stackoverflow.com/a/26314537
@@ -365,18 +396,3 @@ function! Random(n) abort
   let g:rnd = (g:rnd * 31421 + 6927) % 0x10000
   return g:rnd * a:n / 0x10000
 endfunction
-
-
-" if !empty(glob("~/.vim/plugged/tagbar/plugin/tagbar.vim"))
-"     noremap <leader>t :make TEST=<C-R>=substitute(tagbar#currenttag("%s",""),"()","","")<CR><CR>
-" else
-"     echom "Using <cword> for <leader>t"
-"     noremap <leader>t :make TEST=<C-R>=expand("<cword>")<CR><CR>
-" endif
-
-function! RebuildCtags()
-    echo "Regenerating tags..."
-    execute "!sudo rm -f tags"
-    execute "!ctags 2>/dev/null"
-endfunction
-noremap <leader>c :call RebuildCtags()<CR>
