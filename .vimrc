@@ -46,9 +46,10 @@ Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope 
-Plug 'jsfaint/gen_tags.vim'             " Async plugin for vim and neovim to ease the use of ctags/gtags 
-"Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp'], 'do': function('BuildYCM') }  " A code-completion engine for Vim
-"Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'} " Generates config files for YouCompleteMe
+Plug 'ajh17/VimCompletesMe'             " You don't Complete Me; Vim Completes Me! A super simple, super minimal, super light-weight tab completion plugin for Vim.  
+" Plug 'jsfaint/gen_tags.vim'             " Async plugin for vim and neovim to ease the use of ctags/gtags 
+" Plug 'https://gist.github.com/amitab/cd051f1ea23c588109c6cfcb7d1d5776', 
+"     \ { 'as': 'amitab-fzf-cscope', 'do': 'mkdir -p plugin; cp -f *.vim plugin/' } " Use cscope with FZF
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
@@ -310,7 +311,7 @@ cmap bb b#
 
 
 " ====================================
-" Funcitons
+" Funcitons, could be plugins...
 " ====================================
 function! GetVisualSelection() " from http://stackoverflow.com/a/6271254
     let [lnum1, col1] = getpos("'<")[1:2]
@@ -376,7 +377,52 @@ endfunction
 
 function! RebuildCtags()
     echo "Regenerating tags..."
-    execute "!sudo rm -f tags"
-    execute "!ctags 2>/dev/null"
+    execute "!rm -f tags"
+    execute "!ctags -R --totals=yes --exclude=.git --exclude=*/obj/* --python-kinds=-i --c++-kinds=+p --fields=+iaS --extras=+q"
 endfunction
 noremap <leader>c :call RebuildCtags()<CR>
+
+
+" Use cscope with FZF inspired by https://gist.github.com/amitab/cd051f1ea23c588109c6cfcb7d1d5776
+" -----------
+function! Cscope(option, query)
+  let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
+  let opts = {
+  \ 'source':  "cscope -dL" . a:option . " " . a:query . " | awk '" . color . "'",
+  \ 'options': ['--ansi', '--multi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
+  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
+  \ 'down': '40%'
+  \ }
+  function! opts.sink(lines) 
+    let data = split(a:lines)
+    let file = split(data[0], ":")
+    execute 'e ' . '+' . file[1] . ' ' . file[0]
+  endfunction
+  call fzf#run(opts)
+endfunction
+
+function! CscopeChoice(query)
+"   let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
+  let opts = {
+  \ 'source':  [
+  \  '9: Find assignments to this symbol:'.a:query,
+  \  '8: Find files #including this file:'.a:query,
+  \  '7: Find this file:'.a:query,
+  \  '6: Find this egrep pattern:'.a:query,
+  \  '3: Find functions calling this function:'.a:query,
+  \  '4: Find this text string:'.a:query,
+  \  '2: Find functions called by this function:'.a:query,
+  \  '1: Find this global definition:'.a:query,
+  \  '0: Find this C symbol: '.a:query],
+  \ 'options': ['--ansi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
+  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
+  \ 'down': '40%'
+  \ }
+  function! opts.sink(lines) 
+    let data = split(a:lines, ":")
+    call Cscope(data[0], data[2])
+  endfunction
+  call fzf#run(opts)
+endfunction
+nnoremap <silent> <C-]> :call CscopeChoice(expand('<cword>'))<CR>
+
