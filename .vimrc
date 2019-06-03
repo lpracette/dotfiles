@@ -15,21 +15,6 @@ endif
 " ====================================
 " Plugin Management with vim-plug
 " ====================================
-function! BuildYCM(info)
-    if a:info.status == 'installed' || a:info.force
-        !./install.py --clang-completer --js-completer
-    endif
-endfunction
-
-function! BuildCC(info)
-    if a:info.status == 'installed' || a:info.force
-        !mkdir build
-        !cd build && cmake ..
-        !cd build && make && make install
-        !cd build && make clean && make clean_clang
-    endif
-endfunction
-
 call plug#begin()
 
 " Appearance: colors, status bar, icons
@@ -72,7 +57,6 @@ call plug#end()
 " ====================================
 " vim Configuration
 " ====================================
-
 " Basic config: line numbers, no line wrap, highlight incremental search,
 " remap escape key. Quick config if no .vimrc:
 " colo desert |set nu|set nowrap|set hls|set is|inoremap jk <esc>
@@ -117,7 +101,7 @@ set ttyfast
 " End-of-line options
 set fileformats=unix,dos
 
-" struct member autocomple, c only, if YCM is not used
+" struct member autocomple, c only
 set omnifunc=ccomplete#Complete
 
 " Show more information while completing tags.
@@ -421,7 +405,6 @@ function! Cscope(option, query)
 endfunction
 
 function! CscopeChoice(query)
-"   let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
   let opts = {
   \ 'source':  [
   \  '9: Find assignments to this symbol:'.a:query,
@@ -433,8 +416,6 @@ function! CscopeChoice(query)
   \  '2: Find functions called by this function:'.a:query,
   \  '1: Find this global definition:'.a:query,
   \  '0: Find this C symbol: '.a:query],
-  \ 'options': ['--ansi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
-  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
   \ 'down': '40%'
   \ }
   function! opts.sink(lines) 
