@@ -50,6 +50,7 @@ Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line 
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
+Plug 'easymotion/vim-easymotion'
 
 call plug#end()
 
@@ -286,6 +287,9 @@ inoremap <F3> <C-o>:set nu!<CR>
 " Toggle paste mode
 set pastetoggle=<F2>
 
+" remap leader
+let mapleader = "\<Space>"
+
 " switch back to last buffer
 cmap bb b#
 
@@ -380,8 +384,9 @@ endfunction
 
 function! RebuildCtags()
     echo "Regenerating tags..."
-    execute "!rm -f tags"
+    execute "!rm -f tags cscope"
     execute "!ctags -R --totals=yes --exclude=.git --exclude=*/obj/* --python-kinds=-i --c++-kinds=+p --fields=+iaS --extras=+q"
+    execute "!cscope -R ."
 endfunction
 noremap <leader>c :call RebuildCtags()<CR>
 
