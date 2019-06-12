@@ -104,3 +104,7 @@ function what() {
 function checksum() {
     bash -c "echo \"echo \"`md5sum $1`\" | md5sum -c\"  | tmux loadb -"
 }
+
+function vimp() {
+    bash <(curl -sfL https://raw.githubusercontent.com/junegunn/myvim/master/myvim)
+}
