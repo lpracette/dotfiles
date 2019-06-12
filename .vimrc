@@ -22,10 +22,14 @@ Plug 'chriskempson/base16-vim'          "
 Plug 'altercation/vim-colors-solarized' " precision colorscheme for the vim text editor 
 Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
 Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
-Plug 'nathanaelkane/vim-indent-guides'  " A Vim plugin for visually displaying indent levels in code, toggle: \-ig
 Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
 Plug 'Xuyuanp/nerdtree-git-plugin',     " A plugin of NERDTree showing git status
 Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
+Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention levels with thin vertical lines
+Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
+Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vimm
+Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
+
 
 " Coding: tags, git, C\C++
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
@@ -35,7 +39,7 @@ Plug 'ajh17/VimCompletesMe'             " You don't Complete Me; Vim Completes M
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
-Plug 'junegunn/fzf.vim'                                           " key bindings
+Plug 'junegunn/fzf.vim'                                           " fzf ❤️ vim, vim key bindings
 
 " File browsing
 Plug 'scrooloose/nerdtree',            " File explorer
@@ -87,7 +91,12 @@ if filereadable(expand("~/.vimrc_background"))
     let base16colorspace=256
     source ~/.vimrc_background
 else
-    colorscheme desert
+    try
+        colorscheme seoul256
+        let g:airline_theme='zenburn'
+    catch /^Vim\%((\a\+)\)\=:E185/
+        colorscheme desert
+    endtry
 endif
 
 if &term =~ '256color'
@@ -204,6 +213,7 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#show_splits = 0
 let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#obsession#indicator_text = ''
 
 "special characters
 let DISABLE_POWERLINE_FONT=$DISABLE_POWERLINE_FONT 
@@ -270,10 +280,35 @@ command! -bang -nargs=? -complete=dir Files
   
 
 
-" YCM
+" indentLine
 " -----------
-let g:ycm_confirm_extra_conf = 0
+let g:indentLine_char = '┊'
 
+
+" Goyo
+" -----------
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowcmd
+  set scrolloff=999
+  Limelight
+endfunction
+
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  endif
+  set showcmd
+  set scrolloff=10
+  Limelight!
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 
 
@@ -309,6 +344,8 @@ function! SearchGoogleW3m(str,extra)
 endfunction
 vnoremap <leader>s :call SearchGoogleW3m(GetVisualSelection(), "")<CR>
 
+" Goyo
+nnoremap <leader>o :Goyo 85%<CR>
 
 
 " ====================================
