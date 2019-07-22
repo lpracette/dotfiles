@@ -1,3 +1,5 @@
+scriptencoding utf-8
+set encoding=utf-8
 set nocompatible                   " be iMproved
 set runtimepath=~/.vim,$VIMRUNTIME " or else windows uses $HOME/vimfiles
 
@@ -316,8 +318,8 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Key Maps
 " ====================================
 " Toggle line numbers and special characters with <F3>
-noremap <F3> :set nu!<CR>
-inoremap <F3> <C-o>:set nu!<CR>
+noremap <F3> :set nu!<CR>:IndentLinesToggle<CR>
+inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>
 
 " Toggle paste mode
 set pastetoggle=<F2>
