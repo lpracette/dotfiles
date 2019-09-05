@@ -16,6 +16,11 @@ alias less='less -R'
 
 alias prettyJson='python -mjson.tool | pygmentize -l json'
 
+# Aliases are only expanded as the first argument, or after another alias with a trailing space on the end of the command.
+# From bash's help alias:
+# A trailing space in VALUE causes the next word to be checked for alias substitution when the alias is expanded.
+# https://unix.stackexchange.com/a/25329
+alias watch='watch '
 
 # k8s completion
 [ $commands[kubectl] ] && alias k='kubectl'
