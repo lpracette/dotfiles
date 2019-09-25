@@ -12,7 +12,7 @@ export LC_ALL="en_US.UTF-8"
 source ~/.zplug/init.zsh
 
 zplug "zplug/zplug"                                     # Let zplug manage zplug
-zplug "yous/vanilli.sh"                                 # A lightweight start point of shell configuration
+# zplug "yous/vanilli.sh"                                 # A lightweight start point of shell configuration
 zplug "zsh-users/zsh-completions"                       # Additional completion definitions for Zsh
 zplug "zsh-users/zsh-autosuggestions"                   # suggest commands from history
 # zplug "yous/lime"                                       # Simple prompt
