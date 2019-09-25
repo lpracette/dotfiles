@@ -82,9 +82,16 @@ set shiftwidth=4
 set cindent
 set autoindent
 filetype indent on
+
 autocmd FileType make set noexpandtab
 autocmd BufRead,BufNewFile   *.html,*.php,*.yaml setl sw=2 sts=2 et foldmethod=indent
 autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
+
+" add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
+augroup Shebang
+  autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\<nl>\"|$
+  autocmd BufNewFile *.sh 0put =\"#!/usr/bin/env bash\<nl>\<nl>\"|$
+augroup END
 
 " color theme
 syntax enable
