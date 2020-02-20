@@ -31,6 +31,7 @@ Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention 
 Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
 Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vimm
 Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
+Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
 
 
 " Coding: tags, git, C\C++
@@ -56,7 +57,17 @@ Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line 
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
+Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
+Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
 Plug 'easymotion/vim-easymotion'
+
+" Notes
+Plug 'fmoralesc/vim-pad'                " a quick notetaking plugin
+Plug 'vim-pandoc/vim-pandoc'            " pandoc integration and utilities for vim
+Plug 'vim-pandoc/vim-pandoc-syntax'     " pandoc markdown syntax, to be installed alongside vim-pandoc
+
+Plug 'dstein64/vim-startuptime'
 
 call plug#end()
 
@@ -206,10 +217,25 @@ if has('autocmd')
     autocmd GUIEnter * set visualbell t_vb=
 endif
     
+" Spellcheck commit messages
+autocmd FileType gitcommit setlocal spell
 
 " ====================================
 " Plugin Configuration
 " ====================================
+"  vim-pad
+"  ---------
+if empty(glob("~/notes"))
+    execute('!mkdir -p ~/notes')
+endif
+let g:pad#dir = "~/notes"
+let g:pad#default_format = "pandoc"
+
+" undotree
+" -------
+if !exists('g:undotree_WindowLayout')
+    let g:undotree_WindowLayout = 2
+endif
 
 " vim-airline
 " ------------
@@ -260,7 +286,6 @@ let NERDTreeShowHidden=1
 " Tagbar
 " ------------
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
-
 
 
 " GenTags
@@ -336,6 +361,9 @@ let mapleader = "\<Space>"
 
 " switch back to last buffer
 cmap bb b#
+
+" undotree
+nnoremap <leader>u :UndotreeToggle<CR>
 
 " Tagbar
 nnoremap <leader>t :TagbarToggle<CR>
