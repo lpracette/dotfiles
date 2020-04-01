@@ -32,6 +32,8 @@ Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage an
 Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vimm
 Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
+Plug 'blueyed/vim-diminactive'
+Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
 
 
 " Coding: tags, git, C\C++
@@ -95,7 +97,7 @@ set autoindent
 filetype indent on
 
 autocmd FileType make set noexpandtab
-autocmd BufRead,BufNewFile   *.html,*.php,*.yaml setl sw=2 sts=2 et foldmethod=indent
+autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
 autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
 
 " add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
@@ -312,6 +314,15 @@ command! -bang -nargs=* Ag
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
   
+" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
+endfunction
+nnoremap z= :call FzfSpell()<CR>
 
 
 " indentLine
