@@ -24,3 +24,4 @@ alias watch='watch '
 
 # k8s completion
 [ $commands[kubectl] ] && alias k='kubectl'
+[ $commands[kubectl] ] && complete -F __start_kubectl k
