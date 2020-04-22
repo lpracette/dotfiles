@@ -53,12 +53,12 @@ function link_to_home()
 DOTFILES_TO_INSTALL=".gitconfig .tmux.conf .vimrc .zshrc .bashrc .shell_alias .shell_env .shell_functions .ctags"
 link_to_home "$DOTFILES_TO_INSTALL"
 
-if confirm "Install i3 dotfiles"; then
-    DOTFILES_TO_INSTALL_i3="bin .config/ranger/rc.conf .config/ranger/scope.sh .w3m/config .config/i3/config.base .config/i3/conky.conf .config/i3/conky-wrapper .config/lxterminal/lxterminal.conf .conky .conkyrc .Xresources.base .config/base16-shell/hooks/xresources.sh"
-    mkdir -p $HOME/.w3m
-    mkdir -p $HOME/.config/ranger
-    mkdir -p $HOME/.config/i3
-    mkdir -p $HOME/.config/base16-shell/hooks
-    link_to_home "$DOTFILES_TO_INSTALL_i3"
-fi
+# if confirm "Install i3 dotfiles"; then
+#     DOTFILES_TO_INSTALL_i3="bin .config/ranger/rc.conf .config/ranger/scope.sh .w3m/config .config/i3/config.base .config/i3/conky.conf .config/i3/conky-wrapper .config/lxterminal/lxterminal.conf .conky .conkyrc .Xresources.base .config/base16-shell/hooks/xresources.sh"
+#     mkdir -p $HOME/.w3m
+#     mkdir -p $HOME/.config/ranger
+#     mkdir -p $HOME/.config/i3
+#     mkdir -p $HOME/.config/base16-shell/hooks
+#     link_to_home "$DOTFILES_TO_INSTALL_i3"
+# fi
 
