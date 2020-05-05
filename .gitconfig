@@ -13,12 +13,12 @@
     lg = log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(cyan)<%an>%Creset' --abbrev-commit
     st = status -bs
     cbr ="!f() { \
-        local branches branch; \
-        branches=$(git --no-pager branch -vv --color=always); \
-        branch=`echo \"$branches\" | fzf-tmux +m --ansi`; \
-        git checkout $(echo \"$branch\" | awk '{print $1}' | sed \"s/.* //\"); \
-      };\
-    f"
+            local branches branch; \
+            branches=$(git branch --all --color=always | grep -v HEAD); \
+            branch=$(echo \"$branches\" | fzf-tmux  +m --ansi); \
+            git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
+          };\
+        f"
     graph = log --decorate --oneline --graph
     delete-branch = "!f() {git branch -d $1 && git push origin --delete $1 git && fetch --all --prune} f;"
     clean-branches = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
