@@ -34,6 +34,7 @@ Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme bas
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
 Plug 'blueyed/vim-diminactive'
 Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
+Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 
 
 " Coding: tags, git, C\C++
@@ -48,9 +49,6 @@ Plug 'junegunn/fzf.vim'                                           " fzf ❤️ v
 
 " File browsing
 Plug 'scrooloose/nerdtree',            " File explorer
-
-" Persistent sessions
-Plug 'tpope/vim-obsession'              " continuously updated session files 
 
 " Keybinding 
 Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
@@ -315,6 +313,14 @@ command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
   
 " Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+function! SpellCheckToggle()
+  set spell!
+  if &spell
+    echo "Spellcheck ON"
+  else
+    echo "Spellcheck OFF"
+  endif
+endfunction
 function! FzfSpellSink(word)
   exe 'normal! "_ciw'.a:word
 endfunction
@@ -322,7 +328,11 @@ function! FzfSpell()
   let suggestions = spellsuggest(expand("<cword>"))
   return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
 endfunction
-nnoremap z= :call FzfSpell()<CR>
+nnoremap zz :call FzfSpell()<CR>
+
+nnoremap <leader>z :call SpellCheckToggle()<CR>
+
+
 
 
 " indentLine
