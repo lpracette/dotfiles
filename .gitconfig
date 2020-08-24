@@ -14,6 +14,9 @@
     st = status -bs
     cbr ="!f() { \
             local branches branch; \
+            echo \"fetch remote branches...\"; \
+            git fetch; \
+            git fetch origin +refs/pull-requests/*/from:refs/remotes/origin/pull-requests/*; \
             branches=$(git branch --all --color=always | grep -v HEAD); \
             branch=$(echo \"$branches\" | fzf-tmux  +m --ansi); \
             git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
