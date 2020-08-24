@@ -25,7 +25,6 @@ Plug 'altercation/vim-colors-solarized' " precision colorscheme for the vim text
 Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
 Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
 Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
-Plug 'Xuyuanp/nerdtree-git-plugin',     " A plugin of NERDTree showing git status
 Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
 Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention levels with thin vertical lines
 Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
@@ -63,7 +62,8 @@ Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
 Plug 'easymotion/vim-easymotion'
 
 " Notes
-Plug 'fmoralesc/vim-pad'                " a quick notetaking plugin
+Plug 'fmoralesc/vim-pad', {'branch': 'devel'} " a quick notetaking plugin
+Plug 'aaronbieber/vim-quicktask'        " lightweight but feature-rich task management plugin
 Plug 'vim-pandoc/vim-pandoc'            " pandoc integration and utilities for vim
 Plug 'vim-pandoc/vim-pandoc-syntax'     " pandoc markdown syntax, to be installed alongside vim-pandoc
 
