@@ -39,3 +39,5 @@ export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
 # # k8s completion
 command -v kubectl >/dev/null 2>&1 && source <(kubectl completion bash)
 command -v helm >/dev/null 2>&1 && source <(helm completion bash)
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
