@@ -57,8 +57,6 @@ function term-truecolor-test()
         printf "\n";
     }'
 }
-
-
 function countdown(){
     date1=$((`date +%s` + $1)); 
     while [ "$date1" -ge `date +%s` ]; do 
@@ -66,6 +64,9 @@ function countdown(){
         sleep 0.1
     done
     notify-send "Countdown Done $1 seconds elapsed" "$2"
+    if [[ $(echo "$(tmux -V | sed -En 's/^tmux[^0-9]*([.0-9]+).*/\1/p') >= 3.2" | bc) == 1 ]]; then
+        tmux display-popup echo "Countdown Done $1 seconds elapsed$2"
+    fi
 }
 function stopwatch(){
     date1=`date +%s`; 
@@ -108,3 +109,189 @@ function checksum() {
 function vimp() {
     bash <(curl -sfL https://raw.githubusercontent.com/junegunn/myvim/master/myvim)
 }
+
+function git-cp {
+    PATCH_DIR=$(pwd)/${1:-tmp_patch}
+    mkdir -p PATCH_DIR
+    
+    # Local commits
+    git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}` -o $PATCH_DIR
+    git submodule --quiet foreach --recursive "git format-patch -p \$(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR"
+    
+    # Work in Progress
+    if ! git diff --exit-code  --ignore-submodules --quiet; then
+        git diff --ignore-submodules > $PATCH_DIR/wip_$(basename `git rev-parse --show-toplevel`)_$(date +"%Y_%m_%d_%H_%M_%S").patch
+    fi
+    git submodule --quiet foreach --recursive \
+    "if ! git diff --exit-code  --ignore-submodules --quiet; then \
+        git diff --ignore-submodules --src-prefix=\"a/\${path}/\" --dst-prefix=\"b/\${path}/\" >\
+        $PATCH_DIR/wip_\$(basename \$path)_$(date +\"%Y_%m_%d_%H_%M_%S\").patch; \
+     fi"
+    
+    # SVN repos
+    pushd $PATCH_DIR
+    find `git rev-parse --show-toplevel 2>/dev/null` -type d -name ".svn" -exec bash -c 'svn st `dirname {}` | grep -q ^[ADM] && svn di --internal-diff `dirname {}` > wip_$(dirname {}|tr "/" "-" | cut -c 2-)_$(date +%Y_%m_%d_%H_%M_%S).patch' \;
+    popd
+}
+
+function fortune-cow() {
+    fortune | cowsay -f $(ls /usr/share/cowsay/cows | shuf -n 1 |cut -d. -f1)
+}
+
+function cstat() {
+    curl -s https://corona-stats.online?minimal=true | awk 'NR==1||/Canada/||/^[1-9] /||/World/{print}'| cowsay -n -f $(ls /usr/share/cowsay/cows | shuf -n 1 |cut -d. -f1)
+}
+yq() {
+      docker run --rm -i -v ${PWD}:/workdir mikefarah/yq yq $@
+}
+
+function time_all() {
+    echo "Plano:       $(TZ=":America/Chicago" date)"
+    echo "Montreal:    $(TZ=":America/Montreal" date)"
+    echo "London:      $(TZ=":Europe/London" date)"
+    echo "Istanbul:    $(TZ=":Asia/Istanbul" date)"
+    echo "Bangalore:   $(TZ=":Asia/Kolkata" date)"
+    echo "Ho Chi Minh: $(TZ=":Asia/Ho_Chi_Minh" date)"
+}
+
+function aqlSearch() {
+    curl -u $USER -sfX POST -H 'content-type: text/plain' https://rcplc7artent.genband.com/artifactory/api/search/aql --data $1
+}
+#        jq  -r '.results | sort_by(.created) | .[] | .repo + "/" + .path + "/" + .name'
+
+function openapi_generator_cli() {
+    docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli $@
+}
+
+# from https://raw.githubusercontent.com/ryanoasis/nerd-fonts/master/bin/scripts/test-fonts.sh
+function print-decimal-unicode-range() {
+  local originalSequence=("$@")
+  local counter=0
+  # Use alternating colors to see which symbols extend out of the bounding
+  # box.
+  local bgColorBorder='\033[48;5;8m'
+  local bgColorCode='\033[48;5;246m'
+  local alternateBgColorCode='\033[48;5;240m'
+  local bgColorChar='\033[48;5;66m'
+  local alternateBgColorChar='\033[48;5;60m'
+  local underline='\033[4m'
+  local currentColorCode="${bgColorCode}"
+  local currentColorChar="${bgColorChar}"
+  local reset_color='\033[0m'
+  local allChars=""
+  local allCodes=""
+  local wrapAt=5
+  local topLine="${bgColorBorder}╔══════╦══════╦══════╦══════╦══════╗${reset_color}"
+  local bottomLine="${bgColorBorder}╚══════╩══════╩══════╩══════╩══════╝${reset_color}"
+  local line="${bgColorBorder}╠══════╬══════╬══════╬══════╬══════╣${reset_color}"
+  local bar="${bgColorBorder}║${reset_color}"
+  local originalSequenceLength=${#originalSequence[@]}
+  local leftoverSpaces=$((wrapAt - (originalSequenceLength % wrapAt)))
+
+  # add fillers to array to maintain table:
+  if [[ "$leftoverSpaces" < "$wrapAt" ]]; then
+    # shellcheck disable=SC2034
+    # needs rework without 'i' var?
+    for i in $(seq 1 $leftoverSpaces); do
+      originalSequence+=(0)
+    done
+  fi
+
+  local sequenceLength=${#originalSequence[@]}
+
+  printf "%b\\n" "$topLine"
+
+  for decimalCode in "${originalSequence[@]}"; do
+    local hexCode
+    hexCode=$(printf '%x' "${decimalCode}")
+    local code="${hexCode}"
+    local char="\\u${hexCode}"
+
+    # fill in placeholder cells properly formatted:
+    if [ "${char}" = "\\u0" ]; then
+      char=" "
+      code="    "
+    fi
+
+    allCodes+="${currentColorCode} ${underline}${code}${reset_color}${currentColorCode} ${reset_color}$bar"
+    allChars+="${currentColorChar}  ${char}   ${reset_color}$bar"
+    counter=$((counter + 1))
+    count=$(( (count + 1) % wrapAt))
+
+    if [[ $count -eq 0 ]]; then
+
+      if [[ "${currentColorCode}" = "${alternateBgColorCode}" ]]; then
+        currentColorCode="${bgColorCode}"
+        currentColorChar="${bgColorChar}"
+      else
+        currentColorCode="${alternateBgColorCode}"
+        currentColorChar="${alternateBgColorChar}"
+      fi
+
+      printf "%b%b%b" "$bar" "$allCodes" "$reset_color"
+      printf "\\n"
+      printf "%b%b%b" "$bar" "$allChars" "$reset_color"
+      printf "\\n"
+
+      if [ "$counter" != "$sequenceLength" ]; then
+        printf "%b\\n" "$line"
+      fi
+
+      allCodes=""
+      allChars=""
+    fi
+
+  done
+
+  printf "%b\\n" "$bottomLine"
+
+}
+function print-unicode-ranges() {
+  echo ''
+
+  local arr=("$@")
+  local len=$#
+  local combinedRanges=()
+
+  for ((j=0; j<len; j+=2)); do
+    local start="${arr[$j]}"
+    local end="${arr[(($j+1))]}"
+    local startDecimal=$((16#$start))
+    local endDecimal=$((16#$end))
+
+    mapfile -t combinedRanges < <(seq "$startDecimal" "$endDecimal")
+
+  done
+
+  print-decimal-unicode-range "${combinedRanges[@]}"
+
+}
+
+function term-powerline-font-test() {
+  echo "Nerd Fonts - Powerline"
+  print-unicode-ranges e0a0 e0a2 e0b0 e0b3
+  echo; echo
+
+  echo "Nerd Fonts - Powerline Extra"
+  print-unicode-ranges e0a3 e0a3 e0b4 e0c8 e0cc e0d2 e0d4 e0d4
+  echo; echo
+}
+
+function man() { 
+    if [ $# -eq 0 ]; then
+        /usr/bin/man
+    elif whatis $* ; then
+        vim -c 'filetype plugin on' -c 'set ft=man nomod nolist' -c "Man $*";
+    fi
+}
+
+function lint_jenkinsfile() {
+    if [ -z "$JENKINS_URL" ]; then
+        echo "Please define JENKINS_URL"
+    else
+        local JENKINSFILE=${1:-Jenkinsfile}
+        local JENKINS_CRUMB=`curl -s "$JENKINS_URL/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)"`
+        curl -X POST -H $JENKINS_CRUMB -F "jenkinsfile=<$JENKINSFILE" $JENKINS_URL/pipeline-model-converter/validate
+    fi
+}
+
