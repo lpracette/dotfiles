@@ -21,26 +21,27 @@ call plug#begin()
 
 " Appearance: colors, status bar, icons
 Plug 'chriskempson/base16-vim'          "
-Plug 'altercation/vim-colors-solarized' " precision colorscheme for the vim text editor 
 Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
 Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
 Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
 Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
 Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention levels with thin vertical lines
 Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
-Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vimm
+Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vim
 Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
 Plug 'blueyed/vim-diminactive'
 Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
 Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 
-
-" Coding: tags, git, C\C++
+"
+" Coding: tags, git, completion
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
+Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
-Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope 
-Plug 'ajh17/VimCompletesMe'             " You don't Complete Me; Vim Completes Me! A super simple, super minimal, super light-weight tab completion plugin for Vim.  
+Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope
+" Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. requires node `curl -sL install-node.now.sh/lts | bash`
+" Plug 'dense-analysis/ale'
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
@@ -48,26 +49,27 @@ Plug 'junegunn/fzf.vim'                                           " fzf ❤️ v
 
 " File browsing
 Plug 'scrooloose/nerdtree',            " File explorer
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 
-" Keybinding 
-Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more! 
-Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple 
+" Keybinding
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
-Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line 
+Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
-Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
-Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
-Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
-Plug 'easymotion/vim-easymotion'
+" Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more!
+" Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
+" Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+" Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
+" Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
+Plug 'arouene/vim-ansible-vault'
 
 " Notes
-Plug 'fmoralesc/vim-pad', {'branch': 'devel'} " a quick notetaking plugin
-Plug 'aaronbieber/vim-quicktask'        " lightweight but feature-rich task management plugin
-Plug 'vim-pandoc/vim-pandoc'            " pandoc integration and utilities for vim
-Plug 'vim-pandoc/vim-pandoc-syntax'     " pandoc markdown syntax, to be installed alongside vim-pandoc
+" Plug 'fmoralesc/vim-pad', {'branch': 'devel'} " a quick notetaking plugin
+" Plug 'aaronbieber/vim-quicktask'        " lightweight but feature-rich task management plugin
+" Plug 'vim-pandoc/vim-pandoc'            " pandoc integration and utilities for vim
+" Plug 'vim-pandoc/vim-pandoc-syntax'     " pandoc markdown syntax, to be installed alongside vim-pandoc
 
-Plug 'dstein64/vim-startuptime'
+" Plug 'dstein64/vim-startuptime'
 
 call plug#end()
 
@@ -84,7 +86,7 @@ set nu
 set nowrap
 set hlsearch
 set incsearch
-inoremap jk <esc> 
+inoremap jk <esc>
 
 " Identation
 set expandtab
@@ -94,9 +96,12 @@ set cindent
 set autoindent
 filetype indent on
 
+set backspace=indent,eol,start
+
 autocmd FileType make set noexpandtab
 autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
-autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
+autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
+" autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
 
 " add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
 augroup Shebang
@@ -123,6 +128,11 @@ if &term =~ '256color'
     " disable Background Color Erase (BCE)
     set t_ut=
 endif
+
+" transparent bg
+autocmd vimenter * highlight Normal guibg=NONE ctermbg=NONE
+" For Vim<8, replace EndOfBuffer by NonText
+autocmd vimenter * highlight EndOfBuffer guibg=NONE ctermbg=NONE
 
 " Indicates a fast terminal connection.  More characters will be sent to the
 " screen for redrawing
@@ -168,12 +178,12 @@ set directory=~/.vim/swap//,.,/tmp
 set foldmethod=syntax
 set foldlevelstart=99
 
-" any buffer can be hidden (keeping its changes) without first writing the 
+" any buffer can be hidden (keeping its changes) without first writing the
 " buffer to a file. This affects all commands and all buffers.
 set hidden
 
-" When you type the first tab hit will complete as much as possible, the 
-" second tab hit will provide a list, the third and subsequent tabs will cycle 
+" When you type the first tab hit will complete as much as possible, the
+" second tab hit will provide a list, the third and subsequent tabs will cycle
 " through completion options so you can complete the file without further keys
 set wildmode=longest,list,full
 set wildmenu
@@ -182,6 +192,9 @@ set wildmenu
 if &diff
     set diffopt+=iwhite             " Ignore whitespace in vimdiff
 endif
+
+" Run bash interactively with !
+" set shellcmdflag="-ic"
 
 "  highlight the current line in every window and update the highlight as the
 "  cursor moves.
@@ -202,7 +215,7 @@ if has("gui_running")
     colorscheme solarized
     try
         if has('gui_win32')
-            set guifont=DejaVuSansMonoForPowerline_NF:h10:cANSI 
+            set guifont=DejaVuSansMonoForPowerline_NF:h10:cANSI
         else
             set guifont=Inconsolata-dz\ for\ Powerline\ Medium\ 10
         endif
@@ -216,7 +229,7 @@ set noerrorbells visualbell t_vb=
 if has('autocmd')
     autocmd GUIEnter * set visualbell t_vb=
 endif
-    
+
 " Spellcheck commit messages
 autocmd FileType gitcommit setlocal spell
 
@@ -251,8 +264,8 @@ let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#obsession#indicator_text = ''
 
 "special characters
-let DISABLE_POWERLINE_FONT=$DISABLE_POWERLINE_FONT 
-if DISABLE_POWERLINE_FONT == '1' 
+let DISABLE_POWERLINE_FONT=$DISABLE_POWERLINE_FONT
+if DISABLE_POWERLINE_FONT == '1'
     " use when a powerline font is not installed, define empty  powerline symbols
     if !exists('g:airline_symbols')
         let g:airline_symbols = {}
@@ -268,19 +281,16 @@ endif
 
 " NERDTree
 " ------------
-"autocmd VimEnter * NERDTreeFind
-"autocmd VimEnter * wincmd p
-augroup nerd_loader
-    autocmd!
-    autocmd VimEnter * silent! autocmd! FileExplorer
-    autocmd BufEnter,BufNew *
-                \  if isdirectory(expand('<amatch>'))
-                \|   call plug#load('nerdtree')
-                \|   execute 'autocmd! nerd_loader'
-                \| endif
-augroup END
-nnoremap <silent> <Leader>v :NERDTreeFind<CR>
-let NERDTreeShowHidden=1
+" Start NERDTree when Vim starts with a directory argument.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+    \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+
+" Start NERDTree when Vim is started without file arguments.
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+
+nnoremap <silent> - :NERDTreeFind<CR>
 
 
 " Tagbar
@@ -291,7 +301,79 @@ let NERDTreeShowHidden=1
 " GenTags
 " ------------
 let g:gen_tags#statusline=1
- 
+
+" Ansible-Vault
+nnoremap <leader>ae :AnsibleVault<CR>
+nnoremap <leader>ad :AnsibleUnvault<CR>
+
+" coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
+" ------------
+" " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" " delays and poor user experience.
+" set updatetime=300
+
+" " Don't pass messages to |ins-completion-menu|.
+" set shortmess+=c
+
+" " Always show the signcolumn, otherwise it would shift the text each time
+" " diagnostics appear/become resolved.
+" if has("patch-8.1.1564")
+"   " Recently vim can merge signcolumn and number column into one
+"   set signcolumn=number
+" else
+"   set signcolumn=yes
+" endif
+" " Use tab for trigger completion with characters ahead and navigate.
+" " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" " other plugin before putting this into your config.
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
+
+" " Use `[g` and `]g` to navigate diagnostics
+" " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+" nmap <silent> [g <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" " GoTo code navigation.
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+
+" " Use K to show documentation in preview window.
+" nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" function! s:show_documentation()
+"   if (index(['vim','help'], &filetype) >= 0)
+"     execute 'h '.expand('<cword>')
+"   elseif (coc#rpc#ready())
+"     call CocActionAsync('doHover')
+"   else
+"     execute '!' . &keywordprg . " " . expand('<cword>')
+"   endif
+" endfunction
+
+" " Highlight the symbol and its references when holding the cursor.
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
 
 " fzf
 " ------------
@@ -311,8 +393,8 @@ command! -bang -nargs=* Ag
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
-  
-" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+
+" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/
 function! SpellCheckToggle()
   set spell!
   if &spell
@@ -338,6 +420,7 @@ nnoremap <leader>z :call SpellCheckToggle()<CR>
 " indentLine
 " -----------
 let g:indentLine_char = '┊'
+autocmd FileType markdown let g:indentLine_enabled=0
 
 
 " Goyo
@@ -350,6 +433,7 @@ function! s:goyo_enter()
   set noshowcmd
   set scrolloff=999
   Limelight
+  IndentLinesToggle
 endfunction
 
 function! s:goyo_leave()
@@ -360,6 +444,7 @@ function! s:goyo_leave()
   set showcmd
   set scrolloff=10
   Limelight!
+  IndentLinesToggle
 endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
@@ -371,8 +456,8 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Key Maps
 " ====================================
 " Toggle line numbers and special characters with <F3>
-noremap <F3> :set nu!<CR>:IndentLinesToggle<CR>
-inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>
+noremap <F3> :set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
+inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
 
 " Toggle paste mode
 set pastetoggle=<F2>
@@ -496,7 +581,7 @@ function! Cscope(option, query)
   \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
   \ 'down': '40%'
   \ }
-  function! opts.sink(lines) 
+  function! opts.sink(lines)
     let data = split(a:lines)
     let file = split(data[0], ":")
     execute 'e ' . '+' . file[1] . ' ' . file[0]
@@ -518,7 +603,7 @@ function! CscopeChoice(query)
   \  '0: Find this C symbol: '.a:query],
   \ 'down': '40%'
   \ }
-  function! opts.sink(lines) 
+  function! opts.sink(lines)
     let data = split(a:lines, ":")
     call Cscope(data[0], data[2])
   endfunction
