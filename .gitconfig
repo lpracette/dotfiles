@@ -3,6 +3,7 @@
     pager = less -F -X -R [color]
     ui = auto
 	pager = less -F -X
+	ignorecase = false
 [diff]
     tool = vimdiff
 [difftool]
@@ -14,9 +15,6 @@
     st = status -bs
     cbr ="!f() { \
             local branches branch; \
-            echo \"fetch remote branches...\"; \
-            git fetch; \
-            git fetch origin +refs/pull-requests/*/from:refs/remotes/origin/pull-requests/*; \
             branches=$(git branch --all --color=always | grep -v HEAD); \
             branch=$(echo \"$branches\" | fzf-tmux  +m --ansi); \
             git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
@@ -25,6 +23,7 @@
     graph = log --decorate --oneline --graph
     delete-branch = "!f() {git branch -d $1 && git push origin --delete $1 git && fetch --all --prune} f;"
     clean-branches = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
+    dfdev = diff origin/development
 [difftool "vimdiff"]
     cmd = "vimdiff -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
 [mergetool "vimdiff3"]
@@ -38,6 +37,9 @@
 [help]
 	autocorrect = 20
 [include]
-        path = ~/.gitconfig.user
+    path = ~/.gitconfig.user
 [log]
 	date = local
+[remote "origin"]
+	fetch = +refs/pull-requests/*/merge:refs/remotes/origin/pull-requests-merge/*
+	fetch = +refs/pull-requests/*/from:refs/remotes/origin/pull-requests-from/*
