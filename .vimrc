@@ -19,6 +19,12 @@ endif
 " ====================================
 call plug#begin()
 
+
+" Navigate and manipulate files in a tree view.
+Plug 'scrooloose/nerdtree',            " File explorer
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
 " Appearance: colors, status bar, icons
 Plug 'chriskempson/base16-vim'          "
 Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
@@ -47,9 +53,7 @@ Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a win
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
 Plug 'junegunn/fzf.vim'                                           " fzf ❤️ vim, vim key bindings
 
-" File browsing
-Plug 'scrooloose/nerdtree',            " File explorer
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+
 
 " Keybinding
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
