@@ -18,11 +18,12 @@ zplug "zsh-users/zsh-autosuggestions"                   # suggest commands from 
 # zplug "yous/lime"                                       # Simple prompt
 zplug "nojhan/liquidprompt"                             # more complexe prompt
 zplug "chriskempson/base16-shell"                       # Color palette
+zplug "Aloxaf/fzf-tab"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2       # Syntax highlighting
 zplug "zsh-users/zsh-history-substring-search", defer:3  # ZSH port of Fish shell's history search feature
 
 # A command-line fuzzy finder
-zplug "junegunn/fzf-bin", from:gh-r, as:command, rename-to:fzf, use:"*linux*amd64*"
+# zplug "junegunn/fzf-bin", from:gh-r, as:command, rename-to:fzf, use:"*linux*amd64*"
 bindkey -e # use emacs mode (^a ^e etc.)
 zplug "junegunn/fzf", use:"shell/key-bindings.zsh"
 
@@ -54,3 +55,11 @@ bindkey '^x^e' edit-command-line
 # k8s completion
 [ $commands[kubectl] ] && source <(kubectl completion zsh)
 [ $commands[helm] ] && source <(helm completion zsh)
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+[ $commands[aws-vault] ] && eval "$(aws-vault --completion-script-zsh)"
