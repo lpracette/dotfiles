@@ -45,15 +45,13 @@ Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
-Plug 'majutsushi/tagbar'                " Vim plugin that displays tags in a window, ordered by scope
-" Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. requires node `curl -sL install-node.now.sh/lts | bash`
-" Plug 'dense-analysis/ale'
+Plug 'liuchengxu/vista.vim'             " View and search LSP symbols, tags in Vim/NeoVim.
+Plug 'APZelos/blamer.nvim'              " A git blame plugin for (neo)vim inspired by VS Code's GitLens plugin.
+Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. requires node `curl -sL install-node.now.sh/lts | bash`
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
-Plug 'junegunn/fzf.vim'                                           " fzf ❤️ vim, vim key bindings
-
-
 
 " Keybinding
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
@@ -102,6 +100,9 @@ filetype indent on
 
 set backspace=indent,eol,start
 
+" remap leader
+let mapleader = "\<Space>"
+
 autocmd FileType make set noexpandtab
 autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
 autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
@@ -117,8 +118,21 @@ augroup END
 syntax enable
 set background=dark
 if filereadable(expand("~/.vimrc_background"))
+
+    function! s:base16_customize() abort
+    " Popup menu, missing in base16
+        call Base16hi("Italic",        "", "", "", "", "italic", "")
+    endfunction
+
+    augroup on_change_colorschema
+        autocmd!
+        autocmd ColorScheme * call s:base16_customize()
+    augroup END
+
     let base16colorspace=256
     source ~/.vimrc_background
+    " delete 'g:terminal_ansi_colors' from base16 colorscheme, for some reason
+    " it removes the colors formt the fzf-preview popup
 else
     try
         colorscheme seoul256
@@ -145,8 +159,8 @@ set ttyfast
 " End-of-line options
 set fileformats=unix,dos
 
-" struct member autocomple, c only
-set omnifunc=ccomplete#Complete
+" " struct member autocomple, c only
+" set omnifunc=ccomplete#Complete
 
 " Show more information while completing tags.
 set showfulltag
@@ -267,21 +281,6 @@ let g:airline#extensions#tabline#show_splits = 0
 let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#obsession#indicator_text = ''
 
-"special characters
-let DISABLE_POWERLINE_FONT=$DISABLE_POWERLINE_FONT
-if DISABLE_POWERLINE_FONT == '1'
-    " use when a powerline font is not installed, define empty  powerline symbols
-    if !exists('g:airline_symbols')
-        let g:airline_symbols = {}
-    endif
-    let g:airline_left_sep = ''
-    let g:airline_left_alt_sep = ''
-    let g:airline_right_sep = ''
-    let g:airline_right_alt_sep = ''
-else
-    let g:airline_powerline_fonts = 1 " needs https://github.com/powerline/fonts
-endif
-
 
 " NERDTree
 " ------------
@@ -297,75 +296,81 @@ autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
 nnoremap <silent> - :NERDTreeFind<CR>
 
 
-" Tagbar
+" Vista
 " ------------
-"autocmd VimEnter * nested :call tagbar#autoopen(1)
+let g:vista#renderer#enable_icon = 1
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+
+" vimspector
+" ------------
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
 
 
 " GenTags
 " ------------
 let g:gen_tags#statusline=1
 
-" Ansible-Vault
-nnoremap <leader>ae :AnsibleVault<CR>
-nnoremap <leader>ad :AnsibleUnvault<CR>
-
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
-" " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" " delays and poor user experience.
-" set updatetime=300
+"  coc will install the missing extensions after coc.nvim service started
+let g:coc_global_extensions = ['coc-json', 'coc-git', "coc-tsserver", "coc-eslint", "coc-vimlsp", "coc-fzf-preview"]
 
-" " Don't pass messages to |ins-completion-menu|.
-" set shortmess+=c
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
 
-" " Always show the signcolumn, otherwise it would shift the text each time
-" " diagnostics appear/become resolved.
-" if has("patch-8.1.1564")
-"   " Recently vim can merge signcolumn and number column into one
-"   set signcolumn=number
-" else
-"   set signcolumn=yes
-" endif
-" " Use tab for trigger completion with characters ahead and navigate.
-" " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" " other plugin before putting this into your config.
-" inoremap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ coc#refresh()
-" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-" function! s:check_back_space() abort
-"   let col = col('.') - 1
-"   return !col || getline('.')[col - 1]  =~# '\s'
-" endfunction
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
 
-" " Use `[g` and `]g` to navigate diagnostics
-" " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
 
-" " GoTo code navigation.
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-" " Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-" function! s:show_documentation()
-"   if (index(['vim','help'], &filetype) >= 0)
-"     execute 'h '.expand('<cword>')
-"   elseif (coc#rpc#ready())
-"     call CocActionAsync('doHover')
-"   else
-"     execute '!' . &keywordprg . " " . expand('<cword>')
-"   endif
-" endfunction
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
-" " Highlight the symbol and its references when holding the cursor.
-" autocmd CursorHold * silent call CocActionAsync('highlight')
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
@@ -379,25 +384,37 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
+" coc-fzf-preview
+" ------------
+nmap <Leader>f [fzf-p]
+xmap <Leader>f [fzf-p]
+
+nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
+nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
+nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
+nnoremap <silent> [fzf-p]b     :<C-u>CocCommand fzf-preview.Buffers<CR>
+nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
+nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
+nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
+nnoremap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
+nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
+nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
+nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
+xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
+nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
+nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
+nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
+
+let g:fzf_preview_use_dev_icons = 1
+
+nnoremap <leader>g :CocCommand fzf-preview.ProjectGrep<CR>
+nnoremap <leader>e :CocCommand fzf-preview.DirectoryFiles<CR>
+nnoremap <leader>b :CocCommand fzf-preview.Buffers<CR>
+
+
+
 " fzf
 " ------------
-" git grep
-command! -bang -nargs=* GGrep
-  \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   fzf#vim#with_preview({ 'dir': systemlist('git rev-parse --show-toplevel')[0] }), <bang>0)
-
-" Augmenting Ag command using fzf#vim#with_preview function
-command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
-
-" Likewise, Files command with preview window
-command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
-
 " Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/
 function! SpellCheckToggle()
   set spell!
@@ -466,152 +483,10 @@ inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
 " Toggle paste mode
 set pastetoggle=<F2>
 
-" remap leader
-let mapleader = "\<Space>"
-
 " switch back to last buffer
 cmap bb b#
 
 " undotree
-nnoremap <leader>u :UndotreeToggle<CR>
-
-" Tagbar
-nnoremap <leader>t :TagbarToggle<CR>
-
-" FZF
-nnoremap <leader>g :GGrep<CR>
-nnoremap <leader>e :Files<CR>
-nnoremap <leader>d :call fzf#vim#tags(expand('<cword>'), {'options': '--exact --select-1 --exit-0'})<CR>
-nnoremap <leader>b :Buffers<CR>
-
-function! SearchGoogleW3m(str,extra)
-    let l:sCmd="w3m -M www.google.com/search\\?q=".UrlEncode(a:str).a:extra
-    "echom l:sCmd
-    execute "!" . l:sCmd
-endfunction
-vnoremap <leader>s :call SearchGoogleW3m(GetVisualSelection(), "")<CR>
 
 " Goyo
 nnoremap <leader>o :Goyo 85%<CR>
-
-
-" ====================================
-" Funcitons, could be plugins...
-" ====================================
-" from http://stackoverflow.com/a/6271254
-function! GetVisualSelection()
-    " Why is this not a built-in Vim script function?!
-    let [line_start, column_start] = getpos("'<")[1:2]
-    let [line_end, column_end] = getpos("'>")[1:2]
-    let lines = getline(line_start, line_end)
-    if len(lines) == 0
-        return ''
-    endif
-    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-    let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
-endfunction
-
-"from http://www.danielbigham.ca/cgi-bin/document.pl?mode=Display&DocumentID=1053
-" URL encode a string. ie. Percent-encode characters as necessary.
-function! UrlEncode(string)
-
-    let result = ""
-
-    let characters = split(a:string, '.\zs')
-    for character in characters
-        if character == " "
-            let result = result . "+"
-        elseif CharacterRequiresUrlEncoding(character)
-            let i = 0
-            while i < strlen(character)
-                let byte = strpart(character, i, 1)
-                let decimal = char2nr(byte)
-                let result = result . "\\\\%" . printf("%02x", decimal)
-                let i += 1
-            endwhile
-        else
-            let result = result . character
-        endif
-    endfor
-
-    return result
-
-endfunction
-
-" Returns 1 if the given character should be percent-encoded in a URL encoded
-" string.
-function! CharacterRequiresUrlEncoding(character)
-
-    let ascii_code = char2nr(a:character)
-    if ascii_code >= 48 && ascii_code <= 57
-        return 0
-    elseif ascii_code >= 65 && ascii_code <= 90
-        return 0
-    elseif ascii_code >= 97 && ascii_code <= 122
-        return 0
-    elseif a:character == "-" || a:character == "_" || a:character == "." || a:character == "~"
-        return 0
-    endif
-
-    return 1
-
-endfunction
-
-
-" https://stackoverflow.com/a/26314537
-let g:rnd = localtime() % 0x10000
-function! Random(n) abort
-  let g:rnd = (g:rnd * 31421 + 6927) % 0x10000
-  return g:rnd * a:n / 0x10000
-endfunction
-
-function! RebuildCtags()
-    echo "Regenerating tags..."
-    execute "!rm -f tags cscope"
-    execute "!ctags -R --totals=yes --exclude=.git --exclude=*/obj/* --python-kinds=-i --c++-kinds=+p --fields=+iaS --extras=+q"
-    execute "!cscope -R ."
-endfunction
-noremap <leader>c :call RebuildCtags()<CR>
-
-
-" Use cscope with FZF inspired by https://gist.github.com/amitab/cd051f1ea23c588109c6cfcb7d1d5776
-" -----------
-function! Cscope(option, query)
-  let color = '{ x = $1; $1 = ""; z = $3; $3 = ""; printf "\033[34m%s\033[0m:\033[31m%s\033[0m\011\033[37m%s\033[0m\n", x,z,$0; }'
-  let opts = {
-  \ 'source':  "cscope -dL" . a:option . " " . a:query . " | awk '" . color . "'",
-  \ 'options': ['--ansi', '--multi', '--bind', 'alt-a:select-all,alt-d:deselect-all',
-  \             '--color', 'fg:188,fg+:222,bg+:#3a3a3a,hl+:104'],
-  \ 'down': '40%'
-  \ }
-  function! opts.sink(lines)
-    let data = split(a:lines)
-    let file = split(data[0], ":")
-    execute 'e ' . '+' . file[1] . ' ' . file[0]
-  endfunction
-  call fzf#run(opts)
-endfunction
-
-function! CscopeChoice(query)
-  let opts = {
-  \ 'source':  [
-  \  '9: Find assignments to this symbol:'.a:query,
-  \  '8: Find files #including this file:'.a:query,
-  \  '7: Find this file:'.a:query,
-  \  '6: Find this egrep pattern:'.a:query,
-  \  '3: Find functions calling this function:'.a:query,
-  \  '4: Find this text string:'.a:query,
-  \  '2: Find functions called by this function:'.a:query,
-  \  '1: Find this global definition:'.a:query,
-  \  '0: Find this C symbol: '.a:query],
-  \ 'down': '40%'
-  \ }
-  function! opts.sink(lines)
-    let data = split(a:lines, ":")
-    call Cscope(data[0], data[2])
-  endfunction
-  call fzf#run(opts)
-endfunction
-nnoremap <silent> <C-]> :call CscopeChoice(expand('<cword>'))<CR>
-
