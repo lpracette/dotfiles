@@ -52,6 +52,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart 
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
+Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 
 " Keybinding
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
@@ -284,6 +285,8 @@ let g:airline#extensions#obsession#indicator_text = ''
 
 " NERDTree
 " ------------
+let g:webdevicons_conceal_nerdtree_brackets = 1
+
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
@@ -305,6 +308,10 @@ let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 " ------------
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
+nmap <leader>ds <Plug>VimspectorStepOver
+nmap <leader>di <Plug>VimspectorStepInto
+nmap <leader>dd <Plug>VimspectorBalloonEval
+xmap <leader>dd <Plug>VimspectorBalloonEval
 
 
 " GenTags
@@ -354,7 +361,7 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gr :<C-u>CocCommand fzf-preview.CocReferences<CR>
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -376,8 +383,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+xmap <leader>ff <Plug>(coc-format-selected)
+nmap <leader>ff <Plug>(coc-format-selected)
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
@@ -392,7 +399,6 @@ xmap <Leader>f [fzf-p]
 nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
 nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
 nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
-nnoremap <silent> [fzf-p]b     :<C-u>CocCommand fzf-preview.Buffers<CR>
 nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
 nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
 nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
@@ -401,15 +407,15 @@ nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=
 nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
 nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
 xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
-nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
+nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.VistaBufferCTags<CR>
 nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
 nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
 
 let g:fzf_preview_use_dev_icons = 1
 
-nnoremap <leader>g :CocCommand fzf-preview.ProjectGrep<CR>
-nnoremap <leader>e :CocCommand fzf-preview.DirectoryFiles<CR>
-nnoremap <leader>b :CocCommand fzf-preview.Buffers<CR>
+nnoremap          <leader>g :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
+nnoremap <silent> <leader>e :CocCommand fzf-preview.DirectoryFiles<CR>
+nnoremap <silent> <leader>b :CocCommand fzf-preview.AllBuffers<CR>
 
 
 
@@ -443,6 +449,10 @@ nnoremap <leader>z :call SpellCheckToggle()<CR>
 let g:indentLine_char = '┊'
 autocmd FileType markdown let g:indentLine_enabled=0
 
+" Limelight
+" -----------
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
 
 " Goyo
 " -----------
