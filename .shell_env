@@ -8,18 +8,12 @@ export VISUAL=$EDITOR
 export GPG_TTY=$(tty)
 
 
+#from: https://github.com/sharkdp/bat/issues/357#issuecomment-555942979
 FZF_COMMON_OPTIONS="
     --bind='?:toggle-preview'
     --bind='ctrl-u:preview-page-up'
     --bind='ctrl-d:preview-page-down'
-    --preview-window 'right:60%:hidden:wrap'
-    --preview '([[ -d {} ]] && tree -C {}) || ([[ -f {} ]] && bat --style=full --color=always {}) || echo {}'"
-
-command -v fd > /dev/null && export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-command -v bat > /dev/null && command -v tree > /dev/null && export FZF_DEFAULT_OPTS="$FZF_COMMON_OPTIONS"
-command -v fd > /dev/null && export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-command -v fd > /dev/null && export FZF_CTRL_T_COMMAND='fd --type f --type d --hidden --follow --exclude .git'
-
+    --preview-window 'right:60%:wrap'"
 
 # chriskempson/base16-shell
 # export BASE16_SHELL_HOOKS=$HOME/.config/base16-shell/hooks
@@ -41,8 +35,10 @@ fi
 # set PATH so it includes user's private bin if it exists
 [ -d "$HOME/bin" ] && export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# # colorize less
-command -v pygmentize >/dev/null 2>&1 && export LESSOPEN='|pygmentize -O style=friendly %s' 
+# colorize less
+export BAT_THEME=base16-256
+NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || ([ -f "$f" ] && bat --color=always $f || echo $f)'
+command -v bat > /dev/null && command -v tree > /dev/null && export LESSOPEN="$NICE_LESSOPEN"
 
 # DISPLAY=localhost:0.0
 

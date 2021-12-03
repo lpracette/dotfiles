@@ -12,13 +12,11 @@ export LC_ALL="en_US.UTF-8"
 source ~/.zplug/init.zsh
 
 zplug "zplug/zplug"                                     # Let zplug manage zplug
-# zplug "yous/vanilli.sh"                                 # A lightweight start point of shell configuration
+zplug "Aloxaf/fzf-tab"
 zplug "zsh-users/zsh-completions"                       # Additional completion definitions for Zsh
 zplug "zsh-users/zsh-autosuggestions"                   # suggest commands from history
-# zplug "yous/lime"                                       # Simple prompt
 zplug "nojhan/liquidprompt"                             # more complexe prompt
 zplug "chriskempson/base16-shell"                       # Color palette
-zplug "Aloxaf/fzf-tab"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2       # Syntax highlighting
 zplug "zsh-users/zsh-history-substring-search", defer:3  # ZSH port of Fish shell's history search feature
 
@@ -39,12 +37,20 @@ export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
 # if you do a 'rm *', Zsh will give you a sanity check!
 setopt RM_STAR_WAIT
 
-# # Zsh has a spelling corrector
+# Zsh has a spelling corrector
 setopt CORRECT
+
+# include hidden files in completion
+# setopt globdots 
 
 # instead of cloning all of oh-my-zsh for ony command-not-found.plugin.zsh
 # from https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/command-not-found/command-not-found.plugin.zsh
 [[ -e /etc/zsh_command_not_found ]] && source /etc/zsh_command_not_found
+
+# fzf-tab
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
 
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
