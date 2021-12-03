@@ -43,6 +43,8 @@ Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 "
 " Coding: tags, git, completion
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
+Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for gitlab
+Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'liuchengxu/vista.vim'             " View and search LSP symbols, tags in Vim/NeoVim.
@@ -64,7 +66,7 @@ Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line m
 " Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 " Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
 " Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
-Plug 'arouene/vim-ansible-vault'
+" Plug 'arouene/vim-ansible-vault'
 
 " Notes
 " Plug 'fmoralesc/vim-pad', {'branch': 'devel'} " a quick notetaking plugin
@@ -89,7 +91,6 @@ set nu
 set nowrap
 set hlsearch
 set incsearch
-inoremap jk <esc>
 
 " Identation
 set expandtab
@@ -100,9 +101,6 @@ set autoindent
 filetype indent on
 
 set backspace=indent,eol,start
-
-" remap leader
-let mapleader = "\<Space>"
 
 autocmd FileType make set noexpandtab
 autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
@@ -121,7 +119,6 @@ set background=dark
 if filereadable(expand("~/.vimrc_background"))
 
     function! s:base16_customize() abort
-    " Popup menu, missing in base16
         call Base16hi("Italic",        "", "", "", "", "italic", "")
     endfunction
 
@@ -263,11 +260,13 @@ endif
 let g:pad#dir = "~/notes"
 let g:pad#default_format = "pandoc"
 
+
 " undotree
 " -------
 if !exists('g:undotree_WindowLayout')
     let g:undotree_WindowLayout = 2
 endif
+
 
 " vim-airline
 " ------------
@@ -296,27 +295,23 @@ autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
 
-nnoremap <silent> - :NERDTreeFind<CR>
-
 
 " Vista
 " ------------
 let g:vista#renderer#enable_icon = 1
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
+
 " vimspector
 " ------------
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
-nmap <leader>ds <Plug>VimspectorStepOver
-nmap <leader>di <Plug>VimspectorStepInto
-nmap <leader>dd <Plug>VimspectorBalloonEval
-xmap <leader>dd <Plug>VimspectorBalloonEval
 
 
 " GenTags
 " ------------
 let g:gen_tags#statusline=1
+
 
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
@@ -338,33 +333,10 @@ if has("patch-8.1.1564")
 else
   set signcolumn=yes
 endif
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" Use `[g` and `]g` to navigate diagnostics
-" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr :<C-u>CocCommand fzf-preview.CocReferences<CR>
-
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -379,6 +351,123 @@ endfunction
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+
+" coc-fzf-preview
+" ------------
+let g:fzf_preview_use_dev_icons = 1
+
+
+" indentLine
+" -----------
+let g:indentLine_char = '┊'
+autocmd FileType markdown let g:indentLine_enabled=0
+
+
+" Limelight
+" -----------
+let g:limelight_conceal_ctermfg = 'gray'
+let g:limelight_conceal_ctermfg = 240
+
+
+" Goyo
+" -----------
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowcmd
+  set scrolloff=999
+  Limelight
+  IndentLinesDisable
+endfunction
+
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  endif
+  set showcmd
+  set scrolloff=10
+  Limelight!
+  IndentLinesEnable
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+
+" ====================================
+" Key Maps
+" ====================================
+inoremap jk <esc>
+
+" remap leader
+let mapleader = "\<Space>"
+
+" Toggle line numbers and special characters with <F3>
+noremap <F3> :set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
+inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
+
+" Toggle paste mode
+set pastetoggle=<F2>
+
+" switch back to last buffer
+cmap bb b#
+
+" Goyo
+nnoremap <leader>o :Goyo 85%<CR>
+
+" Search in google, use fugitive's GBrowse
+xnoremap <silent> <leader>s y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>
+
+" coc-fzf-preview
+" ------------
+nmap <Leader>f [fzf-p]
+xmap <Leader>f [fzf-p]
+nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
+nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
+nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
+nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
+nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
+nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
+nnoremap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
+nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
+nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
+nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
+xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
+nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
+nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
+nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
+nnoremap          <leader>g  :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
+nnoremap <silent> <leader>gg :<C-u>CocCommand fzf-preview.ProjectGrepRecall<CR>
+nnoremap <silent> <leader>e  :CocCommand fzf-preview.DirectoryFiles<CR>
+nnoremap <silent> <leader>b  :CocCommand fzf-preview.AllBuffers<CR>
+
+" coc.vim
+" ------------
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr :<C-u>CocCommand fzf-preview.CocReferences<CR>
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
 
@@ -391,112 +480,19 @@ nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
-" coc-fzf-preview
+" vimspector
 " ------------
-nmap <Leader>f [fzf-p]
-xmap <Leader>f [fzf-p]
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
+nmap <leader>ds <Plug>VimspectorStepOver
+nmap <leader>di <Plug>VimspectorStepInto
+nmap <leader>dd <Plug>VimspectorBalloonEval
+xmap <leader>dd <Plug>VimspectorBalloonEval
 
-nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
-nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
-nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
-nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
-nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
-nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
-nnoremap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
-nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
-nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
-nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
-xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
-nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.VistaBufferCTags<CR>
-nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
-nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
-
-let g:fzf_preview_use_dev_icons = 1
-
-nnoremap          <leader>g :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
-nnoremap <silent> <leader>e :CocCommand fzf-preview.DirectoryFiles<CR>
-nnoremap <silent> <leader>b :CocCommand fzf-preview.AllBuffers<CR>
-
-
-
-" fzf
+" NERDTree
 " ------------
-" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/
-function! SpellCheckToggle()
-  set spell!
-  if &spell
-    echo "Spellcheck ON"
-  else
-    echo "Spellcheck OFF"
-  endif
-endfunction
-function! FzfSpellSink(word)
-  exe 'normal! "_ciw'.a:word
-endfunction
-function! FzfSpell()
-  let suggestions = spellsuggest(expand("<cword>"))
-  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
-endfunction
-nnoremap zz :call FzfSpell()<CR>
+nnoremap <silent> - :NERDTreeFind<CR>
 
-nnoremap <leader>z :call SpellCheckToggle()<CR>
-
-
-
-
-" indentLine
-" -----------
-let g:indentLine_char = '┊'
-autocmd FileType markdown let g:indentLine_enabled=0
-
-" Limelight
-" -----------
-let g:limelight_conceal_ctermfg = 'gray'
-let g:limelight_conceal_ctermfg = 240
-
-" Goyo
-" -----------
-function! s:goyo_enter()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status off
-    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-  endif
-  set noshowcmd
-  set scrolloff=999
-  Limelight
-  IndentLinesToggle
-endfunction
-
-function! s:goyo_leave()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status on
-    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-  endif
-  set showcmd
-  set scrolloff=10
-  Limelight!
-  IndentLinesToggle
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
-
-
-" ====================================
-" Key Maps
-" ====================================
-" Toggle line numbers and special characters with <F3>
-noremap <F3> :set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
-inoremap <F3> <C-o>:set nu!<CR>:IndentLinesToggle<CR>:GitGutterToggle<CR>
-
-" Toggle paste mode
-set pastetoggle=<F2>
-
-" switch back to last buffer
-cmap bb b#
-
-" undotree
-
-" Goyo
-nnoremap <leader>o :Goyo 85%<CR>
+" Vista
+" ------------
+nmap <silent> <leader>t :<C-u>Vista finder<CR>
