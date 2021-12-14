@@ -22,8 +22,8 @@ call plug#begin()
 
 " Navigate and manipulate files in a tree view.
 Plug 'scrooloose/nerdtree',            " File explorer
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " Appearance: colors, status bar, icons
 Plug 'chriskempson/base16-vim'          "
@@ -34,7 +34,7 @@ Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular
 Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention levels with thin vertical lines
 Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
 Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vim
-Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
+" Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
 Plug 'blueyed/vim-diminactive'
 Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
@@ -44,22 +44,30 @@ Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 " Coding: tags, git, completion
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for gitlab
-Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
+" Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'liuchengxu/vista.vim'             " View and search LSP symbols, tags in Vim/NeoVim.
 Plug 'APZelos/blamer.nvim'              " A git blame plugin for (neo)vim inspired by VS Code's GitLens plugin.
 Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. requires node `curl -sL install-node.now.sh/lts | bash`
+Plug 'antoinemadec/coc-fzf'
+Plug 'heavenshell/vim-jsdoc', {
+  \ 'for': ['javascript', 'javascript.jsx','typescript'],
+  \ 'do': 'make install'
+\}
+Plug 'xavierchow/vim-swagger-preview'
+Plug 'JamshedVesuna/vim-markdown-preview'
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
-Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
+Plug 'junegunn/fzf.vim'
 
 " Keybinding
-Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
+" Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
+Plug 'RyanMillerC/better-vim-tmux-resizer' 
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
 " Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more!
 " Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
@@ -103,8 +111,8 @@ filetype indent on
 set backspace=indent,eol,start
 
 autocmd FileType make set noexpandtab
-autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
-autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
+" autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
+" autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
 " autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
 
 " add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
@@ -226,17 +234,13 @@ set scrolloff=10
 set mouse=a
 
 " Gvim options
+set guifont=DejaVuSansMonoNerdFontCompleteM-Bold:h13
 if has("gui_running")
     set go=
     colorscheme solarized
     try
-        if has('gui_win32')
-            set guifont=DejaVuSansMonoForPowerline_NF:h10:cANSI
-        else
-            set guifont=Inconsolata-dz\ for\ Powerline\ Medium\ 10
-        endif
     catch /^Vim\%((\a\+)\)\=:E596/
-        echom "The Inconsolata-dz_for_Powerline font is not installed"
+        echom "The DejaVuSansMono Nerd Font is not installed"
     endtry
 endif
 
@@ -316,7 +320,7 @@ let g:gen_tags#statusline=1
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
 "  coc will install the missing extensions after coc.nvim service started
-let g:coc_global_extensions = ['coc-json', 'coc-git', "coc-tsserver", "coc-eslint", "coc-vimlsp", "coc-fzf-preview"]
+let g:coc_global_extensions = ['coc-json', "coc-tsserver", "coc-eslint", "coc-vimlsp"]
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -349,12 +353,7 @@ function! s:show_documentation()
 endfunction
 
 " Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-
-" coc-fzf-preview
-" ------------
-let g:fzf_preview_use_dev_icons = 1
+" autocmd CursorHold * silent call CocActionAsync('highlight')
 
 
 " indentLine
@@ -396,6 +395,11 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
+" vim-markdown-preview
+"---------
+let vim_markdown_preview_github=1
+let vim_markdown_preview_browser='Google Chrome'
+
 
 " ====================================
 " Key Maps
@@ -421,28 +425,16 @@ nnoremap <leader>o :Goyo 85%<CR>
 " Search in google, use fugitive's GBrowse
 xnoremap <silent> <leader>s y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>
 
-" coc-fzf-preview
+" fzf.vim
 " ------------
-nmap <Leader>f [fzf-p]
-xmap <Leader>f [fzf-p]
-nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
-nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
-nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
-nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
-nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
-nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
-nnoremap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
-nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
-nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
-nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
-xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
-nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
-nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
-nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
-nnoremap          <leader>g  :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
-nnoremap <silent> <leader>gg :<C-u>CocCommand fzf-preview.ProjectGrepRecall<CR>
-nnoremap <silent> <leader>e  :CocCommand fzf-preview.DirectoryFiles<CR>
-nnoremap <silent> <leader>b  :CocCommand fzf-preview.AllBuffers<CR>
+" see https://github.com/junegunn/fzf.vim#commands
+nnoremap          <leader>g  :<C-u>Rg<Space>
+xnoremap          <leader>g  y<Esc>:Rg <C-R>"
+nnoremap <silent> <leader>e  :Files<CR>
+nnoremap <silent> <leader>b  :Buffers<CR>
+nnoremap <silent> <leader>l  :Lines<CR>
+nnoremap <silent> <leader>h  :History<CR>
+
 
 " coc.vim
 " ------------
@@ -464,7 +456,7 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr :<C-u>CocCommand fzf-preview.CocReferences<CR>
+nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -472,18 +464,27 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>ff <Plug>(coc-format-selected)
-nmap <leader>ff <Plug>(coc-format-selected)
+xmap <leader>f <Plug>(coc-format-selected)
+nmap <leader>f <Plug>(coc-format-selected)
 
 " Remap keys for applying codeAction to the current buffer.
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
 
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
 " vimspector
 " ------------
-let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
-let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
 nmap <leader>ds <Plug>VimspectorStepOver
 nmap <leader>di <Plug>VimspectorStepInto
 nmap <leader>dd <Plug>VimspectorBalloonEval
@@ -496,3 +497,8 @@ nnoremap <silent> - :NERDTreeFind<CR>
 " Vista
 " ------------
 nmap <silent> <leader>t :<C-u>Vista finder<CR>
+nmap <silent> <leader>tt :<C-u>Vista!!<CR>
+
+" vim-swagger-preview
+" ------------
+nmap  <leader>c <Plug>GenerateDiagram 

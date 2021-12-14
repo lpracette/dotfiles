@@ -50,7 +50,7 @@ function link_to_home()
 
 
 
-DOTFILES_TO_INSTALL=".gitconfig .tmux.conf .vimrc .zshrc .bashrc .shell_alias .shell_env .shell_functions .ctags"
+DOTFILES_TO_INSTALL=".gitconfig .tmux.conf .vimrc .zshrc .bashrc .shell_alias .shell_env .shell_functions .ctags .config/nvim/init.vim .config/alacritty.yml coc-settings.json"
 link_to_home "$DOTFILES_TO_INSTALL"
 
 # if confirm "Install i3 dotfiles"; then
