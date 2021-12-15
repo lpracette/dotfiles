@@ -45,3 +45,5 @@
 	fetch = +refs/pull-requests/*/from:refs/remotes/origin/pull-requests-from/*
 [gpg]
 	program = gpg
+[init]
+	defaultBranch = main
