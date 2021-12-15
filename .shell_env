@@ -8,12 +8,12 @@ export VISUAL=$EDITOR
 export GPG_TTY=$(tty)
 
 
-#from: https://github.com/sharkdp/bat/issues/357#issuecomment-555942979
-FZF_COMMON_OPTIONS="
+export FZF_DEFAULT_OPTS="
     --bind='?:toggle-preview'
     --bind='ctrl-u:preview-page-up'
     --bind='ctrl-d:preview-page-down'
-    --preview-window 'right:60%:wrap'"
+    --preview-window 'right:60%:wrap'
+    --preview 'less {} || echo {}'"
 
 # chriskempson/base16-shell
 # export BASE16_SHELL_HOOKS=$HOME/.config/base16-shell/hooks
