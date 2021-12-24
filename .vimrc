@@ -44,7 +44,7 @@ Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
 " Coding: tags, git, completion
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for gitlab
-" Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
+Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
 Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
 Plug 'liuchengxu/vista.vim'             " View and search LSP symbols, tags in Vim/NeoVim.
@@ -56,21 +56,20 @@ Plug 'heavenshell/vim-jsdoc', {
   \ 'for': ['javascript', 'javascript.jsx','typescript'],
   \ 'do': 'make install'
 \}
-Plug 'xavierchow/vim-swagger-preview'
-Plug 'JamshedVesuna/vim-markdown-preview'
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
 Plug 'junegunn/fzf.vim'
+Plug 'Avi-D-coder/fzf-wordnet.vim' " Dictionary completion powered by FZF and Wordnet for vim and your terminal.
 
 " Keybinding
-" Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line
 Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
 Plug 'RyanMillerC/better-vim-tmux-resizer' 
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
+Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
+Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
 " Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more!
-" Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
 " Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 " Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
 " Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
@@ -115,6 +114,12 @@ autocmd FileType make set noexpandtab
 " autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
 " autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
 
+" Spellcheck commit messages and markdown
+augroup Spellcheck
+    autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en_us
+    autocmd FileType gitcommit setlocal spell spelllang=en_us
+augroup END
+
 " add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
 augroup Shebang
   autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\<nl>\"|$
@@ -137,8 +142,6 @@ if filereadable(expand("~/.vimrc_background"))
 
     let base16colorspace=256
     source ~/.vimrc_background
-    " delete 'g:terminal_ansi_colors' from base16 colorscheme, for some reason
-    " it removes the colors formt the fzf-preview popup
 else
     try
         colorscheme seoul256
@@ -201,6 +204,7 @@ set directory=~/.vim/swap//,.,/tmp
 " automatically create folds, open all folds
 set foldmethod=syntax
 set foldlevelstart=99
+let g:markdown_folding = 1
 
 " any buffer can be hidden (keeping its changes) without first writing the
 " buffer to a file. This affects all commands and all buffers.
@@ -249,9 +253,6 @@ set noerrorbells visualbell t_vb=
 if has('autocmd')
     autocmd GUIEnter * set visualbell t_vb=
 endif
-
-" Spellcheck commit messages
-autocmd FileType gitcommit setlocal spell
 
 " ====================================
 " Plugin Configuration
@@ -320,7 +321,7 @@ let g:gen_tags#statusline=1
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
 "  coc will install the missing extensions after coc.nvim service started
-let g:coc_global_extensions = ['coc-json', "coc-tsserver", "coc-eslint", "coc-vimlsp"]
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced']
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -400,6 +401,11 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 let vim_markdown_preview_github=1
 let vim_markdown_preview_browser='Google Chrome'
 
+" vim-surround
+"---------
+autocmd FileType markdown let b:surround_{char2nr('i')} = "*\r*"
+autocmd FileType markdown let b:surround_{char2nr('b')} = "**\r**"
+
 
 " ====================================
 " Key Maps
@@ -419,11 +425,22 @@ set pastetoggle=<F2>
 " switch back to last buffer
 cmap bb b#
 
+" gf creates file if it does not exists
+noremap gf :e <cfile><cr>
+
+" Open current file in vscode
+noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
+
+" Open link, use fugitive's GBrowse 
+xnoremap <silent> <leader>c y<Esc>:GBrowse <C-R>"<CR>
+nnoremap <silent> <leader>c :execute 'GBrowse '.expand('<cWORD>')<CR>
+
 " Goyo
 nnoremap <leader>o :Goyo 85%<CR>
 
 " Search in google, use fugitive's GBrowse
 xnoremap <silent> <leader>s y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>
+nnoremap <silent> <leader>s :execute 'GBrowse https://www.google.com/search?q='.expand('<cWORD>')<CR>
 
 " fzf.vim
 " ------------
@@ -434,6 +451,19 @@ nnoremap <silent> <leader>e  :Files<CR>
 nnoremap <silent> <leader>b  :Buffers<CR>
 nnoremap <silent> <leader>l  :Lines<CR>
 nnoremap <silent> <leader>h  :History<CR>
+" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  if executable('git')
+      return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%', 'options': ['--preview', 'wn {} -over']})
+  else
+      return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%'})
+  endif
+endfunction
+nnoremap <silent> <leader>z :call FzfSpell()<CR>
 
 
 " coc.vim
@@ -483,6 +513,14 @@ omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
 
+" coc-swagger
+" ------------
+autocmd FileType yaml  nnoremap <buffer> <leader>p :CocCommand swagger.render<CR>
+
+" coc-markdown-preview-enhanced
+" ------------
+autocmd FileType markdown  nnoremap <buffer> <leader>p :CocCommand markdown-preview-enhanced.openPreview<CR>
+
 " vimspector
 " ------------
 nmap <leader>ds <Plug>VimspectorStepOver
@@ -499,6 +537,6 @@ nnoremap <silent> - :NERDTreeFind<CR>
 nmap <silent> <leader>t :<C-u>Vista finder<CR>
 nmap <silent> <leader>tt :<C-u>Vista!!<CR>
 
-" vim-swagger-preview
+" fzf-wordnet.vim
 " ------------
-nmap  <leader>c <Plug>GenerateDiagram 
+imap <C-S> <Plug>(fzf-complete-wordnet)
