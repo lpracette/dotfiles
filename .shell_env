@@ -37,8 +37,8 @@ fi
 
 # colorize less
 export BAT_THEME=base16-256
-NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || ([ -f "$f" ] && bat --color=always $f || echo $f)'
-command -v bat > /dev/null && command -v tree > /dev/null && export LESSOPEN="$NICE_LESSOPEN"
+NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || ( [ $(head -c 4 $f | tail -c 3) = "PDF" ] && pdftotext -layout $f - || ([ -f "$f" ] && bat --color=always $f || echo $f))'
+command -v bat > /dev/null && command -v pdftotext > /dev/null && command -v tree > /dev/null && export LESSOPEN="$NICE_LESSOPEN"
 
 # DISPLAY=localhost:0.0
 
