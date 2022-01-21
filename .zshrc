@@ -43,6 +43,10 @@ setopt CORRECT
 # include hidden files in completion
 # setopt globdots 
 
+# enable completion
+autoload bashcompinit && bashcompinit
+autoload -Uz compinit && compinit
+
 # instead of cloning all of oh-my-zsh for ony command-not-found.plugin.zsh
 # from https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/command-not-found/command-not-found.plugin.zsh
 [[ -e /etc/zsh_command_not_found ]] && source /etc/zsh_command_not_found
@@ -50,7 +54,7 @@ setopt CORRECT
 # fzf-tab
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less $word || ${(Q)realpath}'
 
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
@@ -69,3 +73,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 [ $commands[aws-vault] ] && eval "$(aws-vault --completion-script-zsh)"
+[ $commands[npm] ] && eval "$(npm completion)"
+[ $commands[aws] ] && complete -C `which aws_completer` aws
+
