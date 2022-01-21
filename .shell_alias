@@ -1,5 +1,6 @@
 # vi: ft=sh
 
+alias vim=nvim
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -24,4 +25,4 @@ alias watch='watch '
 
 # k8s completion
 [ $commands[kubectl] ] && alias k='kubectl'
-[ $commands[kubectl] ] && complete -F __start_kubectl k
+# [ $commands[kubectl] ] && complete -F __start_kubectl k

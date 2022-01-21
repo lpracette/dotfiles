@@ -111,8 +111,9 @@ function vimp() {
 }
 
 function git-cp {
-    PATCH_DIR=$(pwd)/${1:-tmp_patch}
+    PATCH_DIR="$HOME/backup/patch/$(basename $(pwd))_$(date +'%Y_%m_%d_%H_%M_%S')/"
     mkdir -p PATCH_DIR
+    echo "Backing up to $PATCH_DIR..."
     
     # Local commits
     git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}` -o $PATCH_DIR
@@ -127,22 +128,15 @@ function git-cp {
         git diff --ignore-submodules --src-prefix=\"a/\${path}/\" --dst-prefix=\"b/\${path}/\" >\
         $PATCH_DIR/wip_\$(basename \$path)_$(date +\"%Y_%m_%d_%H_%M_%S\").patch; \
      fi"
-    
+}
+
+function svn-cp() {
+    PATCH_DIR=$(pwd)/${1:-tmp_patch}
+
     # SVN repos
     pushd $PATCH_DIR
     find `git rev-parse --show-toplevel 2>/dev/null` -type d -name ".svn" -exec bash -c 'svn st `dirname {}` | grep -q ^[ADM] && svn di --internal-diff `dirname {}` > wip_$(dirname {}|tr "/" "-" | cut -c 2-)_$(date +%Y_%m_%d_%H_%M_%S).patch' \;
     popd
-}
-
-function fortune-cow() {
-    fortune | cowsay -f $(ls /usr/share/cowsay/cows | shuf -n 1 |cut -d. -f1)
-}
-
-function cstat() {
-    curl -s https://corona-stats.online?minimal=true | awk 'NR==1||/Canada/||/^[1-9] /||/World/{print}'| cowsay -n -f $(ls /usr/share/cowsay/cows | shuf -n 1 |cut -d. -f1)
-}
-yq() {
-      docker run --rm -i -v ${PWD}:/workdir mikefarah/yq yq $@
 }
 
 function time_all() {
