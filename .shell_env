@@ -2,18 +2,10 @@
 
 #####
 # Environment
-export EDITOR=`which vim`
+export EDITOR=`which nvim`
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export GPG_TTY=$(tty)
-
-
-export FZF_DEFAULT_OPTS="
-    --bind='?:toggle-preview'
-    --bind='ctrl-u:preview-page-up'
-    --bind='ctrl-d:preview-page-down'
-    --preview-window 'right:60%:wrap'
-    --preview 'less {} || echo {}'"
 
 # chriskempson/base16-shell
 # export BASE16_SHELL_HOOKS=$HOME/.config/base16-shell/hooks
@@ -37,8 +29,25 @@ fi
 
 # colorize less
 export BAT_THEME=base16-256
-NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || ( [ $(head -c 4 $f | tail -c 3) = "PDF" ] && pdftotext -layout $f - || ([ -f "$f" ] && bat --color=always $f || echo $f))'
-command -v bat > /dev/null && command -v pdftotext > /dev/null && command -v tree > /dev/null && export LESSOPEN="$NICE_LESSOPEN"
+
+export FZF_DEFAULT_OPTS="
+    --bind='?:toggle-preview'
+    --bind='ctrl-u:preview-page-up'
+    --bind='ctrl-d:preview-page-down'
+    --preview-window 'right:60%:wrap'
+    --preview 'less {}'"
+
+NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || (
+  [ "$(head -c 4 $f 2>/dev/null | tail -c 3)" = "PDF" ] && pdftotext -layout $f - || (
+  [ -f "$f" ] && bat --color=always $f 2>/dev/null || (
+  git branch -vvv --color=always | grep -E "^.*$f" ||
+  echo $f)))'
+
+command -v bat > /dev/null && \
+    command -v pdftotext > /dev/null && 
+    command -v tree > /dev/null && \
+    command -v git > /dev/null && \
+    export LESSOPEN="$NICE_LESSOPEN"
 
 # DISPLAY=localhost:0.0
 
