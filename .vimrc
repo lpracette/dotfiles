@@ -290,6 +290,7 @@ let g:airline#extensions#obsession#indicator_text = ''
 " NERDTree
 " ------------
 let g:webdevicons_conceal_nerdtree_brackets = 1
+let NERDTreeShowHidden=1
 
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
@@ -431,6 +432,10 @@ noremap gf :e <cfile><cr>
 " Open current file in vscode
 noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
 
+" Convert JSON to YAML/ YAML to JSON with python3
+xnoremap <silent> <leader>ty :'<,'>!python3 -c 'import sys, json, yaml; yaml.safe_dump(json.load(sys.stdin), sys.stdout, default_flow_style=False)'<CR>
+xnoremap <silent> <leader>tj :'<,'>!python3 -c 'import sys, json, yaml;print(json.dumps(yaml.load(sys.stdin,Loader=yaml.FullLoader), indent=2,default=str))'<CR>
+
 " Open link, use fugitive's GBrowse 
 xnoremap <silent> <leader>c y<Esc>:GBrowse <C-R>"<CR>
 nnoremap <silent> <leader>c :execute 'GBrowse '.expand('<cWORD>')<CR>
@@ -530,7 +535,8 @@ xmap <leader>dd <Plug>VimspectorBalloonEval
 
 " NERDTree
 " ------------
-nnoremap <silent> - :NERDTreeFind<CR>
+" nnoremap <silent> - :NERDTreeFind<CR>
+nnoremap <silent> <expr> - g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 " Vista
 " ------------
