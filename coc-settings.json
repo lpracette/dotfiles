@@ -1,5 +1,7 @@
 {
-  "codeLens.enable": true,
+  "eslint.debug": true,
+  "javascript.suggestionActions.enabled": false,
+  "codeLens.enable": false,
   "diagnostic.errorSign": "✘",
   "diagnostic.warningSign": "",
   "diagnostic.infoSign": "",
