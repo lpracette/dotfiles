@@ -20,10 +20,11 @@
             git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
           };\
         f"
+    npm-tag = "!f() { \
+            [[ ! $1 =~ ^(major|minor|patch)$ ]] && echo \"ERROR Missing version type.\n\nUsage:\ngit npm-tag [major|minor|patch]\" && exit 1; \
+            npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git log --no-merges --pretty=format:' %h - %s (%ci) <%an>' $(git describe --tags --abbrev=0 @^)..@)\")\"; \
+        }; f"
     graph = log --decorate --oneline --graph
-    delete-branch = "!f() {git branch -d $1 && git push origin --delete $1 git && fetch --all --prune} f;"
-    clean-branches = "!f() { git branch --merged ${1-master} | grep -v " ${1-master}$" | xargs -r git branch -d; }; f"
-    dfdev = diff origin/development
 [difftool "vimdiff"]
     cmd = "vimdiff -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
 [mergetool "vimdiff3"]
@@ -40,10 +41,9 @@
     path = ~/.gitconfig.user
 [log]
 	date = local
-[remote "origin"]
-	fetch = +refs/pull-requests/*/merge:refs/remotes/origin/pull-requests-merge/*
-	fetch = +refs/pull-requests/*/from:refs/remotes/origin/pull-requests-from/*
 [gpg]
 	program = gpg
 [init]
 	defaultBranch = main
+[fetch]
+	prune = true
