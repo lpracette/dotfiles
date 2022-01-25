@@ -429,6 +429,10 @@ cmap bb b#
 " gf creates file if it does not exists
 noremap gf :e <cfile><cr>
 
+" insert current date-time
+nnoremap <silent> <leader>i  "=strftime("%c")<CR>P
+nnoremap <silent> <leader>ic  "=printf(&commentstring, strftime(" %c "))<CR>P
+
 " Open current file in vscode
 noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
 
