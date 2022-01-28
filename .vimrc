@@ -156,6 +156,9 @@ if &term =~ '256color'
     set t_ut=
 endif
 
+hi clear SpellBad
+hi SpellBad term=reverse cterm=underline ctermfg=red gui=undercurl
+
 " transparent bg
 autocmd vimenter * highlight Normal guibg=NONE ctermbg=NONE
 " For Vim<8, replace EndOfBuffer by NonText
@@ -294,12 +297,12 @@ let NERDTreeShowHidden=1
 
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   |
     \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
 " Start NERDTree when Vim is started without file arguments.
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && &filetype !=# 'man' | NERDTree | endif
 
 
 " Vista
@@ -322,7 +325,7 @@ let g:gen_tags#statusline=1
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
 "  coc will install the missing extensions after coc.nvim service started
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-prettier', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced']
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -433,6 +436,9 @@ noremap gf :e <cfile><cr>
 nnoremap <silent> <leader>i  "=strftime("%c")<CR>P
 nnoremap <silent> <leader>ic  "=printf(&commentstring, strftime(" %c "))<CR>P
 
+" add a markdown h3 with date
+nnoremap <silent> <leader>an  "=printf("###%s (%s)", input("Note title: "),strftime("%c"))<CR>P
+
 " Open current file in vscode
 noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
 
@@ -466,7 +472,7 @@ function! FzfSpellSink(word)
 endfunction
 function! FzfSpell()
   let suggestions = spellsuggest(expand("<cword>"))
-  if executable('git')
+  if executable('wn')
       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%', 'options': ['--preview', 'wn {} -over']})
   else
       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%'})
