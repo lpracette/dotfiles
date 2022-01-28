@@ -158,6 +158,8 @@ endif
 
 hi clear SpellBad
 hi SpellBad term=reverse cterm=underline ctermfg=red gui=undercurl
+hi clear SpellCap
+hi SpellCap term=reverse cterm=underline ctermfg=lightblue gui=undercurl
 
 " transparent bg
 autocmd vimenter * highlight Normal guibg=NONE ctermbg=NONE
