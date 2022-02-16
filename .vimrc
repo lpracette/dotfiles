@@ -431,7 +431,7 @@ set pastetoggle=<F2>
 " switch back to last buffer
 cmap bb b#
 
-" gf creates file if it does not exists
+" gf creates file if it does not exists, use gF to open only
 noremap gf :e <cfile><cr>
 
 " insert current date-time
@@ -439,7 +439,24 @@ nnoremap <silent> <leader>i  "=strftime("%c")<CR>P
 nnoremap <silent> <leader>ic  "=printf(&commentstring, strftime(" %c "))<CR>P
 
 " add a markdown h3 with date
-nnoremap <silent> <leader>an  "=printf("###%s (%s)", input("Note title: "),strftime("%c"))<CR>P
+autocmd FileType markdown  nnoremap <silent> <leader>an  "=printf("###%s (%s)\n", input("Note title: "),strftime("%c"))<CR>P
+
+" add a markdown entry for daily scrum
+autocmd FileType markdown  nnoremap <silent> <leader>de  "=printf("\n### (%s)\n#### Done\n - \n#### Problems\n \n#### Todo\n - \n", strftime("%c"))<CR>PjjjA
+
+autocmd FileType gitcommit nnoremap <silent> <buffer> i  i<C-r>=<sid>commit_type()<CR>
+fun! s:commit_type()
+    call complete(1, [
+                \{'word':' ','menu':'none'},
+                \{'word':'fix: ','menu':'Bug fixing', 'kind':'🐛' },
+                \{'word':'feat: ','menu':'New feature', 'kind':'✨' },
+                \{'word':'chore: ','menu':'No code change (version or dependency bump, ci/cd, etc.)', 'kind':'🔧' },
+                \{'word':'major: ','menu':'For major version increase when breaking changes or big changes', 'kind':'💥' } ])
+  nunmap <buffer> i
+  return ''
+endfun
+
+
 
 " Open current file in vscode
 noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
