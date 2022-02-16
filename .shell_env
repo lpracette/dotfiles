@@ -40,7 +40,7 @@ export FZF_DEFAULT_OPTS="
 NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || (
   [ "$(head -c 4 $f 2>/dev/null | tail -c 3)" = "PDF" ] && pdftotext -layout $f - || (
   [ -f "$f" ] && bat --color=always $f 2>/dev/null || (
-  git branch -vvv --color=always | grep -E "^.*$f" ||
+  git branch -vvv --color=always 2>/dev/null | grep -E "^.*$f" ||
   echo $f)))'
 
 command -v bat > /dev/null && \
