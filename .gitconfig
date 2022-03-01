@@ -20,9 +20,12 @@
             git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
           };\
         f"
+    last-tag = describe --tags --abbrev=0 @^
+    cl = !git log --no-merges --pretty=format:' %h - %s (%ci) <%an>' $(git last-tag)..@
+    tag-cl = "!git tag -a $1 -m \"$(echo Version $1)\n\nChanges since $(git last-tag):\n$(git cl)\" #"
     npm-tag = "!f() { \
             [[ ! $1 =~ ^(major|minor|patch)$ ]] && echo \"ERROR Missing version type.\n\nUsage:\ngit npm-tag [major|minor|patch]\" && exit 1; \
-            npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git log --no-merges --pretty=format:' %h - %s (%ci) <%an>' $(git describe --tags --abbrev=0 @^)..@)\")\"; \
+            npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git cl)\")\"; \
         }; f"
     graph = log --decorate --oneline --graph
 [difftool "vimdiff"]
@@ -47,3 +50,5 @@
 	defaultBranch = main
 [fetch]
 	prune = true
+[remote "origin"]
+    fetch = +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*
