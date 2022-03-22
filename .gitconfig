@@ -21,11 +21,11 @@
           };\
         f"
     last-tag = describe --tags --abbrev=0 @^
-    cl = !git log --no-merges --pretty=format:' %h - %s (%ci) <%an>' $(git last-tag)..@
-    tag-cl = "!git tag -a $1 -m \"$(echo Version $1)\n\nChanges since $(git last-tag):\n$(git cl)\" #"
+    cl = "!git log --no-merges --pretty=format:\" %h - %s (%ci) <$1%an>\" $(git last-tag)..@ #"
+    tag-cl = "!git tag -a $1 -m \"$(echo Version $1)\n\nChanges since $(git last-tag):\n$(git cl '')\" #"
     npm-tag = "!f() { \
             [[ ! $1 =~ ^(major|minor|patch)$ ]] && echo \"ERROR Missing version type.\n\nUsage:\ngit npm-tag [major|minor|patch]\" && exit 1; \
-            npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git cl)\")\"; \
+            npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git cl '')\")\"; \
         }; f"
     graph = log --decorate --oneline --graph
 [difftool "vimdiff"]
