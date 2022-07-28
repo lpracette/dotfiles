@@ -1,10 +1,5 @@
 export LC_ALL="en_US.UTF-8"
 
-
-[ -e ~/.shell_alias ] && source ~/.shell_alias 
-[ -e ~/.shell_env ] && source ~/.shell_env
-[ -e ~/.shell_functions ] && source ~/.shell_functions
-
 #install zplug
 [ ! -d ~/.zplug ] && curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
 
@@ -54,7 +49,8 @@ autoload -Uz compinit && compinit
 # fzf-tab
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:complete:*:*' fzf-preview 'less $word || ${(Q)realpath}'
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less $word'
+# zstyle ':fzf-tab:complete:*:*' fzf-preview 'less $word || ${(Q)realpath}'
 
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
@@ -76,3 +72,6 @@ export NVM_DIR="$HOME/.nvm"
 [ $commands[npm] ] && eval "$(npm completion)"
 [ $commands[aws] ] && complete -C `which aws_completer` aws
 
+[ -e ~/.shell_alias ] && source ~/.shell_alias 
+[ -e ~/.shell_env ] && source ~/.shell_env
+[ -e ~/.shell_functions ] && source ~/.shell_functions
