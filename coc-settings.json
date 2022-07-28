@@ -1,6 +1,10 @@
 {
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.quoteStyle": "single",
   "eslint.debug": true,
   "javascript.suggestionActions.enabled": false,
+  "coc.preferences.formatOnSaveFiletypes": ["markdown", "yaml", "javascript", "json", "typescript"],
+  "prettier.requireConfig": true,
   "codeLens.enable": false,
   "diagnostic.errorSign": "✘",
   "diagnostic.warningSign": "",
