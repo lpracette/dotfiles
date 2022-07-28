@@ -56,6 +56,7 @@ Plug 'heavenshell/vim-jsdoc', {
   \ 'for': ['javascript', 'javascript.jsx','typescript'],
   \ 'do': 'make install'
 \}
+Plug 'vim-test/vim-test'
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
@@ -69,6 +70,7 @@ Plug 'RyanMillerC/better-vim-tmux-resizer'
 Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
 Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
+Plug 'tpope/vim-abolish'
 " Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more!
 " Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 " Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
@@ -575,3 +577,8 @@ nmap <silent> <leader>tt :<C-u>Vista!!<CR>
 " fzf-wordnet.vim
 " ------------
 imap <C-S> <Plug>(fzf-complete-wordnet)
+
+" vim-test
+" ------------
+nmap <silent> <leader>tn :TestNearest<CR>
+nmap <silent> <leader>tf :TestFile<CR>
