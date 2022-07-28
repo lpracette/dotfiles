@@ -322,13 +322,12 @@ function toggle_dark_mode() {
 }
 
 function jira() {
-
     jql='assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate'
     jql=$(echo "$jql" | jq -sRr @uri)
     tmpfile=$(mktemp)
     COLOR='\u001b[1;34m'
     C_END='\u001b[0m'
-    preview="cat tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '.issues[] | select(.key == \$KEY) | \
+    preview="cat $tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '.issues[] | select(.key == \$KEY) | \
         \"\\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" + \
         \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created + 
         \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated + 
@@ -336,9 +335,9 @@ function jira() {
         \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName + 
         \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name + 
         \"\n${COLOR}Description$C_END:\n\" + .fields.description '"
-    curl -su $JIRA_USER:$JIRA_PASS "$JIRA_URL/rest/api/2/search?jql=$jql" -o tmpfile
-    cat tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
-    rm tmpfile
+    curl -su $JIRA_USER:$JIRA_PASS "$JIRA_URL/rest/api/2/search?jql=$jql" -o $tmpfile
+    cat $tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
+    rm $tmpfile
 }
 
 function jiraBrowse() {
