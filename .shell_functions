@@ -289,3 +289,63 @@ function lint_jenkinsfile() {
     fi
 }
 
+# from https://stackoverflow.com/a/23002317
+function abspath() {
+    # generate absolute path from relative path
+    # $1     : relative filename
+    # return : absolute path
+    if [ -d "$1" ]; then
+        # dirkl
+        (cd "$1"; pwd)
+    elif [ -f "$1" ]; then
+        # file
+        if [[ $1 = /* ]]; then
+            echo "$1"
+        elif [[ $1 == */* ]]; then
+            echo "$(cd "${1%/*}"; pwd)/${1##*/}"
+        else
+            echo "$(pwd)/$1"
+        fi
+    fi
+}
+
+function toggle_dark_mode() {
+    if [[ "$(osascript -e 'tell app "System Events" to tell appearance preferences to return dark mode')" == "true" ]]; then
+        osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to false'
+        bash -ci 'base16_atelier-plateau-light'
+    else
+        osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
+        bash -ci 'base16_atelier-plateau'
+    fi
+
+
+}
+
+function jira() {
+
+    jql='assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate'
+    jql=$(echo "$jql" | jq -sRr @uri)
+    tmpfile=$(mktemp)
+    COLOR='\u001b[1;34m'
+    C_END='\u001b[0m'
+    preview="cat tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '.issues[] | select(.key == \$KEY) | \
+        \"\\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" + \
+        \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created + 
+        \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated + 
+        \"\n\"+ \"${COLOR}Due date$C_END: \"    + .fields.duedate + 
+        \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName + 
+        \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name + 
+        \"\n${COLOR}Description$C_END:\n\" + .fields.description '"
+    curl -su $JIRA_USER:$JIRA_PASS "$JIRA_URL/rest/api/2/search?jql=$jql" -o tmpfile
+    cat tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
+    rm tmpfile
+}
+
+function jiraBrowse() {
+    case "$(uname)" in
+        (*Linux*) open='xdg-open' ;;
+        (*Darwin*) open='open' ;;
+        (*) echo 'Error: open command is undefined'; return 1
+    esac
+    ${open} "${JIRA_URL}/browse/$(jira)"
+}
