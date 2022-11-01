@@ -348,3 +348,14 @@ function jiraBrowse() {
     esac
     ${open} "${JIRA_URL}/browse/$(jira)"
 }
+
+function redact_env() {
+    env | sed 's/^\([^=]*\)=\(.\{2\}\).*\(.\{2\}\)$/\1=\2***\3/'
+}
+
+function vimdiffDir() {
+    for files in $(diff -rq $1 $2|grep 'differ$'|sed "s/^Files //g;s/ differ$//g;s/ and /:/g"); do 
+        nvim -d ${files%:*} ${files#*:}; 
+    done
+}
+

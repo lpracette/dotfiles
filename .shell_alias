@@ -26,6 +26,10 @@ alias prettyJson='python -mjson.tool | pygmentize -l json'
 # https://unix.stackexchange.com/a/25329
 alias watch='watch '
 
+# Use nvim for vimdiff
+alias vimdiff='nvim -d'
+
+
 # k8s completion
 [ $commands[kubectl] ] && alias k='kubectl'
 # [ $commands[kubectl] ] && complete -F __start_kubectl k
