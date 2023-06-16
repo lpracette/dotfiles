@@ -22,8 +22,8 @@ call plug#begin()
 
 " Navigate and manipulate files in a tree view.
 Plug 'scrooloose/nerdtree',            " File explorer
-" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-" Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'johnstef99/vim-nerdtree-syntax-highlight'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " Appearance: colors, status bar, icons
 Plug 'chriskempson/base16-vim'          "
@@ -31,37 +31,43 @@ Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim tha
 Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
 Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
 Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
-Plug 'Yggdroot/indentLine'              " A vim plugin to display the indention levels with thin vertical lines
-Plug 'junegunn/limelight.vim'           " 🔦 All the world's indeed a stage and we are merely players
-Plug 'junegunn/goyo.vim'                " 🌷 Distraction-free writing in Vim
-" Plug 'junegunn/seoul256.vim'            " 🌳 Low-contrast Vim color scheme based on Seoul Colors
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
-Plug 'blueyed/vim-diminactive'
 Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
-Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R
+" Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R 
+Plug 'sainnhe/edge'                     " Clean & Elegant Color Scheme inspired by Atom One and Material
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " 🍨 Soothing pastel theme for (Neo)vim
+
 
 "
 " Coding: tags, git, completion
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
-Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for gitlab
-Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for github
+Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for GitLab
+Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for GitHub
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
-Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
-Plug 'liuchengxu/vista.vim'             " View and search LSP symbols, tags in Vim/NeoVim.
-Plug 'APZelos/blamer.nvim'              " A git blame plugin for (neo)vim inspired by VS Code's GitLens plugin.
-Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. requires node `curl -sL install-node.now.sh/lts | bash`
-Plug 'antoinemadec/coc-fzf'
-Plug 'heavenshell/vim-jsdoc', {
-  \ 'for': ['javascript', 'javascript.jsx','typescript'],
-  \ 'do': 'make install'
-\}
-Plug 'vim-test/vim-test'
+Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. Requires node `curl -sL install-node.now.sh/lts | bash`
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go'}
+
+
+if has('nvim')
+    Plug 'nvim-treesitter/nvim-treesitter', " Nvim Treesitter configurations and abstraction layer
+        \ {'do': ':TSUpdate'} 
+    Plug 'nvim-tree/nvim-web-devicons'      " A lua fork of vim-devicons. This plugin provides the same icons as well as colors for each icon.
+
+    Plug 'mfussenegger/nvim-dap'            " Debug Adapter Protocol client implementation for Neovim
+    Plug 'rcarriga/nvim-dap-ui'             " A UI for nvim-dap
+    Plug 'leoluz/nvim-dap-go'               " An extension for nvim-dap providing configurations for launching go debugger (delve) and debugging individual tests Resources
+
+else
+    Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
+    Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
+endif
+
 
 " Fuzy search: buffers, files, tags
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
 Plug 'junegunn/fzf.vim'
 Plug 'Avi-D-coder/fzf-wordnet.vim' " Dictionary completion powered by FZF and Wordnet for vim and your terminal.
+Plug 'antoinemadec/coc-fzf'
 
 " Keybinding
 Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line
@@ -71,19 +77,6 @@ Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line m
 Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
 Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
 Plug 'tpope/vim-abolish'
-" Plug 'vim-scripts/DrawIt'               " Ascii drawing plugin: lines, ellipses, arrows, fills, and more!
-" Plug 'godlygeek/tabular'                " Vim script for text filtering and alignment. http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
-" Plug 'AndrewRadev/splitjoin.vim'        " Switch between single-line and multiline forms of code gS / gJ
-" Plug 'mbbill/undotree'                  " The undo history visualizer for VIM
-" Plug 'arouene/vim-ansible-vault'
-
-" Notes
-" Plug 'fmoralesc/vim-pad', {'branch': 'devel'} " a quick notetaking plugin
-" Plug 'aaronbieber/vim-quicktask'        " lightweight but feature-rich task management plugin
-" Plug 'vim-pandoc/vim-pandoc'            " pandoc integration and utilities for vim
-" Plug 'vim-pandoc/vim-pandoc-syntax'     " pandoc markdown syntax, to be installed alongside vim-pandoc
-
-" Plug 'dstein64/vim-startuptime'
 
 call plug#end()
 
@@ -130,38 +123,49 @@ augroup END
 
 " color theme
 syntax enable
-set background=dark
-if filereadable(expand("~/.vimrc_background"))
-
-    function! s:base16_customize() abort
-        call Base16hi("Italic",        "", "", "", "", "italic", "")
-    endfunction
-
-    augroup on_change_colorschema
-        autocmd!
-        autocmd ColorScheme * call s:base16_customize()
-    augroup END
-
-    let base16colorspace=256
-    source ~/.vimrc_background
+let s:mode = systemlist("osascript -e 'tell app \"System Events\" to tell appearance preferences to return dark mode'")[0]
+if s:mode ==# "true"
+    set background=dark
 else
-    try
-        colorscheme seoul256
-        let g:airline_theme='zenburn'
-    catch /^Vim\%((\a\+)\)\=:E185/
-        colorscheme desert
-    endtry
+    set background=light
 endif
+if has('termguicolors')
+  let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
+
+if has('nvim')
+lua <<EOF
+require("catppuccin").setup({
+    integrations = {
+        coc_nvim = true,
+    },
+})
+EOF
+let g:airline_theme = 'catppuccin'
+colorscheme catppuccin
+
+else
+let g:edge_style = 'aura'
+let g:edge_better_performance = 1
+let g:edge_enable_italic = 1
+let g:edge_dim_inactive_windows = 1
+let g:edge_current_word = 'bold'
+let g:edge_disable_terminal_colors = 1
+let g:airline_theme = 'edge'
+colorscheme edge
+endif
+
+"if exists('$BASE16_THEME') && (!exists('g:colors_name') || g:colors_name != 'base16-$BASE16_THEME')
+"    let base16colorspace=256 " https://github.com/chriskempson/base16-vim#256-colorspace
+"    colorscheme base16-$BASE16_THEME
+"endif
 
 if &term =~ '256color'
     " disable Background Color Erase (BCE)
     set t_ut=
 endif
-
-hi clear SpellBad
-hi SpellBad term=reverse cterm=underline ctermfg=red gui=undercurl
-hi clear SpellCap
-hi SpellCap term=reverse cterm=underline ctermfg=lightblue gui=undercurl
 
 " transparent bg
 autocmd vimenter * highlight Normal guibg=NONE ctermbg=NONE
@@ -231,9 +235,8 @@ endif
 " Run bash interactively with !
 " set shellcmdflag="-ic"
 
-"  highlight the current line in every window and update the highlight as the
-"  cursor moves.
-"set cursorline
+" set cursorline " Highlight the text line of the cursor
+" set relativenumber " Show the line number relative to the line with the cursor in front of each line.
 
 " Let cursor move past the last char in <C-v> mode
 set virtualedit=block
@@ -245,11 +248,9 @@ set scrolloff=10
 set mouse=a
 
 " Gvim options
-set guifont=DejaVuSansMonoNerdFontCompleteM-Bold:h13
 if has("gui_running")
-    set go=
-    colorscheme solarized
     try
+        set guifont=DejaVuSansMonoNerdFontCompleteM-Bold:h13
     catch /^Vim\%((\a\+)\)\=:E596/
         echom "The DejaVuSansMono Nerd Font is not installed"
     endtry
@@ -264,21 +265,6 @@ endif
 " ====================================
 " Plugin Configuration
 " ====================================
-"  vim-pad
-"  ---------
-if empty(glob("~/notes"))
-    execute('!mkdir -p ~/notes')
-endif
-let g:pad#dir = "~/notes"
-let g:pad#default_format = "pandoc"
-
-
-" undotree
-" -------
-if !exists('g:undotree_WindowLayout')
-    let g:undotree_WindowLayout = 2
-endif
-
 
 " vim-airline
 " ------------
@@ -296,8 +282,10 @@ let g:airline#extensions#obsession#indicator_text = ''
 
 " NERDTree
 " ------------
-let g:webdevicons_conceal_nerdtree_brackets = 1
 let NERDTreeShowHidden=1
+let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:NERDTreeMapJumpPrevSibling=""
+let g:NERDTreeMapJumpNextSibling=""
 
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
@@ -309,27 +297,16 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && &filetype !=# 'man' | NERDTree | endif
 
 
-" Vista
-" ------------
-let g:vista#renderer#enable_icon = 1
-let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
-
-
 " vimspector
 " ------------
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
 
 
-" GenTags
-" ------------
-let g:gen_tags#statusline=1
-
-
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
 "  coc will install the missing extensions after coc.nvim service started
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-prettier', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-prettier', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced','coc-go']
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -340,69 +317,10 @@ set shortmess+=c
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
+set signcolumn=yes
 
 " Highlight the symbol and its references when holding the cursor.
 " autocmd CursorHold * silent call CocActionAsync('highlight')
-
-
-" indentLine
-" -----------
-let g:indentLine_char = '┊'
-autocmd FileType markdown let g:indentLine_enabled=0
-
-
-" Limelight
-" -----------
-let g:limelight_conceal_ctermfg = 'gray'
-let g:limelight_conceal_ctermfg = 240
-
-
-" Goyo
-" -----------
-function! s:goyo_enter()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status off
-    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
-  endif
-  set noshowcmd
-  set scrolloff=999
-  Limelight
-  IndentLinesDisable
-endfunction
-
-function! s:goyo_leave()
-  if executable('tmux') && strlen($TMUX)
-    silent !tmux set status on
-    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
-  endif
-  set showcmd
-  set scrolloff=10
-  Limelight!
-  IndentLinesEnable
-endfunction
-
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
 " vim-markdown-preview
 "---------
@@ -414,6 +332,34 @@ let vim_markdown_preview_browser='Google Chrome'
 autocmd FileType markdown let b:surround_{char2nr('i')} = "*\r*"
 autocmd FileType markdown let b:surround_{char2nr('b')} = "**\r**"
 
+" nvim-treesitter
+"---------
+if has('nvim')
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all" (the five listed parsers should always be installed)
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
+
+  highlight = {
+    enable = true,
+    disable = {"markdown"},
+  },
+  additional_vim_regex_highlighting = false,
+}
+
+require'nvim-web-devicons'.setup({})
+
+require('dapui').setup()
+require('dap-go').setup()
+EOF
+endif
 
 " ====================================
 " Key Maps
@@ -446,20 +392,6 @@ autocmd FileType markdown  nnoremap <silent> <leader>an  "=printf("###%s (%s)\n"
 " add a markdown entry for daily scrum
 autocmd FileType markdown  nnoremap <silent> <leader>de  "=printf("\n### (%s)\n#### Done\n - \n#### Problems\n \n#### Todo\n - \n", strftime("%c"))<CR>PjjjA
 
-autocmd FileType gitcommit nnoremap <silent> <buffer> i  i<C-r>=<sid>commit_type_prefix()<CR>
-fun! s:commit_type_prefix()
-    call complete(1, [
-                \{'word':' ','menu':'none'},
-                \{'word':'fix: ','menu':'Bug fixing', 'kind':'🐛' },
-                \{'word':'feat: ','menu':'New feature', 'kind':'✨' },
-                \{'word':'chore: ','menu':'No code change (version or dependency bump, ci/cd, etc.)', 'kind':'🔧' },
-                \{'word':'major: ','menu':'For major version increase when breaking changes or big changes', 'kind':'💥' } ])
-  nunmap <buffer> i
-  return ''
-endfun
-
-
-
 " Open current file in vscode
 noremap <silent> <leader>v :call system('code ' . getcwd() . ' --goto ' .expand('%') . ':' . line('.')  . ':' . col('.'))<CR>
 
@@ -471,9 +403,6 @@ xnoremap <silent> <leader>tj :'<,'>!python3 -c 'import sys, json, yaml;print(jso
 xnoremap <silent> <leader>c y<Esc>:GBrowse <C-R>"<CR>
 nnoremap <silent> <leader>c :execute 'GBrowse '.expand('<cWORD>')<CR>
 
-" Goyo
-nnoremap <leader>o :Goyo 85%<CR>
-
 " Search in google, use fugitive's GBrowse
 xnoremap <silent> <leader>s y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>
 nnoremap <silent> <leader>s :execute 'GBrowse https://www.google.com/search?q='.expand('<cWORD>')<CR>
@@ -481,11 +410,11 @@ nnoremap <silent> <leader>s :execute 'GBrowse https://www.google.com/search?q='.
 " fzf.vim
 " ------------
 " see https://github.com/junegunn/fzf.vim#commands
-nnoremap          <leader>g  :<C-u>Rg<Space>
+nnoremap <silent> <leader>g :vimgrep /<C-R><C-W>/ **/*.* \| cw<CR>
+" nnoremap          <leader>g  :execute '<C-u>Rg '.expand('<cWORD>')<CR>
 xnoremap          <leader>g  y<Esc>:Rg <C-R>"
 nnoremap <silent> <leader>e  :Files<CR>
 nnoremap <silent> <leader>b  :Buffers<CR>
-nnoremap <silent> <leader>l  :Lines<CR>
 nnoremap <silent> <leader>h  :History<CR>
 " Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
 function! FzfSpellSink(word)
@@ -501,6 +430,9 @@ function! FzfSpell()
 endfunction
 nnoremap <silent> <leader>z :call FzfSpell()<CR>
 
+" go-vim
+" ------------
+let g:go_def_mapping_enabled = 0
 
 " coc.vim
 " ------------
@@ -545,7 +477,8 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call ShowDocumentation()<CR>
-
+nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 function! ShowDocumentation()
   if CocAction('hasProvider', 'hover')
     call CocActionAsync('doHover')
@@ -606,6 +539,9 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
+" coc-fzf
+nmap <leader>o :CocFzfList outline<CR>
+nmap <leader>l :CocFzfList<CR>
 
 " coc-swagger
 " ------------
@@ -619,28 +555,25 @@ autocmd FileType markdown  nnoremap <buffer> <leader>p :CocCommand markdown-prev
 " ------------
 autocmd FileType rego setlocal commentstring=#\ %s
 
-" vimspector
-" ------------
-nmap <leader>ds <Plug>VimspectorStepOver
-nmap <leader>di <Plug>VimspectorStepInto
-nmap <leader>dd <Plug>VimspectorBalloonEval
-xmap <leader>dd <Plug>VimspectorBalloonEval
+if has('nvim')
+    " nmap <leader>dd lua require("dapui").toggle()
+else
+    " vimspector
+    " ------------
+    nmap <leader>ds <Plug>VimspectorStepOver
+    nmap <leader>di <Plug>VimspectorStepInto
+    nmap <leader>dd <Plug>VimspectorBalloonEval
+    xmap <leader>dd <Plug>VimspectorBalloonEval
+endif
 
 " NERDTree
 " ------------
 " nnoremap <silent> - :NERDTreeFind<CR>
 nnoremap <silent> <expr> - g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
-" Vista
-" ------------
-nmap <silent> <leader>t :<C-u>Vista finder<CR>
-nmap <silent> <leader>tt :<C-u>Vista!!<CR>
 
 " fzf-wordnet.vim
 " ------------
 imap <C-S> <Plug>(fzf-complete-wordnet)
 
-" vim-test
-" ------------
-nmap <silent> <leader>tn :TestNearest<CR>
-nmap <silent> <leader>tf :TestFile<CR>
+source ~/.vimrc.local
