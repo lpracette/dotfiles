@@ -18,6 +18,7 @@ alias p='ps aux|awk '"'"'$11!~/^\[/{print $0}'"'"
 alias vimf='vim $(fzf)'
 alias less='less -R'
 
+alias python=python3
 alias prettyJson='python -mjson.tool | pygmentize -l json'
 
 # Aliases are only expanded as the first argument, or after another alias with a trailing space on the end of the command.

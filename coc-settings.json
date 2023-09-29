@@ -1,4 +1,18 @@
 {
+  "coc.preferences.formatOnSave": true,
+  "coc.preferences.formatOnType": true,
+
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "pyright.organizeimports.provider": "isort",
+  "python.linting.flake8Args": [
+    "--max-line-length=120",
+    "--ignore=E203,E501,D100,D101,D102,D103,D104,D105,D106,D107",
+    ],
+  "python.linting.banditEnabled": true,
+  "python.linting.mypyEnabled": true,
+
   "languageserver": {
     "golangci-lint-languageserver": {
       "command": "golangci-lint-langserver",
@@ -20,7 +34,6 @@
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.quoteStyle": "single",
   "javascript.suggestionActions.enabled": false,
-  "coc.preferences.formatOnSaveFiletypes": ["markdown", "yaml", "javascript", "json", "typescript"],
   "prettier.requireConfig": true,
   "codeLens.enable": false,
   "diagnostic.errorSign": "✘",

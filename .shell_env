@@ -2,6 +2,7 @@
 
 #####
 # Environment
+export LC_ALL="en_US.UTF-8"
 export EDITOR=`which nvim`
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
@@ -12,6 +13,7 @@ export GPG_TTY=$(tty)
 
 # nojhan/liquidprompt
 export LP_ENABLE_TIME=1
+LP_MARK_PREFIX=$'\n'
 
 # Python options
 if [ -e ~/.pythonrc ]; then 
@@ -28,7 +30,7 @@ fi
 [ -d "$HOME/bin" ] && export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # colorize less
-export BAT_THEME=base16-256
+export BAT_THEME=zenburn
 
 export FZF_DEFAULT_OPTS="
     --bind='?:toggle-preview'
@@ -40,8 +42,9 @@ export FZF_DEFAULT_OPTS="
 NICE_LESSOPEN='|f=%s && [ -d "$f" ] && tree -L 2 -d -C $f || (
   [ "$(head -c 4 $f 2>/dev/null | tail -c 3)" = "PDF" ] && pdftotext -layout $f - || (
   [ -f "$f" ] && bat --color=always $f 2>/dev/null || (
+  [[ $commands[$f] ]] && /usr/bin/man -P cat $f || (
   git branch -vvv --color=always 2>/dev/null | grep -E "^.*$f" ||
-  echo $f)))'
+  echo $f))))'
 
 command -v bat > /dev/null && \
     command -v pdftotext > /dev/null && 
@@ -55,10 +58,13 @@ LS_COLORS='no=00;38;5;244:rs=0:di=00;38;5;33:ln=00;38;5;37:mh=00:pi=48;5;230;38;
 export LS_COLORS
 
 
-if [ -d /usr/local/go ]; then
-    export GO111MODULE=on
-    export GOROOT=/usr/local/go
-    export GOPATH=$HOME/scm/go
+if [ `brew --prefix golang` ]; then
+    # export GO111MODULE=on
+    # export GOROOT=/usr/local/go
+    # export GOPATH=$HOME/scm/go
+    export GOPATH=$HOME/go
+    export GOROOT="$(brew --prefix golang)/libexec"
+    export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
     if [ ! -d $GOPATH ]; then
@@ -67,5 +73,14 @@ if [ -d /usr/local/go ]; then
 fi
 
 export ANSIBLE_NOCOWS=1
+
+
+export NVM_DIR="$HOME/.nvm"
+function nvm_load()
+{
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+}
+
 
 [ -e ~/.shell_env_local ] && source ~/.shell_env_local

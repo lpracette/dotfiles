@@ -20,46 +20,65 @@ endif
 call plug#begin()
 
 
-" Navigate and manipulate files in a tree view.
-Plug 'scrooloose/nerdtree',            " File explorer
-Plug 'johnstef99/vim-nerdtree-syntax-highlight'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 
 " Appearance: colors, status bar, icons
-Plug 'chriskempson/base16-vim'          "
-Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
-Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
+" Plug 'chriskempson/base16-vim'          "
 Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
-Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
 Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
 Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
+
 " Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R 
-Plug 'sainnhe/edge'                     " Clean & Elegant Color Scheme inspired by Atom One and Material
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " 🍨 Soothing pastel theme for (Neo)vim
+" Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " 🍨 Soothing pastel theme for (Neo)vim
 
 
 "
-" Coding: tags, git, completion
+" Coding: git
 Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
 Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for GitLab
 Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for GitHub
 Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
+
+"
+" Coding: LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. Requires node `curl -sL install-node.now.sh/lts | bash`
+
+
+" Coding: golang
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go'}
 
 
 if has('nvim')
+    Plug 'Mofiqul/vscode.nvim'
+    Plug 'nvim-lualine/lualine.nvim'
+    Plug 'akinsho/bufferline.nvim'
+
     Plug 'nvim-treesitter/nvim-treesitter', " Nvim Treesitter configurations and abstraction layer
         \ {'do': ':TSUpdate'} 
+
     Plug 'nvim-tree/nvim-web-devicons'      " A lua fork of vim-devicons. This plugin provides the same icons as well as colors for each icon.
+
+    Plug 'iamcco/markdown-preview.nvim', { 'do': ':call mkdp#util#install()', 'for': 'markdown' }
+
+    Plug 'nvim-tree/nvim-tree.lua'
+    Plug 'lukas-reineke/indent-blankline.nvim'
 
     Plug 'mfussenegger/nvim-dap'            " Debug Adapter Protocol client implementation for Neovim
     Plug 'rcarriga/nvim-dap-ui'             " A UI for nvim-dap
     Plug 'leoluz/nvim-dap-go'               " An extension for nvim-dap providing configurations for launching go debugger (delve) and debugging individual tests Resources
 
 else
+    Plug 'sainnhe/edge'                     " Clean & Elegant Color Scheme inspired by Atom One and Material
+
+    Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
+    Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
     Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
+    Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
     Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
+
+    " Navigate and manipulate files in a tree view.
+    Plug 'scrooloose/nerdtree',            " File explorer
+    Plug 'johnstef99/vim-nerdtree-syntax-highlight'
+    Plug 'Xuyuanp/nerdtree-git-plugin'
 endif
 
 
@@ -137,14 +156,41 @@ endif
 
 if has('nvim')
 lua <<EOF
-require("catppuccin").setup({
-    integrations = {
-        coc_nvim = true,
+require('vscode').setup({
+    italic_comments = true,
+})
+require('vscode').load()
+
+require('bufferline').setup({
+    options = {
+        numbers = "buffer_id",
+        separator_style = "thick", -- "slant" | "slope" | "thick" | "thin" | { 'any', 'any' },
+        offsets = {
+            { filetype = "nerdtree", text = "File Explorer", },
+            { filetype = "NvimTree", text = "File Explorer", }, },
     },
 })
+require('lualine').setup({
+    options = {
+        theme = 'vscode',
+        disabled_filetypes = {'nerdtree','NvimTree'},
+    },
+})
+
+-- disable netrw at the very start of your init.lua
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
+
+-- empty setup using defaults
+require("nvim-tree").setup()
+
+require("indent_blankline").setup()
 EOF
-let g:airline_theme = 'catppuccin'
-colorscheme catppuccin
+
+autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && &filetype !=# 'man' | NvimTreeOpen | endif
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   |
+    \ execute 'NvimTreeOpen' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+
 
 else
 let g:edge_style = 'aura'
@@ -236,7 +282,7 @@ endif
 " set shellcmdflag="-ic"
 
 " set cursorline " Highlight the text line of the cursor
-" set relativenumber " Show the line number relative to the line with the cursor in front of each line.
+set relativenumber " Show the line number relative to the line with the cursor in front of each line.
 
 " Let cursor move past the last char in <C-v> mode
 set virtualedit=block
@@ -268,6 +314,7 @@ endif
 
 " vim-airline
 " ------------
+if !has('nvim')
 "  " don't count trailing whitespace since it lags in huge files
 "let g:airline#extensions#whitespace#enabled = 0
  " put a buffer list at the top
@@ -283,6 +330,7 @@ let g:airline#extensions#obsession#indicator_text = ''
 " NERDTree
 " ------------
 let NERDTreeShowHidden=1
+let g:NERDTreeStatusline = '%#NonText#'
 let g:webdevicons_conceal_nerdtree_brackets = 1
 let g:NERDTreeMapJumpPrevSibling=""
 let g:NERDTreeMapJumpNextSibling=""
@@ -302,11 +350,12 @@ autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && &filetype !=# 'man' 
 let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:vimspector_install_gadgets = [ 'vscode-node-debug2' ]
 
+endif
 
 " coc, see https://github.com/neoclide/coc.nvim#example-vim-configuration
 " ------------
 "  coc will install the missing extensions after coc.nvim service started
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-prettier', 'coc-webview', 'coc-swagger', 'coc-markdown-preview-enhanced','coc-go']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-eslint', 'coc-vimlsp', 'coc-yaml', 'coc-prettier', 'coc-webview', 'coc-swagger','coc-go', 'coc-pyright']
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -547,9 +596,6 @@ nmap <leader>l :CocFzfList<CR>
 " ------------
 autocmd FileType yaml  nnoremap <buffer> <leader>p :CocCommand swagger.render<CR>
 
-" coc-markdown-preview-enhanced
-" ------------
-autocmd FileType markdown  nnoremap <buffer> <leader>p :CocCommand markdown-preview-enhanced.openPreview<CR>
 
 " tpope/vim-commentary
 " ------------
@@ -557,6 +603,14 @@ autocmd FileType rego setlocal commentstring=#\ %s
 
 if has('nvim')
     " nmap <leader>dd lua require("dapui").toggle()
+    
+    " coc-markdown-preview-enhanced
+    " ------------
+    autocmd FileType markdown  nnoremap <buffer> <leader>p <Plug>MarkdownPreview
+
+    " NERDTree
+    " ------------
+    nnoremap <silent> - :NvimTreeFindFileToggle<CR>
 else
     " vimspector
     " ------------
@@ -564,12 +618,13 @@ else
     nmap <leader>di <Plug>VimspectorStepInto
     nmap <leader>dd <Plug>VimspectorBalloonEval
     xmap <leader>dd <Plug>VimspectorBalloonEval
+
+    " NERDTree
+    " ------------
+    " nnoremap <silent> - :NERDTreeFind<CR>
+    nnoremap <silent> <expr> - g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 endif
 
-" NERDTree
-" ------------
-" nnoremap <silent> - :NERDTreeFind<CR>
-nnoremap <silent> <expr> - g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 
 
 " fzf-wordnet.vim
