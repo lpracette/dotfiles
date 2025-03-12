@@ -1,35 +1,43 @@
 {
-  "coc.preferences.formatOnSave": true,
-  "coc.preferences.formatOnType": true,
-
-  "python.formatting.provider": "black",
-  "python.linting.enabled": true,
-  "python.linting.flake8Enabled": true,
-  "pyright.organizeimports.provider": "isort",
-  "python.linting.flake8Args": [
-    "--max-line-length=120",
-    "--ignore=E203,E501,D100,D101,D102,D103,D104,D105,D106,D107",
-    ],
-  "python.linting.banditEnabled": true,
-  "python.linting.mypyEnabled": true,
 
   "languageserver": {
     "golangci-lint-languageserver": {
       "command": "golangci-lint-langserver",
-      "filetypes": [
-        "go"
-      ],
+      "filetypes": ["go"],
       "initializationOptions": {
-        "command": [
-          "golangci-lint",
-          "run",
-          "--out-format",
-          "json",
-          "--issues-exit-code=1"
-        ]
+        "command": ["golangci-lint", "run", "-v", "--out-format", "json", "--issues-exit-code=1"]
       }
     }
   },
+  "coc.preferences.formatOnSave": true,
+  "coc.preferences.formatOnType": true,
+
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": [
+      "--config=pyproject.toml"
+    ],
+  "pyright.organizeimports.provider": "isort",
+  "pyright.enable": true,
+
+  "python.sortImports.args": [
+      "--config=pyproject.toml"
+  ],
+
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+      "--config=pyproject.toml"
+  ],
+  "python.linting.banditEnabled": true,
+  "python.linting.banditArgs": [
+    "--configfile",
+    "pyproject.toml"
+  ],
+  "python.linting.mypyEnabled": true,
+  "python.linting.mypyArgs": [
+      "--config=pyproject.toml"
+  ],
+
   "eslint.debug": true,
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.preferences.quoteStyle": "single",
