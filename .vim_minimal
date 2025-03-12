@@ -1,0 +1,105 @@
+" vim: ft=vim
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath=&runtimepath
+
+" ====================================
+" First time load, install plugins
+" ====================================
+if empty(glob("~/.vim/autoload/plug.vim"))
+    if executable('git')
+        execute('!mkdir -p ~/.vim/{autoload,undo,swap} && curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim && vim +PlugInstall +qall')
+    else
+        echom "Please install git to allow plugin configuration through vim-plug"
+    endif
+endif
+" Plugin Management with vim-plug
+call plug#begin()  " Begin section for defining plugins
+
+Plug 'tpope/vim-fugitive'  " A Git wrapper
+
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go'}  " Go development plugin for Vim
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }  " A command-line fuzzy finder
+Plug 'junegunn/fzf.vim'  " Fuzzy finder for Vim
+
+Plug 'github/copilot.vim'
+
+call plug#end()  " End section for defining plugins
+
+
+colo slate         " Load color scheme 'slate'.
+syntax on          " Turn syntax highlighting on.
+
+filetype on        " Enable type file detection. Vim will be able to try to detect the type of file is use.
+filetype plugin on " Enable plugins and load plugin for the detected file type.
+filetype indent on " Load an indent file for the detected file type.
+
+"---- Settings ----
+set nocp           " 'compatible' is not set
+set nu             " Precede each line with its line number.
+set et             " Use the appropriate number of spaces to insert a <Tab>.
+set ts=4           " Number of spaces that a <Tab> in the file counts for.
+set nowrap         " Lines longer than the width of the window will not wrap.
+set hls            " When there is a previous search pattern, highlight all its matches.
+set is             " While typing a search command, show where the pattern, as it was typed so far, matches.
+set visualbell     " Disable the vim bell
+set encoding=UTF-8 " Setting the character encoding of Vim to UTF-8
+set path+=**       " Search down to subfolders
+set hidden         " Buffer can be hidden without being written
+set splitright     " Open splits more naturally
+
+" When you type the first tab hit will complete as much as possible, the
+" second tab hit will provide a list, the third and subsequent tabs will cycle
+" through completion options so you can complete the file without further keys
+set wildmode=longest,list,full
+set wildmenu
+
+" Auto Completion - Enable Omni complete features
+set omnifunc=syntaxcomplete#Complete
+
+set foldmethod=indent " set folds based on indents
+set foldlevelstart=99 " set folds as expanded
+
+set backspace=indent,eol,start " backspace working as expected
+
+" Use an undo file and set a directory to store the undo history
+set undofile
+set undodir=~/.vim/undo/
+
+" put swap files in common dir
+set backupdir=~/.vim/swap//,.,/tmp
+set directory=~/.vim/swap//,.,/tmp
+
+let g:netrw_banner=0   " hide netrw (Ntree) banner
+let g:netrw_showhide=1 " show hidden files
+
+"---- Key Maps ----
+inoremap jk <esc>	" Remap jk to <esc> in insert mode.
+cmap bb b#          " switch back to last buffer
+
+let mapleader = "\<Space>"
+
+" Maps <C-h/j/k/l> to switch vim splits in the given direction
+nnoremap <silent> <c-h> :<C-U>execute 'wincmd h'<cr>
+nnoremap <silent> <c-j> :<C-U>execute 'wincmd j'<cr>
+nnoremap <silent> <c-k> :<C-U>execute 'wincmd k'<cr>
+nnoremap <silent> <c-l> :<C-U>execute 'wincmd l'<cr>
+
+" FZF
+nnoremap <silent> <leader>e  :Files<CR>
+nnoremap <silent> <leader>b  :Buffers<CR>
+
+" Toggle Ntree (netrw) 
+nnoremap <silent> = :20Lexplore<cr> 
+
+"---- Status Line ----
+set laststatus=2
+set statusline=%#LineNr#\ %f%m\ 
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\[%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\ 
