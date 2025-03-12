@@ -1,165 +1,159 @@
-scriptencoding utf-8
-set encoding=utf-8
-set nocompatible                   " be iMproved
-set runtimepath=~/.vim,$VIMRUNTIME " or else windows uses $HOME/vimfiles
 
-" ====================================
-" First time load, install plugins
-" ====================================
-if empty(glob("~/.vim/autoload/plug.vim"))
-    if executable('git')
-        execute('!mkdir -p ~/.vim/{autoload,undo,swap} && curl -sfLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim && vim +PlugInstall +qall')
-    else
-        echom "Please install git to allow plugin configuration through vim-plug"
-    endif
-endif
-
-" ====================================
 " Plugin Management with vim-plug
-" ====================================
-call plug#begin()
+call plug#begin()  " Begin section for defining plugins
 
 
+Plug 'dstein64/vim-startuptime'  " A Vim plugin to profile Vim's startup tim
+" Appearance plugins
+Plug 'kshenoy/vim-signature'  " Plugin to toggle, display and navigate marks
+Plug 'pedrohdz/vim-yaml-folds'  " YAML, RAML, EYAML & SaltStack SLS folding for Vim
+Plug 'arecarn/vim-clean-fold'  " Provides cleaning function for folds
 
-" Appearance: colors, status bar, icons
-" Plug 'chriskempson/base16-vim'          "
-Plug 'kshenoy/vim-signature'            " Plugin to toggle, display and navigate marks
-Plug 'pedrohdz/vim-yaml-folds'          " YAML, RAML, EYAML & SaltStack SLS folding for Vim
-Plug 'arecarn/vim-clean-fold'           " Provides cleaning function for folds
+" Git plugins
+Plug 'tpope/vim-fugitive'  " A Git wrapper
+Plug 'shumphrey/fugitive-gitlab.vim'  " Fugitive GBrowse for GitLab
+Plug 'tpope/vim-rhubarb'  " Fugitive GBrowse for GitHub
+Plug 'airblade/vim-gitgutter'  " A Vim plugin which shows a git diff in the sign column
 
-" Plug 'junegunn/vim-peekaboo'            " 👀 \" / @ / CTRL-R 
-" Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " 🍨 Soothing pastel theme for (Neo)vim
+" LSP plugin
+Plug 'neoclide/coc.nvim', {'branch': 'release'}  " Make your Vim/Neovim as smart as VSCode
 
+" Golang plugin
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go'}  " Go development plugin for Vim
 
-"
-" Coding: git
-Plug 'tpope/vim-fugitive'               " a Git wrapper so awesome, it should be illegal
-Plug 'shumphrey/fugitive-gitlab.vim'    " fugitive GBrowse for GitLab
-Plug 'tpope/vim-rhubarb'                " fugitive GBrowse for GitHub
-Plug 'airblade/vim-gitgutter'           " A Vim plugin which shows a git diff in the sign column. 
-
-"
-" Coding: LSP
-Plug 'neoclide/coc.nvim', {'branch': 'release'} " Make your Vim/Neovim as smart as VSCode. Requires node `curl -sL install-node.now.sh/lts | bash`
-
-
-" Coding: golang
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries', 'for': 'go'}
-
-
-if has('nvim')
-    Plug 'Mofiqul/vscode.nvim'
-    Plug 'nvim-lualine/lualine.nvim'
-    Plug 'akinsho/bufferline.nvim'
-
-    Plug 'nvim-treesitter/nvim-treesitter', " Nvim Treesitter configurations and abstraction layer
-        \ {'do': ':TSUpdate'} 
-
-    Plug 'nvim-tree/nvim-web-devicons'      " A lua fork of vim-devicons. This plugin provides the same icons as well as colors for each icon.
-
-    Plug 'iamcco/markdown-preview.nvim', { 'do': ':call mkdp#util#install()', 'for': 'markdown' }
-
-    Plug 'nvim-tree/nvim-tree.lua'
-    Plug 'lukas-reineke/indent-blankline.nvim'
-
-    Plug 'mfussenegger/nvim-dap'            " Debug Adapter Protocol client implementation for Neovim
-    Plug 'rcarriga/nvim-dap-ui'             " A UI for nvim-dap
-    Plug 'leoluz/nvim-dap-go'               " An extension for nvim-dap providing configurations for launching go debugger (delve) and debugging individual tests Resources
-
+" Neovim specific plugins
+if has('nvim')  " Check if Neovim is being used
+    Plug 'Mofiqul/vscode.nvim'  " VSCode theme for Neovim
+    Plug 'nvim-lualine/lualine.nvim'  " A blazing fast and easy to configure neovim statusline plugin
+    Plug 'akinsho/bufferline.nvim'  " A snazzy bufferline for Neovim
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " Nvim Treesitter configurations and abstraction layer
+    Plug 'nvim-tree/nvim-web-devicons'  " A lua fork of vim-devicons
+    Plug 'iamcco/markdown-preview.nvim', { 'do': ':call mkdp#util#install()', 'for': 'markdown' }  " Markdown preview plugin for (Neo)vim
+    Plug 'nvim-tree/nvim-tree.lua'  " A File Explorer For Neovim
+    Plug 'lukas-reineke/indent-blankline.nvim'  " This plugin adds indentation guides to all lines
+    " Plug 'mfussenegger/nvim-dap'  " Debug Adapter Protocol client implementation for Neovim
+    " Plug 'rcarriga/nvim-dap-ui'  " A UI for nvim-dap
+    " Plug 'leoluz/nvim-dap-go'  " An extension for nvim-dap providing configurations for launching go debugger (delve) and debugging individual tests
+    " Plug 'github/copilot.vim'  " GitHub Copilot for Vim
+    " Plug 'jonahgoldwastaken/copilot-status.nvim', { 'branch': 'main' } " Simple Copilot status indicator for Neovim
+    Plug 'zbirenbaum/copilot.lua'  " A Neovim plugin for GitHub Copilot
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'main'}
+    Plug 'AndreM222/copilot-lualine'
 else
-    Plug 'sainnhe/edge'                     " Clean & Elegant Color Scheme inspired by Atom One and Material
-
-    Plug 'vim-airline/vim-airline'          " lean & mean status/tabline for vim that's light as air
-    Plug 'vim-airline/vim-airline-themes'   " A collection of themes for vim-airline
-    Plug 'sheerun/vim-polyglot'             " A collection of language packs for Vim
-    Plug 'ryanoasis/vim-devicons'           " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
-    Plug 'puremourning/vimspector'          " A multi language graphical debugger for Vim
-
-    " Navigate and manipulate files in a tree view.
-    Plug 'scrooloose/nerdtree',            " File explorer
-    Plug 'johnstef99/vim-nerdtree-syntax-highlight'
-    Plug 'Xuyuanp/nerdtree-git-plugin'
+    Plug 'tomasiser/vim-code-dark'  " Dark color scheme for Vim
+    Plug 'vim-airline/vim-airline'  " Lean & mean status/tabline for vim that's light as air
+    Plug 'vim-airline/vim-airline-themes'  " A collection of themes for vim-airline
+    Plug 'sheerun/vim-polyglot'  " A collection of language packs for Vim
+    Plug 'ryanoasis/vim-devicons'  " Adds file type glyphs/icons to popular Vim plugins: NERDTree, vim-airline
+    Plug 'puremourning/vimspector'  " A multi language graphical debugger for Vim
+    Plug 'scrooloose/nerdtree'  " File explorer
+    Plug 'johnstef99/vim-nerdtree-syntax-highlight'  " Syntax highlighting for NERDTree
+    Plug 'Xuyuanp/nerdtree-git-plugin'  " A plugin of NERDTree showing git status
 endif
 
+" Fuzzy search plugins
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }  " A command-line fuzzy finder
+Plug 'junegunn/fzf.vim'  " Fuzzy finder for Vim
+Plug 'Avi-D-coder/fzf-wordnet.vim'  " Dictionary completion powered by FZF and Wordnet for vim and your terminal
+Plug 'nvim-lua/plenary.nvim'  " All the lua functions I don't want to write twice
+Plug 'nvim-telescope/telescope.nvim'  " A highly extendable fuzzy finder over lists
+Plug 'fannheyward/telescope-coc.nvim'  " coc.nvim integration for telescope.nvim
 
-" Fuzy search: buffers, files, tags
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " A command-line fuzzy finder
-Plug 'junegunn/fzf.vim'
-Plug 'Avi-D-coder/fzf-wordnet.vim' " Dictionary completion powered by FZF and Wordnet for vim and your terminal.
-Plug 'antoinemadec/coc-fzf'
+" Keybinding plugins
+Plug 'tpope/vim-commentary'  " Comment stuff out, Use gcc to comment out a line
+Plug 'christoomey/vim-tmux-navigator'  " Seamless navigation between tmux panes and vim splits
+Plug 'RyanMillerC/better-vim-tmux-resizer'  " Better resizing of panes for Tmux and Vim
+Plug 'vim-utils/vim-husk'  " Mappings that boost vim command line mode
+Plug 'tpope/vim-surround'  " Quoting/parenthesizing made simple
+Plug 'tpope/vim-repeat'  " Enable repeating supported plugin maps with '.'
+Plug 'tpope/vim-abolish'  " Easily search for, substitute, and abbreviate multiple variants of a word
+Plug 'junegunn/vim-easy-align'  " A Vim alignment plugin
+" Plug 'Kachyz/vim-gitmoji'
 
-" Keybinding
-Plug 'tpope/vim-commentary'             " comment stuff out, Use gcc to comment out a line
-Plug 'christoomey/vim-tmux-navigator'   " Seamless navigation between tmux panes and vim splits
-Plug 'RyanMillerC/better-vim-tmux-resizer' 
-Plug 'vim-utils/vim-husk'               " Mappings that boost vim command line mode.
-Plug 'tpope/vim-surround'               " quoting/parenthesizing made simple
-Plug 'tpope/vim-repeat'                 " enable repeating supported plugin maps with '.'
-Plug 'tpope/vim-abolish'
-
-call plug#end()
+" Plug 'marko-cerovac/material.nvim'
+" Plug 'sainnhe/edge'
+" Plug 'mhartington/oceanic-next'
+" Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " 🍨 Soothing pastel theme for (Neo)vim
+" Plug 'tomasiser/vim-code-dark'  " Dark color scheme for Vim
 
 
-" ====================================
-" vim Configuration
-" ====================================
-" Basic config: line numbers, no line wrap, highlight incremental search,
-" remap escape key. Quick config if no .vimrc:
-" colo desert |set nu|set nowrap|set hls|set is|inoremap jk <esc>
-" With 4 space tabs:
-" colo desert |set nu|set et|set ts=4|set sw=4|set ci|set ai|set nowrap|set hls|set is|inoremap jk <esc>
-set nu
-set nowrap
-set hlsearch
-set incsearch
 
-" Identation
-set expandtab
-set tabstop=4
-set shiftwidth=4
-set cindent
-set autoindent
-filetype indent on
+call plug#end()  " End section for defining plugins
 
-set backspace=indent,eol,start
-
-autocmd FileType make set noexpandtab
-" autocmd BufRead,BufNewFile   *.html,*.php,*.yaml,*.json setl sw=2 sts=2 et foldmethod=indent
-" autocmd BufRead,BufNewFile   *.py setl foldmethod=indent
-" autocmd BufRead,BufNewFile   *.c,*.cpp,*.h setl sw=4 sts=4 et
+" Basic vim configuration
+set nu  " Display line numbers
+set nowrap  " Do not wrap lines
+set hlsearch  " Highlight search results
+set incsearch  " Incremental search
+set expandtab  " Use spaces instead of tabs
+set tabstop=4  " Number of spaces a tab counts for
+set shiftwidth=4  " Number of spaces used for each step of (auto)indent
+set cindent  " C-style indentation
+set autoindent  " Copy indent from current line when starting a new line
+filetype indent on  " Enable filetype-based indentation
+set backspace=indent,eol,start  " Allow backspacing over everything in insert mode
+autocmd FileType make set noexpandtab  " Do not expand tabs in Makefiles
 
 " Spellcheck commit messages and markdown
 augroup Spellcheck
-    autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en_us
-    autocmd FileType gitcommit setlocal spell spelllang=en_us
+    autocmd!
+    autocmd BufRead,BufNewFile *.md setlocal spell spelllang=en_us  " Enable spell check for markdown files
+    autocmd FileType gitcommit setlocal spell spelllang=en_us  " Enable spell check for git commit messages
+    autocmd FileType yaml setlocal spell spelllang=en_us  " Enable spell check for git commit messages
 augroup END
 
-" add #! to new scripts: https://vim.fandom.com/wiki/Shebang_line_automatically_generated
+" Add #! to new scripts
 augroup Shebang
-  autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\<nl>\"|$
-  autocmd BufNewFile *.sh 0put =\"#!/usr/bin/env bash\<nl>\<nl>\"|$
+    autocmd!
+    autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl>\<nl>\"|$  " Add python shebang to new .py files
+    autocmd BufNewFile *.sh 0put =\"#!/usr/bin/env bash\<nl>\<nl>\"|$  " Add bash shebang to new .sh files
 augroup END
 
-" color theme
-syntax enable
-let s:mode = systemlist("osascript -e 'tell app \"System Events\" to tell appearance preferences to return dark mode'")[0]
-if s:mode ==# "true"
-    set background=dark
-else
-    set background=light
-endif
+" Color theme
+syntax enable  " Enable syntax highlighting
+function! SetBackgroundBasedOnSystemTheme()
+    if has("mac")
+        try
+            let s:mode = systemlist("osascript -e 'tell app \"System Events\" to tell appearance preferences to return dark mode'")[0]
+            if s:mode ==# "true"
+                set background=dark  " Set background to dark if system theme is dark
+            else
+                set background=light  " Set background to light if system theme is light
+            endif
+        catch
+            set background=dark  " Set background to dark if osascript is not available or fails
+        endtry
+    else
+        set background=dark  " Set background to dark if not on macOS
+    endif
+endfunction
+
+" Run the function after Vim has started
+autocmd VimEnter * call SetBackgroundBasedOnSystemTheme()
 if has('termguicolors')
-  let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
+  let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"  " Enable true color support
+  let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"  " Enable true color support
+  set termguicolors  " Enable true color support
 endif
 
 if has('nvim')
 lua <<EOF
 require('vscode').setup({
+     -- Enable transparent background
+    transparent = true,
+
+    -- Enable italic comment
     italic_comments = true,
+
+    -- Underline `@markup.link.*` variants
+    underline_links = true,
+
+    -- Disable nvim-tree background color
+    disable_nvimtree_bg = true,
 })
 require('vscode').load()
+
 
 require('bufferline').setup({
     options = {
@@ -170,11 +164,37 @@ require('bufferline').setup({
             { filetype = "NvimTree", text = "File Explorer", }, },
     },
 })
+
+
+
+require('copilot').setup({
+    panel = {
+        keymap = {
+            accept = "<C-E>",
+        },
+    },
+    suggestion = {
+        auto_trigger = true,
+        keymap = {
+            accept = "<C-E>",
+        },
+    },
+    filetypes = {
+        markdown = true,
+        yaml = true
+    },
+})
+vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#808080" })
+
+
 require('lualine').setup({
     options = {
         theme = 'vscode',
         disabled_filetypes = {'nerdtree','NvimTree'},
     },
+    sections = {
+        lualine_x = { 'copilot' ,'encoding', 'fileformat', 'filetype' }, -- I added copilot here
+    }
 })
 
 -- disable netrw at the very start of your init.lua
@@ -184,23 +204,24 @@ require('lualine').setup({
 -- empty setup using defaults
 require("nvim-tree").setup()
 
-require("indent_blankline").setup()
+require("ibl").setup()
+ 
+require("CopilotChat").setup {
+  debug = false, -- Enable debugging
+  -- See Configuration section for rest
+}
 EOF
 
+
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') && &filetype !=# 'man' | NvimTreeOpen | endif
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   |
-    \ execute 'NvimTreeOpen' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   | execute 'NvimTreeOpen' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
 
 else
-let g:edge_style = 'aura'
-let g:edge_better_performance = 1
-let g:edge_enable_italic = 1
-let g:edge_dim_inactive_windows = 1
-let g:edge_current_word = 'bold'
-let g:edge_disable_terminal_colors = 1
-let g:airline_theme = 'edge'
-colorscheme edge
+let g:codedark_italics=1
+let g:codedark_transparent=1
+let g:airline_theme = 'codedark'
+colorscheme codedark
 endif
 
 "if exists('$BASE16_THEME') && (!exists('g:colors_name') || g:colors_name != 'base16-$BASE16_THEME')
@@ -259,7 +280,7 @@ set backupdir=~/.vim/swap//,.,/tmp
 set directory=~/.vim/swap//,.,/tmp
 
 " automatically create folds, open all folds
-set foldmethod=syntax
+set foldmethod=indent
 set foldlevelstart=99
 let g:markdown_folding = 1
 
@@ -282,7 +303,7 @@ endif
 " set shellcmdflag="-ic"
 
 " set cursorline " Highlight the text line of the cursor
-set relativenumber " Show the line number relative to the line with the cursor in front of each line.
+"set relativenumber " Show the line number relative to the line with the cursor in front of each line.
 
 " Let cursor move past the last char in <C-v> mode
 set virtualedit=block
@@ -296,9 +317,10 @@ set mouse=a
 " Gvim options
 if has("gui_running")
     try
-        set guifont=DejaVuSansMonoNerdFontCompleteM-Bold:h13
+        set guifont=RobotoMonoNFM-Rg:h13
+
     catch /^Vim\%((\a\+)\)\=:E596/
-        echom "The DejaVuSansMono Nerd Font is not installed"
+        echom "The RobotoMonoNFM-Rg Nerd Font is not installed"
     endtry
 endif
 
@@ -337,8 +359,7 @@ let g:NERDTreeMapJumpNextSibling=""
 
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   |
-    \ execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
+autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in')   | execute 'NERDTree' argv()[0] | wincmd p | enew | execute 'cd '.argv()[0] | endif
 
 " Start NERDTree when Vim is started without file arguments.
 autocmd StdinReadPre * let s:std_in=1
@@ -376,6 +397,10 @@ set signcolumn=yes
 let vim_markdown_preview_github=1
 let vim_markdown_preview_browser='Google Chrome'
 
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'mermaid', 'json', 'yaml']
+let g:markdown_syntax_conceal = 0
+
+
 " vim-surround
 "---------
 autocmd FileType markdown let b:surround_{char2nr('i')} = "*\r*"
@@ -384,6 +409,8 @@ autocmd FileType markdown let b:surround_{char2nr('b')} = "**\r**"
 " nvim-treesitter
 "---------
 if has('nvim')
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
@@ -398,15 +425,15 @@ require'nvim-treesitter.configs'.setup {
 
   highlight = {
     enable = true,
-    disable = {"markdown"},
+    -- disable = {"markdown"},
   },
   additional_vim_regex_highlighting = false,
 }
 
 require'nvim-web-devicons'.setup({})
 
-require('dapui').setup()
-require('dap-go').setup()
+-- require('dapui').setup()
+-- require('dap-go').setup()
 EOF
 endif
 
@@ -456,28 +483,59 @@ nnoremap <silent> <leader>c :execute 'GBrowse '.expand('<cWORD>')<CR>
 xnoremap <silent> <leader>s y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>
 nnoremap <silent> <leader>s :execute 'GBrowse https://www.google.com/search?q='.expand('<cWORD>')<CR>
 
+" copilot
+" ------------
+
+" imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
+" let g:copilot_no_tab_map = v:true
+" let g:copilot_workspace_folders = ['~/go', './internal','~/copilot_context']
+
+
 " fzf.vim
 " ------------
 " see https://github.com/junegunn/fzf.vim#commands
+" nnoremap <silent> <leader>g :vimgrep /<C-R><C-W>/ **/*.* \| cw<CR>
+" " nnoremap          <leader>g  :execute '<C-u>Rg '.expand('<cWORD>')<CR>
+" xnoremap          <leader>g  y<Esc>:Rg <C-R>"
+" nnoremap <silent> <leader>e  :Files<CR>
+" nnoremap <silent> <leader>b  :Buffers<CR>
+" nnoremap <silent> <leader>h  :History<CR>
+
 nnoremap <silent> <leader>g :vimgrep /<C-R><C-W>/ **/*.* \| cw<CR>
-" nnoremap          <leader>g  :execute '<C-u>Rg '.expand('<cWORD>')<CR>
 xnoremap          <leader>g  y<Esc>:Rg <C-R>"
 nnoremap <silent> <leader>e  :Files<CR>
 nnoremap <silent> <leader>b  :Buffers<CR>
-nnoremap <silent> <leader>h  :History<CR>
-" Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+ 
+
 function! FzfSpellSink(word)
   exe 'normal! "_ciw'.a:word
 endfunction
-function! FzfSpell()
-  let suggestions = spellsuggest(expand("<cword>"))
+function! Gitmoji()
+    let suggestions = emoji#list()
   if executable('wn')
       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%', 'options': ['--preview', 'wn {} -over']})
   else
       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%'})
   endif
 endfunction
-nnoremap <silent> <leader>z :call FzfSpell()<CR>
+nnoremap <silent> <leader>x :call Gitmoji()<CR>
+
+ 
+" " Spell suggestions: https://coreyja.com/vim-spelling-suggestions-fzf/  
+" function! FzfSpellSink(word)
+"   exe 'normal! "_ciw'.a:word
+" endfunction
+" function! FzfSpell()
+"   let suggestions = spellsuggest(expand("<cword>"))
+"   if executable('wn') h
+"       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%', 'options': ['--preview', 'wn {} -over']})
+"   else
+"       return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': '30%'})
+"   endif
+" endfunction
+" nnoremap <silent> <leader>z :call FzfSpell()<CR>
+nnoremap <silent> <leader>z :Telescope spell_suggest<CR>
+
 
 " go-vim
 " ------------
@@ -490,16 +548,12 @@ let g:go_def_mapping_enabled = 0
 " no select by `"suggest.noselect": true` in your configuration file.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
+inoremap <silent><expr> <TAB> coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "\<Tab>" : coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Make <CR> to accept selected completion item or notify coc.nvim to format
 " <C-g>u breaks current undo, please make your own choice.
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm(): "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -567,6 +621,9 @@ nmap <leader>qf  <Plug>(coc-fix-current)
 " Run the Code Lens action on the current line.
 nmap <leader>cl  <Plug>(coc-codelens-action)
 
+nmap <leader>% :let @*=expand('%:p')<CR>
+
+
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
 xmap if <Plug>(coc-funcobj-i)
@@ -589,8 +646,8 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
 endif
 
 " coc-fzf
-nmap <leader>o :CocFzfList outline<CR>
-nmap <leader>l :CocFzfList<CR>
+" nmap <leader>o :CocFzfList outline<CR>
+" nmap <leader>l :CocFzfList<CR>
 
 " coc-swagger
 " ------------
@@ -603,10 +660,12 @@ autocmd FileType rego setlocal commentstring=#\ %s
 
 if has('nvim')
     " nmap <leader>dd lua require("dapui").toggle()
-    
+
     " coc-markdown-preview-enhanced
     " ------------
     autocmd FileType markdown  nnoremap <buffer> <leader>p <Plug>MarkdownPreview
+    let g:mkdp_theme = 'light'
+
 
     " NERDTree
     " ------------
@@ -626,9 +685,43 @@ else
 endif
 
 
+" CopilotChat
+" ------------
+" nnoremap <leader>cc  :CopilotChat 
+" nnoremap <leader>ccb :CopilotChatBuffer
+" nnoremap <leader>cce <cmd>CopilotChatExplain<cr>
+" nnoremap <leader>cct <cmd>CopilotChatTests<cr>
+" xnoremap <leader>ccv :CopilotChatVisual<cr>
+" xnoremap <leader>ccx :CopilotChatInPlace<cr>
+
+function! QuickChat()
+  let input = input("Quick Chat: ")
+  if input != ""
+    call luaeval('require("CopilotChat").ask(_A.input, { selection = require("CopilotChat.select").buffer })', {'input': input})
+  endif
+endfunction
+
+nnoremap <silent> <leader>cc :CopilotChatToggle<CR>
+nnoremap <leader>ccd :CopilotChatDocs<CR>
+nnoremap <leader>cct :CopilotChatTests<CR>
+nnoremap <leader>ccr :CopilotChatReview<CR>
+nnoremap <leader>ccb :call QuickChat()<CR>
+
+
 
 " fzf-wordnet.vim
 " ------------
 imap <C-S> <Plug>(fzf-complete-wordnet)
 
+
+" junegunn/vim-easy-align
+" -----------
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 source ~/.vimrc.local
+
+
