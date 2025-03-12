@@ -305,6 +305,16 @@ return {
       dap.listeners.before.event_exited['dapui_config'] = function()
         dapui.close({})
       end
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'dap-float',
+        callback = function()
+          vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>close!<CR>', { noremap = true, silent = true })
+        end,
+      })
+
+      vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'DiagnosticInfo' })
+      vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'DiagnosticError' })
+      vim.fn.sign_define('DapBreakpointCondition', { text = '', texthl = 'DiagnosticInfo' })
     end,
     keys = {
       {
@@ -320,6 +330,20 @@ return {
           require('dapui').eval()
         end,
         desc = '[d]ap [e]val',
+      },
+      {
+        '<leader>dWa',
+        function()
+          require('dapui').elements.watches.add()
+        end,
+        desc = '[d]ap ui [W]atch [a]dd',
+      },
+      {
+        '<leader>dWr',
+        function()
+          require('dapui').elements.watches.remove()
+        end,
+        desc = '[d]ap ui [W]atch [r]emove',
       },
     },
   },

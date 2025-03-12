@@ -4,7 +4,7 @@ return {
     keys = {
       { '<leader>s', 'y<Esc>:GBrowse https://www.google.com/search?q=<C-R>"<CR>', mode = { 'x' } },
     },
-    cmd = { 'G', 'Git', 'Gbrowse' },
+    cmd = { 'G', 'Git', 'GBrowse' },
   },
-  { 'tpope/vim-rhubarb', lazy = true },
+  { 'tpope/vim-rhubarb', cmd = { 'GGrowse' } },
 }
