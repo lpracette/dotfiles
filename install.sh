@@ -50,5 +50,5 @@ function link_to_home()
 
 
 
-DOTFILES_TO_INSTALL=".gitconfig .tmux.conf .zshrc .bashrc .shell_alias .shell_env .shell_functions .config/nvim/init.lua"
+DOTFILES_TO_INSTALL=".gitconfig .tmux.conf .zshrc .bashrc .shell_alias .shell_env .shell_functions .config/nvim"
 link_to_home "$DOTFILES_TO_INSTALL"
