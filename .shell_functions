@@ -271,13 +271,13 @@ function term-powerline-font-test() {
   echo; echo
 }
 
-function man() { 
-    if [ $# -eq 0 ]; then
-        /usr/bin/man
-    elif whatis $* ; then
-        vim -c 'filetype plugin on' -c 'set ft=man nomod nolist' -c "Man $*";
-    fi
-}
+# function man() { 
+#     if [ $# -eq 0 ]; then
+#         /usr/bin/man
+#     elif whatis $* ; then
+#         vim -c 'filetype plugin on' -c 'set ft=man nomod nolist' -c "Man $*";
+#     fi
+# }
 
 function lint_jenkinsfile() {
     if [ -z "$JENKINS_URL" ]; then
@@ -322,6 +322,9 @@ function toggle_dark_mode() {
 }
 
 function jira() {
+    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' < ~/.jira)
+    JIRA_DOMAIN=$(jq -r .servers.production.url < ~/.jira)
+
     jql='assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate'
     jql=$(echo "$jql" | jq -sRr @uri)
     tmpfile=$(mktemp)
@@ -335,7 +338,7 @@ function jira() {
         \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName + 
         \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name + 
         \"\n${COLOR}Description$C_END:\n\" + .fields.description '"
-    curl -su $JIRA_USER:$JIRA_PASS "$JIRA_URL/rest/api/2/search?jql=$jql" -o $tmpfile
+    curl -su $JIRA_BASIC_AUTH "$JIRA_DOMAIN/rest/api/2/search?jql=$jql" -o $tmpfile
     cat $tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
     rm $tmpfile
 }
@@ -359,3 +362,6 @@ function vimdiffDir() {
     done
 }
 
+function decodeJwt() {
+    jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$1"
+}
