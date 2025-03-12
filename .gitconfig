@@ -1,5 +1,5 @@
 [core]
-    editor = vim
+    editor = nvim
     pager = less -F -X -R [color]
     ui = auto
 	pager = less -F -X
@@ -35,17 +35,17 @@
     graph = log --decorate --oneline --graph
     pushmr = push -o merge_request.create
 	meld = !git difftool -t meld --dir-diff
-[difftool "vimdiff"]
-    cmd = "vimdiff -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
-[mergetool "vimdiff3"]
-      cmd = vim -u ~/.vimrc -f -d -c \"wincmd J\" \"$MERGED\" -R \"$LOCAL\" \"$BASE\" \"$REMOTE\"
+[difftool "nvimdiff"]
+    cmd = "nvim -d -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
+[mergetool "nvimdiff3"]
+      cmd = "nvim -d \"$LOCAL\" \"$REMOTE\" \"$MERGED\" -c 'wincmd w' -c 'wincmd J'"
 [push]
 	default = simple
 	autoSetupRemote = true
 [mergetool]
 	prompt = false
 [merge]
-	tool = vimdiff
+	tool = nvimdiff
 [help]
 	autocorrect = 20
 [include]
