@@ -2,17 +2,17 @@
 font:
   size: 15.0
   normal:
-    family: "DejaVuSansMono Nerd Font Mono"
-    style: Book
+    family: "RobotoMono Nerd Font"
+    style: Regular
   bold:
-    family: "DejaVuSansMono Nerd Font Mono"
+    family: "RobotoMono Nerd Font"
     style: Bold
   italic:
-    family: "DejaVuSansMono Nerd Font Mono"
-    style: Oblique
+    family: "RobotoMono Nerd Font"
+    style: Italic
   bold_italic:
-    family: "DejaVuSansMono Nerd Font Mono"
-    style: Bold Oblique
+    family: "RobotoMono Nerd Font"
+    style: Bold Italic
 key_bindings:
   - { key: F, mods: Command|Control, action: ToggleFullscreen }
   - { key: F, mods: Alt, chars: "\x1bf" }
@@ -205,7 +205,7 @@ key_bindings:
 #
 # Thin strokes are suitable for retina displays, but for non-retina screens
 # it is recommended to set `use_thin_strokes` to `false`.
-#use_thin_strokes: true
+use_thin_strokes: true
 
 # If `true`, bold text is drawn using the bright color variants.
 #draw_bold_text_with_bright_colors: false
