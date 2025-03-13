@@ -77,6 +77,7 @@ bindkey '^x^e' edit-command-line
 [ -e ~/.shell_alias ] && source ~/.shell_alias 
 [ -e ~/.shell_env ] && source ~/.shell_env
 [ -e ~/.shell_functions ] && source ~/.shell_functions
+. /usr/local/bin/hs-opskit-rc-zsh
 
 
 # uncomment to enable profiling

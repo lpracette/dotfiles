@@ -1,9 +1,0 @@
--R
---totals=yes
---exclude=.git
---exclude=*/obj/*
---python-kinds=-i
---c++-kinds=+p
---fields=+iaS
---extras=+q
-
