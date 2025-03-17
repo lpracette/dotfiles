@@ -289,7 +289,24 @@ return {
       'nvim-neotest/nvim-nio',
       'mfussenegger/nvim-dap',
     },
-    opts = {},
+    opts = {
+      layouts = {
+        -- other elements: 'breakpoints', 'stacks', 'watches'
+        {
+          elements = { 'scopes' },
+          size = 10,
+          position = 'bottom', -- Can be "bottom" or "top"
+        },
+        {
+          elements = {
+            { id = 'console', size = 0.5 },
+            { id = 'repl', size = 0.5 },
+          },
+          size = 40,
+          position = 'left', -- Can be "left" or "right"
+        },
+      },
+    },
     config = function(_, opts)
       -- setup dap config by VsCode launch.json file
       -- require("dap.ext.vscode").load_launchjs()
