@@ -10,23 +10,29 @@ function bplug_init() {
     [[ ":$PATH:" == *":$BPLUG_BIN_DIR:"* ]] || export PATH=$BPLUG_BIN_DIR:$PATH
 }
 function bplug() {
-    [ ! -d $BPLUG_REPO_DIR/${1} ] && git clone http://github.com/${1} $BPLUG_REPO_DIR/${1}
+    [ ! -d $BPLUG_REPO_DIR/${1} ] && echo "installing ${1}..." && git clone http://github.com/${1} $BPLUG_REPO_DIR/${1}
     [ ! -z "${2}" ] && source $BPLUG_REPO_DIR/${1}/${2}
 }
 function bplug_bin() {
-    [ ! -e $BPLUG_BIN_DIR/${3} ] && wget -qO- $(curl -s "https://api.github.com/repos/${1}/releases/latest" | awk  "/browser_download_url.*${2}/{print \$2}"|tr -d \") | tar -xz -C $BPLUG_BIN_DIR
+    arch=$(uname -o | tr '[:upper:]' '[:lower:]')
+    case "$(uname -m)" in
+        (*x86_64*) arch="${arch}_amd64" ;;
+        (*arm64*) arch="${arch}_arm64" ;;
+        (*) echo 'Error: arch is undefined'; return 1
+    esac
+    [ ! -e $BPLUG_BIN_DIR/${2} ] && echo "installing ${1} bin (${arch})..." && wget -qO- $(curl -s "https://api.github.com/repos/${1}/releases/latest" | awk  "/browser_download_url.*${arch}/{print \$2}"|tr -d \") | tar -xz -C $BPLUG_BIN_DIR
 }
 # /bplug
 
 [ -e ~/.shell_alias ] && source ~/.shell_alias        
 [ -e ~/.shell_env ] && source ~/.shell_env            
-[ -e ~/.shell_functions ] && source ~/.shell_functions
+# [ -e ~/.shell_functions ] && source ~/.shell_functions
 
 # Plugins
 bplug_init
 bplug     'mrzool/bash-sensible'      'sensible.bash'
 bplug     'nojhan/liquidprompt'       'liquidprompt'
-bplug_bin 'junegunn/fzf-bin'          'linux_amd64'             'fzf'
+bplug_bin 'junegunn/fzf'              'fzf'
 bplug     'junegunn/fzf'              'shell/key-bindings.bash'
 bplug     'chriskempson/base16-shell' ''
 

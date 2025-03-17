@@ -31,7 +31,5 @@ alias watch='watch '
 # Use nvim for vimdiff
 alias vimdiff='nvim -d'
 
-
-# k8s completion
+# k8s 
 [ $commands[kubectl] ] && alias k='kubectl'
-# [ $commands[kubectl] ] && complete -F __start_kubectl k

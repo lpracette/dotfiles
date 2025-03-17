@@ -45,13 +45,6 @@ fpath+=~/.zfunc
 # enable completion
 # autoload -Uz compinit && compinit
 
-# instead of cloning all of oh-my-zsh for ony command-not-found.plugin.zsh
-# from https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/command-not-found/command-not-found.plugin.zsh
-# [[ -e /etc/zsh_command_not_found ]] && source /etc/zsh_command_not_found
-
-#prompt for 'Do you want to install it? (N/y)' if command not found
-# export COMMAND_NOT_FOUND_INSTALL_PROMPT=1
-
 # fzf-tab
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':fzf-tab:*' switch-group ',' '.'
