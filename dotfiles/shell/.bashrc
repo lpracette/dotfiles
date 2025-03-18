@@ -26,7 +26,7 @@ function bplug_bin() {
 
 [ -e ~/.shell_alias ] && source ~/.shell_alias        
 [ -e ~/.shell_env ] && source ~/.shell_env            
-# [ -e ~/.shell_functions ] && source ~/.shell_functions
+[ -e ~/.shell_functions ] && source ~/.shell_functions
 
 # Plugins
 bplug_init
