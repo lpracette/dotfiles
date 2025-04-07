@@ -1,0 +1,23 @@
+{
+    "Profiles": [
+        {
+            "Name" : "iterm2",
+            "Guid" : "C07FD6CA-DD79-462D-B154-8174697C3B7A",
+
+            "Normal Font" : "RobotoMonoNFM-Rg 14",
+            "Use Italic Font" : true,
+            "Use Bright Bold" : true,
+            "Draw Powerline Glyphs" : true,
+            "Vertical Spacing" : 0.9,
+            "Horizontal Spacing" : 0.95,
+
+            "Visual Bell" : true,
+            "Silence Bell" : true,
+
+            "Treat Option as Alt" : true,
+            "Keyboard Map" : { },
+
+            "Terminal Type" : "xterm"
+        }
+    ]
+}
