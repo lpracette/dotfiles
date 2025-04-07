@@ -109,7 +109,7 @@ return {
       })
 
       require('mason-lspconfig').setup({
-        ensure_installed = {},
+        ensure_installed = { 'pyright', 'tflint', 'gopls' },
         handlers = {
           -- this first function is the "default handler"
           -- it applies to every language server without a "custom handler"
@@ -136,9 +136,6 @@ return {
                     command = {
                       'golangci-lint',
                       'run',
-                      '--out-format',
-                      'json',
-                      '--issues-exit-code=1',
                     },
                   },
                 },

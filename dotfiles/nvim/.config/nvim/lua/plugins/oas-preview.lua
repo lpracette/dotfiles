@@ -6,4 +6,8 @@ return {
     ui = 'swagger', -- "swagger", "redoc", "stoplight"
     auto_open_url = true, -- false to disable it, default is true
   },
+  ft = { 'yaml' },
+  keys = {
+    { '<leader>ps', ':OASPreview<CR>', 'OpenAPI Preview' },
+  },
 }
