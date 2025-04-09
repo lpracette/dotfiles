@@ -1,6 +1,6 @@
 return {
   { 'nvim-tree/nvim-web-devicons' },
-  { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
+  -- { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
   { 'AndreM222/copilot-lualine' },
   { 'kshenoy/vim-signature' },
   { 'pedrohdz/vim-yaml-folds' },
