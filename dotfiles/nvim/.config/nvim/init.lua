@@ -35,6 +35,7 @@ vim.opt.showmode = false
 vim.opt.showcmd = true
 vim.opt.virtualedit = 'block'
 vim.opt.mouse = 'a'
+vim.opt.mousemoveevent = true
 vim.opt.scrolloff = 10
 vim.opt.spell = true
 vim.opt.spelllang = { 'en_us' }
@@ -46,6 +47,33 @@ vim.api.nvim_set_keymap('c', 'bb', 'b#', { noremap = true })
 
 -- Highlighting
 vim.api.nvim_set_hl(0, 'CopilotSuggestion', { fg = '#808080' })
+
+-- Diagnostics signs
+vim.diagnostic.config({
+  underline = true,
+  update_in_insert = false,
+  virtual_text = {
+    spacing = 4,
+    source = 'if_many',
+    prefix = '●',
+  },
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    source = 'always',
+  },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = ' ',
+      [vim.diagnostic.severity.WARN] = ' ',
+      [vim.diagnostic.severity.INFO] = '󰋼 ',
+      [vim.diagnostic.severity.HINT] = '󰌵 ',
+    },
+    numhl = {
+      [vim.diagnostic.severity.WARN] = 'WarningMsg',
+    },
+  },
+})
 
 -- Source local configuration
 vim.cmd([[source ~/.vimrc.local]])

@@ -1,4 +1,15 @@
 return {
+  {
+    'soulis-1256/eagle.nvim',
+    opts = {
+      notify = {
+        enabled = true,
+        timeout = 3000, -- Show for 3 seconds
+        position = 'top',
+        style = 'warning',
+      },
+    },
+  },
   { 'zbirenbaum/copilot-cmp' },
   { 'hrsh7th/cmp-nvim-lsp-signature-help' },
   { 'hrsh7th/cmp-path' },
@@ -38,13 +49,9 @@ return {
           end, { 'i', 's' }),
 
           ['<S-Tab>'] = cmp.mapping(function()
-            if cmp.visible() then
-              cmp.select_prev_item()
-            end
+            if cmp.visible() then cmp.select_prev_item() end
           end, { 'i', 's' }),
-          ['<C-E>'] = cmp.mapping(function(fallback)
-            fallback()
-          end),
+          ['<C-E>'] = cmp.mapping(function(fallback) fallback() end),
         }),
         window = {
           completion = cmp.config.window.bordered(),
@@ -88,6 +95,20 @@ return {
       -- This should be executed before you configure any language server
       lsp_defaults.capabilities = vim.tbl_deep_extend('force', lsp_defaults.capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+      lsp_defaults.diagnostics = {
+        underline = true,
+        update_in_insert = false,
+        virtual_text = {
+          spacing = 4,
+          source = 'if_many',
+          prefix = 'icons',
+        },
+        severity_sort = true,
+        float = {
+          border = 'rounded',
+        },
+      }
+
       -- LspAttach is where you enable features that only work
       -- if there is a language server active in the file
       vim.api.nvim_create_autocmd('LspAttach', {
@@ -102,6 +123,7 @@ return {
           vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
           vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
           vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+          vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float(0, {scope="line"})<CR>', opts)
           vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
           vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
           vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
@@ -161,9 +183,7 @@ return {
       {
         -- Customize or remove this keymap to your liking
         '<leader>f',
-        function()
-          require('conform').format({ async = true })
-        end,
+        function() require('conform').format({ async = true }) end,
         mode = '',
         desc = 'Format buffer',
       },

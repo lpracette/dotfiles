@@ -1,8 +1,9 @@
 call_parentheses = "Input"
-column_width = 200
+column_width = 300
 indent_type = "Spaces"
 indent_width = 2
 line_endings = "Unix"
 quote_style = "AutoPreferSingle"
+collapse_simple_statement = "Always"
 [sort_requires]
 enabled = true
