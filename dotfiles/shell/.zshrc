@@ -70,6 +70,7 @@ bindkey '^x^e' edit-command-line
 [ -e ~/.shell_alias ] && source ~/.shell_alias 
 [ -e ~/.shell_env ] && source ~/.shell_env
 [ -e ~/.shell_functions ] && source ~/.shell_functions
+[ -e ~/.shell_local ] && source ~/.shell_local
 
 . /opt/homebrew/bin/hs-opskit-rc-zsh
 
