@@ -60,3 +60,5 @@
 	prune = true
 [remote "origin"]
     fetch = +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*
+[pull]
+	rebase = true

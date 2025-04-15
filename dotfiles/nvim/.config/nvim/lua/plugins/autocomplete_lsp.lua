@@ -141,7 +141,7 @@ return {
                 settings = {
                   Lua = {
                     diagnostics = {
-                      globals = { 'vim' },
+                      globals = { 'vim', 'Snacks' },
                     },
                   },
                 },
@@ -202,7 +202,7 @@ return {
         lsp_format = 'fallback',
       },
       -- Set up format-on-save
-      format_on_save = { timeout_ms = 500 },
+      format_on_save = { timeout_ms = 5000 },
       -- Customize formatters
       formatters = {
         shfmt = {
