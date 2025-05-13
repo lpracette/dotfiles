@@ -35,6 +35,7 @@
     graph = log --decorate --oneline --graph
     pushmr = push -o merge_request.create
 	meld = !git difftool -t meld --dir-diff
+    fp =!git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}`
 [difftool "nvimdiff"]
     cmd = "nvim -d -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
 [mergetool "nvimdiff3"]
