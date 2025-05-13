@@ -116,7 +116,7 @@ return {
       { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
       { '<leader>sR', function() Snacks.picker.resume() end, desc = 'Resume' },
       { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-      { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+      { '<leader>sx', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
       -- LSP
       { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
       { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
@@ -162,6 +162,25 @@ return {
           Snacks.toggle.inlay_hints():map('<leader>uh')
           Snacks.toggle.indent():map('<leader>ug')
           Snacks.toggle.dim():map('<leader>uD')
+
+          local copilot_exists = pcall(require, 'copilot')
+          if copilot_exists then
+            Snacks.toggle({
+              name = 'Copilot Completion',
+              color = {
+                enabled = 'azure',
+                disabled = 'orange',
+              },
+              get = function() return not require('copilot.client').is_disabled() end,
+              set = function(state)
+                if state then
+                  require('copilot.command').enable()
+                else
+                  require('copilot.command').disable()
+                end
+              end,
+            }):map('<leader>uC')
+          end
         end,
       })
     end,
