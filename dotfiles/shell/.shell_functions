@@ -101,10 +101,10 @@ function git-cp {
 function toggle_dark_mode() {
     if [[ "$(osascript -e 'tell app "System Events" to tell appearance preferences to return dark mode')" == "true" ]]; then
         osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to false'
-        bash -ci 'base16_atelier-plateau-light'
+        ${SHELL:-bash} -ci 'base16_atelier-plateau-light'
     else
         osascript -e 'tell app "System Events" to tell appearance preferences to set dark mode to true'
-        bash -ci 'base16_atelier-plateau'
+        ${SHELL:-bash} -ci 'base16_atelier-plateau'
     fi
 }
 
