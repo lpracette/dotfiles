@@ -13,29 +13,12 @@
     l = log --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ci) %C(cyan bold)<%an>%Creset %G? ' --abbrev-commit
     lg = log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(cyan)<%an>%Creset %G? ' --abbrev-commit
     st = status -bs
-    cbr ="!f() { \
-            local branches branch; \
-            branches=$(git branch --all --color=always | grep -v HEAD); \
-            branch=$(echo \"$branches\" | fzf-tmux  +m --ansi); \
-            git checkout $(echo \"$branch\" | sed \"s/.* //\" | sed \"s#remotes/[^/]*/##\"); \
-          };\
-        f"
     last-tag = describe --tags --abbrev=0 @^
     cl = "!git log --no-merges --pretty=format:\" * %h - %s (%ci) <$1%an>\" $(git last-tag)..@ #"
     tag-cl = "!git tag -a $1 -m \"$(echo Version $1)\n\nChanges since $(git last-tag):\n$(git cl '')\" #"
-    npm-tag = "!f() { \
-            [[ ! $1 =~ ^(major|minor|patch)$ ]] && echo \"ERROR Missing version type.\n\nUsage:\ngit npm-tag [major|minor|patch]\" && exit 1; \
-            local REPO_NAME=$(basename -s .git `git config --get remote.origin.url`); \
-            local CHANGES=$(git cl '@'); \
-            local TAG_VER=$(npm version $1 -m \"$(echo \"Update to %s\n\nChangelog:\n$(git cl '')\")\"); \
-            local MSG=$(echo \"Planning a deployment of $REPO_NAME ($TAG_VER) to staging with:\n$CHANGES\nPlease react with :deployparrot: once tested on dev.\"); \
-            echo \"$MSG\" | pbcopy;\
-            echo \"$MSG\"; \
-        }; f"
-    graph = log --decorate --oneline --graph
-    pushmr = push -o merge_request.create
 	meld = !git difftool -t meld --dir-diff
     fp =!git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}`
+    del-gone = "!git branch -vvv | awk '/: gone]/{print $1}' | xargs git branch -D"
 [difftool "nvimdiff"]
     cmd = "nvim -d -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
 [mergetool "nvimdiff3"]
