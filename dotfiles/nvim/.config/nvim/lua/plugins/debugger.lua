@@ -263,7 +263,6 @@ return {
     },
     config = function(_, opts)
       -- setup dap config by VsCode launch.json file
-      -- require("dap.ext.vscode").load_launchjs()
       local dap = require('dap')
       local dapui = require('dapui')
       dapui.setup(opts)
@@ -275,9 +274,10 @@ return {
         callback = function() vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>close!<CR>', { noremap = true, silent = true }) end,
       })
 
-      vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'DiagnosticInfo' })
-      vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'DiagnosticError' })
-      vim.fn.sign_define('DapBreakpointCondition', { text = '', texthl = 'DiagnosticInfo' })
+      vim.fn.sign_define('DapBreakpoint', { text = '🟥', texthl = '', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapBreakpointRejected', { text = '⚠️', texthl = 'DiagnosticError' })
+      vim.fn.sign_define('DapBreakpointCondition', { text = '❓', texthl = 'DiagnosticInfo' })
+      vim.fn.sign_define('DapStopped', { text = '▶️', texthl = 'debugPC', linehl = 'debugPC', numhl = 'debugPC' })
     end,
     keys = {
       {

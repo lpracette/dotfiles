@@ -12,4 +12,9 @@ return {
     'f-person/auto-dark-mode.nvim',
     opts = {},
   },
+  {
+    'folke/tokyonight.nvim',
+    lazy = true,
+    opts = { style = 'night' },
+  },
 }
