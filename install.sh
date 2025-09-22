@@ -9,9 +9,13 @@ if ! command -v brew > /dev/null; then
 fi
 
 # Install Homebrew packages
+export HOMEBREW_NO_ENV_HINTS=1
 brew bundle --file=$DOTFILES/Brewfile
 
 # stow dotfiles
 for pkg in $(ls $DOTFILES/dotfiles); do
   stow -v -t $HOME -d $DOTFILES/dotfiles $pkg
 done
+
+# Install Neovim plugins
+nvim --headless "+Lazy! update" +qa
