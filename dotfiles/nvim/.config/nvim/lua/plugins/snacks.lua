@@ -6,6 +6,7 @@ return {
     ---@type snacks.Config
     opts = {
       bigfile = { enabled = true },
+      image = { enabled = false },
       dashboard = {
         width = 150,
         sections = {
@@ -65,7 +66,7 @@ return {
       scope = { enabled = true },
       scroll = { enabled = false },
       statuscolumn = { enabled = true },
-      words = { enabled = false },
+      words = { enabled = true },
       styles = {
         notification = {
           -- wo = { wrap = true } -- Wrap notifications
@@ -183,6 +184,25 @@ return {
               end,
             }):map('<leader>uC')
           end
+
+          -- local image_exists = pcall(require, 'image')
+          -- if image_exists then
+          --   Snacks.toggle({
+          --     name = 'Image Viewer',
+          --     color = {
+          --       enabled = 'azure',
+          --       disabled = 'orange',
+          --     },
+          --     get = function() return require('image').is_enabled() end,
+          --     set = function(state)
+          --       if state then
+          --         require('image').enable() -- enable the plugin
+          --       else
+          --         require('image').disable() -- disable the plugin
+          --       end
+          --     end,
+          --   }):map('<leader>ui')
+          -- end
         end,
       })
     end,
