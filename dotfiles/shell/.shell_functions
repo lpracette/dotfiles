@@ -165,3 +165,11 @@ function decrypt() {
     done
 }
 
+function lazyvim() {
+ docker run -w /root -it -v ~/code:/code --rm alpine:edge sh -uelic '
+  apk add go git lazygit fzf curl neovim ripgrep alpine-sdk --update
+  git clone https://github.com/LazyVim/starter ~/.config/nvim
+  cd ~/.config/nvim
+  nvim
+'
+}
