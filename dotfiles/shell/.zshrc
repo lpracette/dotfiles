@@ -43,7 +43,7 @@ setopt globdots
 
 fpath+=~/.zfunc
 # enable completion
-# autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit
 
 # fzf-tab
 zstyle ':completion:*:descriptions' format '[%d]'
