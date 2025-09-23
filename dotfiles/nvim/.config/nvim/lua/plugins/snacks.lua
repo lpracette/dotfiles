@@ -7,51 +7,7 @@ return {
     opts = {
       bigfile = { enabled = true },
       image = { enabled = false },
-      dashboard = {
-        width = 150,
-        sections = {
-          { section = 'keys', gap = 1, padding = 1 },
-          {
-            icon = ' ',
-            desc = 'Browse Repo',
-            padding = 1,
-            key = 'b',
-            action = function() Snacks.gitbrowse() end,
-          },
-          function()
-            local in_git = Snacks.git.get_root() ~= nil
-            local cmds = {
-              {
-                icon = ' ',
-                title = 'Open PRs',
-                cmd = 'gh pr list -L 3',
-                key = 'P',
-                action = function() vim.fn.jobstart('gh pr list --web', { detach = true }) end,
-                height = 7,
-                width = 150,
-              },
-              {
-                icon = ' ',
-                title = 'Git Status',
-                cmd = 'git --no-pager diff --stat -B -M -C',
-                height = 10,
-                key = 's',
-                action = function() vim.cmd('Git') end,
-              },
-            }
-            return vim.tbl_map(function(cmd)
-              return vim.tbl_extend('force', {
-                section = 'terminal',
-                enabled = in_git,
-                padding = 1,
-                ttl = 5 * 60,
-                indent = 3,
-              }, cmd)
-            end, cmds)
-          end,
-          { section = 'startup' },
-        },
-      },
+      dashboard = { enabled = true },
       explorer = {
         replace_netrw = true, -- Replace netrw with the snacks explorer
       },
@@ -121,11 +77,6 @@ return {
       { '<leader>sz', function() Snacks.picker.spelling() end, desc = 'Spelling Suggestions' },
 
       -- LSP
-      { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
-      { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
-      { 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
-      { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
-      { 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
       { '<leader>ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
       { '<leader>sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
       -- Other
@@ -184,25 +135,6 @@ return {
               end,
             }):map('<leader>uC')
           end
-
-          -- local image_exists = pcall(require, 'image')
-          -- if image_exists then
-          --   Snacks.toggle({
-          --     name = 'Image Viewer',
-          --     color = {
-          --       enabled = 'azure',
-          --       disabled = 'orange',
-          --     },
-          --     get = function() return require('image').is_enabled() end,
-          --     set = function(state)
-          --       if state then
-          --         require('image').enable() -- enable the plugin
-          --       else
-          --         require('image').disable() -- disable the plugin
-          --       end
-          --     end,
-          --   }):map('<leader>ui')
-          -- end
         end,
       })
     end,

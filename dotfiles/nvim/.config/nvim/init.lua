@@ -40,6 +40,7 @@ vim.opt.scrolloff = 10
 vim.opt.spell = true
 vim.opt.spelllang = { 'en_us' }
 vim.opt.laststatus = 2
+vim.opt.winborder = 'rounded'
 
 -- Key mappings
 vim.api.nvim_set_keymap('i', 'jk', '<esc>', { noremap = true })

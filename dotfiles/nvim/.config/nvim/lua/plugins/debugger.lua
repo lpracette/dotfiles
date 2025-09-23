@@ -7,7 +7,6 @@ return {
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-lua/plenary.nvim',
-      'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
 
       'nvim-neotest/neotest-plenary',
@@ -18,7 +17,6 @@ return {
         dependencies = {
           {
             'mfussenegger/nvim-dap-python',
-            -- opts = { 'uv' },
           },
         },
       },
@@ -274,10 +272,10 @@ return {
         callback = function() vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>close!<CR>', { noremap = true, silent = true }) end,
       })
 
-      vim.fn.sign_define('DapBreakpoint', { text = '🟥', texthl = '', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DiagnosticSignError', linehl = '', numhl = '' })
       vim.fn.sign_define('DapBreakpointRejected', { text = '⚠️', texthl = 'DiagnosticError' })
       vim.fn.sign_define('DapBreakpointCondition', { text = '❓', texthl = 'DiagnosticInfo' })
-      vim.fn.sign_define('DapStopped', { text = '▶️', texthl = 'debugPC', linehl = 'debugPC', numhl = 'debugPC' })
+      vim.fn.sign_define('DapStopped', { text = '➔', texthl = 'debugPC', linehl = 'debugPC', numhl = 'debugPC' })
     end,
     keys = {
       {
@@ -305,5 +303,11 @@ return {
   {
     'theHamsta/nvim-dap-virtual-text',
     opts = {},
+  },
+  {
+    'mfussenegger/nvim-dap-python',
+    ft = 'python',
+    dependencies = { 'mfussenegger/nvim-dap' },
+    config = function() require('dap-python').setup('python') end,
   },
 }
