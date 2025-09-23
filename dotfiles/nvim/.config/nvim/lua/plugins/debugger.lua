@@ -8,27 +8,22 @@ return {
       'nvim-neotest/nvim-nio',
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
-
       'nvim-neotest/neotest-plenary',
       'nvim-neotest/neotest-vim-test',
-
       {
         'nvim-neotest/neotest-python',
         dependencies = {
           {
             'mfussenegger/nvim-dap-python',
+            ft = 'python',
+            dependencies = { 'mfussenegger/nvim-dap' },
+            config = function() require('dap-python').setup('python') end,
           },
         },
       },
-
       {
         'fredrikaverpil/neotest-golang',
-        dependencies = {
-          {
-            'leoluz/nvim-dap-go',
-            opts = {},
-          },
-        },
+        dependencies = { { 'leoluz/nvim-dap-go' } },
         branch = 'main',
       },
     },
@@ -77,66 +72,18 @@ return {
       require('neotest').setup(opts)
     end,
     keys = {
-      {
-        '<leader>ta',
-        function() require('neotest').run.attach() end,
-        desc = '[t]est [a]ttach',
-      },
-      {
-        '<leader>tf',
-        function() require('neotest').run.run(vim.fn.expand('%')) end,
-        desc = '[t]est run [f]ile',
-      },
-      {
-        '<leader>tA',
-        function() require('neotest').run.run(vim.uv.cwd()) end,
-        desc = '[t]est [A]ll files',
-      },
-      {
-        '<leader>tS',
-        function() require('neotest').run.run({ suite = true }) end,
-        desc = '[t]est [S]uite',
-      },
-      {
-        '<leader>tn',
-        function() require('neotest').run.run() end,
-        desc = '[t]est [n]earest',
-      },
-      {
-        '<leader>tl',
-        function() require('neotest').run.run_last() end,
-        desc = '[t]est [l]ast',
-      },
-      {
-        '<leader>ts',
-        function() require('neotest').summary.toggle() end,
-        desc = '[t]est [s]ummary',
-      },
-      {
-        '<leader>to',
-        function() require('neotest').output.open({ enter = true, auto_close = true }) end,
-        desc = '[t]est [o]utput',
-      },
-      {
-        '<leader>tO',
-        function() require('neotest').output_panel.toggle() end,
-        desc = '[t]est [O]utput panel',
-      },
-      {
-        '<leader>tt',
-        function() require('neotest').run.stop() end,
-        desc = '[t]est [t]erminate',
-      },
-      {
-        '<leader>td',
-        function() require('neotest').run.run({ suite = false, strategy = 'dap' }) end,
-        desc = 'Debug nearest test',
-      },
-      {
-        '<leader>tD',
-        function() require('neotest').run.run({ vim.fn.expand('%'), strategy = 'dap' }) end,
-        desc = 'Debug current file',
-      },
+      { '<leader>ta', function() require('neotest').run.attach() end, desc = '[t]est [a]ttach' },
+      { '<leader>tf', function() require('neotest').run.run(vim.fn.expand('%')) end, desc = '[t]est run [f]ile' },
+      { '<leader>tA', function() require('neotest').run.run(vim.uv.cwd()) end, desc = '[t]est [A]ll files' },
+      { '<leader>tS', function() require('neotest').run.run({ suite = true }) end, desc = '[t]est [S]uite' },
+      { '<leader>tn', function() require('neotest').run.run() end, desc = '[t]est [n]earest' },
+      { '<leader>tl', function() require('neotest').run.run_last() end, desc = '[t]est [l]ast' },
+      { '<leader>ts', function() require('neotest').summary.toggle() end, desc = '[t]est [s]ummary' },
+      { '<leader>to', function() require('neotest').output.open({ enter = true, auto_close = true }) end, desc = '[t]est [o]utput' },
+      { '<leader>tO', function() require('neotest').output_panel.toggle() end, desc = '[t]est [O]utput panel' },
+      { '<leader>tt', function() require('neotest').run.stop() end, desc = '[t]est [t]erminate' },
+      { '<leader>td', function() require('neotest').run.run({ suite = false, strategy = 'dap' }) end, desc = 'Debug nearest test' },
+      { '<leader>tD', function() require('neotest').run.run({ vim.fn.expand('%'), strategy = 'dap' }) end, desc = 'Debug current file' },
     },
   },
 
@@ -145,169 +92,48 @@ return {
     'mfussenegger/nvim-dap',
     event = 'VeryLazy',
     keys = {
-      {
-        '<leader>db',
-        function() require('dap').toggle_breakpoint() end,
-        desc = 'toggle [d]ebug [b]reakpoint',
-      },
-      {
-        '<leader>dB',
-        function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
-        desc = '[d]ebug [B]reakpoint',
-      },
-      {
-        '<leader>dc',
-        function() require('dap').continue() end,
-        desc = '[d]ebug [c]ontinue (start here)',
-      },
-      {
-        '<leader>dC',
-        function() require('dap').run_to_cursor() end,
-        desc = '[d]ebug [C]ursor',
-      },
-      {
-        '<leader>dg',
-        function() require('dap').goto_() end,
-        desc = '[d]ebug [g]o to line',
-      },
-      {
-        '<leader>do',
-        function() require('dap').step_over() end,
-        desc = '[d]ebug step [o]ver',
-      },
-      {
-        '<leader>dO',
-        function() require('dap').step_out() end,
-        desc = '[d]ebug step [O]ut',
-      },
-      {
-        '<leader>di',
-        function() require('dap').step_into() end,
-        desc = '[d]ebug [i]nto',
-      },
-      {
-        '<leader>dj',
-        function() require('dap').down() end,
-        desc = '[d]ebug [j]ump down',
-      },
-      {
-        '<leader>dk',
-        function() require('dap').up() end,
-        desc = '[d]ebug [k]ump up',
-      },
-      {
-        '<leader>dl',
-        function() require('dap').run_last() end,
-        desc = '[d]ebug [l]ast',
-      },
-      {
-        '<leader>dp',
-        function() require('dap').pause() end,
-        desc = '[d]ebug [p]ause',
-      },
-      {
-        '<leader>dr',
-        function() require('dap').repl.toggle() end,
-        desc = '[d]ebug [r]epl',
-      },
-      {
-        '<leader>dR',
-        function() require('dap').clear_breakpoints() end,
-        desc = '[d]ebug [R]emove breakpoints',
-      },
-      {
-        '<leader>ds',
-        function() require('dap').session() end,
-        desc = '[d]ebug [s]ession',
-      },
-      {
-        '<leader>dt',
-        function() require('dap').terminate() end,
-        desc = '[d]ebug [t]erminate',
-      },
-      {
-        '<leader>dw',
-        function() require('dap.ui.widgets').hover() end,
-        desc = '[d]ebug [w]idgets',
-      },
-    },
-  },
-
-  -- DAP UI setup
-  {
-    'rcarriga/nvim-dap-ui',
-    event = 'VeryLazy',
-    dependencies = {
-      'nvim-neotest/nvim-nio',
-      'mfussenegger/nvim-dap',
-    },
-    opts = {
-      -- layouts = {
-      --   -- other elements: 'breakpoints', 'stacks', 'watches'
-      --   {
-      --     elements = { 'scopes' },
-      --     size = 10,
-      --     position = 'bottom', -- Can be "bottom" or "top"
-      --   },
-      --   {
-      --     elements = {
-      --       { id = 'console', size = 0.5 },
-      --       { id = 'repl', size = 0.5 },
-      --     },
-      --     size = 40,
-      --     position = 'left', -- Can be "left" or "right"
-      --   },
-      -- },
+      { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = 'toggle [d]ebug [b]reakpoint' },
+      { '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = '[d]ebug [B]reakpoint' },
+      { '<leader>dc', function() require('dap').continue() end, desc = '[d]ebug [c]ontinue (start here)' },
+      { '<leader>dC', function() require('dap').run_to_cursor() end, desc = '[d]ebug [C]ursor' },
+      { '<leader>dg', function() require('dap').goto_() end, desc = '[d]ebug [g]o to line' },
+      { '<leader>do', function() require('dap').step_over() end, desc = '[d]ebug step [o]ver' },
+      { '<leader>dO', function() require('dap').step_out() end, desc = '[d]ebug step [O]ut' },
+      { '<leader>di', function() require('dap').step_into() end, desc = '[d]ebug [i]nto' },
+      { '<leader>dj', function() require('dap').down() end, desc = '[d]ebug [j]ump down' },
+      { '<leader>dk', function() require('dap').up() end, desc = '[d]ebug [k]ump up' },
+      { '<leader>dl', function() require('dap').run_last() end, desc = '[d]ebug [l]ast' },
+      { '<leader>dp', function() require('dap').pause() end, desc = '[d]ebug [p]ause' },
+      { '<leader>dr', function() require('dap').repl.toggle() end, desc = '[d]ebug [r]epl' },
+      { '<leader>dR', function() require('dap').clear_breakpoints() end, desc = '[d]ebug [R]emove breakpoints' },
+      { '<leader>ds', function() require('dap').session() end, desc = '[d]ebug [s]ession' },
+      { '<leader>dt', function() require('dap').terminate() end, desc = '[d]ebug [t]erminate' },
+      { '<leader>dw', function() require('dap.ui.widgets').hover() end, desc = '[d]ebug [w]idgets' },
     },
     config = function(_, opts)
-      -- setup dap config by VsCode launch.json file
-      local dap = require('dap')
-      local dapui = require('dapui')
-      dapui.setup(opts)
-      dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open({}) end
-      dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close({}) end
-      dap.listeners.before.event_exited['dapui_config'] = function() dapui.close({}) end
-      vim.api.nvim_create_autocmd('FileType', {
-        pattern = 'dap-float',
-        callback = function() vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>close!<CR>', { noremap = true, silent = true }) end,
-      })
-
       vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DiagnosticSignError', linehl = '', numhl = '' })
-      vim.fn.sign_define('DapBreakpointRejected', { text = '⚠️', texthl = 'DiagnosticError' })
-      vim.fn.sign_define('DapBreakpointCondition', { text = '❓', texthl = 'DiagnosticInfo' })
-      vim.fn.sign_define('DapStopped', { text = '➔', texthl = 'debugPC', linehl = 'debugPC', numhl = 'debugPC' })
+      vim.api.nvim_create_autocmd('filetype', {
+        pattern = 'dap-float',
+        callback = function() vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<cmd>close!<cr>', { noremap = true, silent = true }) end,
+      })
     end,
-    keys = {
-      {
-        '<leader>du',
-        function() require('dapui').toggle({}) end,
-        desc = '[d]ap [u]i',
-      },
-      {
-        '<leader>de',
-        function() require('dapui').eval() end,
-        desc = '[d]ap [e]val',
-      },
-      {
-        '<leader>dWa',
-        function() require('dapui').elements.watches.add() end,
-        desc = '[d]ap ui [W]atch [a]dd',
-      },
-      {
-        '<leader>dWr',
-        function() require('dapui').elements.watches.remove() end,
-        desc = '[d]ap ui [W]atch [r]emove',
-      },
-    },
   },
+
+  {
+    'igorlfs/nvim-dap-view',
+    opts = { winbar = { controls = { enabled = true } } },
+    config = function(_, opts)
+      local dap = require('dap')
+      local dap_view = require('dap-view')
+      dap_view.setup(opts)
+      dap.listeners.after.event_initialized['dap_view_open'] = function() dap_view.open({}) end
+      dap.listeners.before.event_terminated['dap_view_close'] = function() dap_view.close({}) end
+      dap.listeners.before.event_exited['dap_view_close'] = function() dap_view.close({}) end
+    end,
+  },
+
   {
     'theHamsta/nvim-dap-virtual-text',
     opts = {},
-  },
-  {
-    'mfussenegger/nvim-dap-python',
-    ft = 'python',
-    dependencies = { 'mfussenegger/nvim-dap' },
-    config = function() require('dap-python').setup('python') end,
   },
 }
