@@ -45,7 +45,17 @@ return {
       require('mason-lspconfig').setup({
         ensure_installed = { 'pyright', 'tflint', 'gopls', 'golangci_lint_ls', 'lua_ls', 'marksman', 'jsonls', 'yamlls' },
         handlers = {
-          function(server_name) require('lspconfig')[server_name].setup({}) end,
+          function(server_name)
+            -- Set the foldingRange capability
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities.textDocument.foldingRange = {
+              dynamicRegistration = false,
+              lineFoldingOnly = true,
+            }
+            require('lspconfig')[server_name].setup({
+              capabilities = capabilities,
+            })
+          end,
         },
       })
     end,
@@ -95,5 +105,20 @@ return {
     cmd = { 'Outline', 'OutlineOpen' },
     keys = { { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle outline' } },
     opts = {},
+  },
+
+  -- Folds
+  {
+    'kevinhwang91/nvim-ufo',
+    dependencies = { 'kevinhwang91/promise-async' },
+    opts = {
+      provider_selector = function(_, _, _) return { 'lsp', 'indent' } end,
+    },
+    config = function(_, opts)
+      vim.o.foldcolumn = '1'
+      vim.o.foldlevel = 99
+      vim.o.foldenable = true
+      require('ufo').setup(opts)
+    end,
   },
 }
