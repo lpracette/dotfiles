@@ -7,7 +7,8 @@ return {
     dependencies = {
       'nvim-neotest/nvim-nio',
       'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
+      'antoinemadec/FixCursorHold.nvim',
+      { 'nvim-treesitter/nvim-treesitter', branch = 'main' },
       'nvim-neotest/neotest-plenary',
       'nvim-neotest/neotest-vim-test',
       {
@@ -23,7 +24,12 @@ return {
       },
       {
         'fredrikaverpil/neotest-golang',
-        dependencies = { { 'leoluz/nvim-dap-go' } },
+        dependencies = {
+          {
+            'leoluz/nvim-dap-go',
+            opts = {},
+          },
+        },
         branch = 'main',
       },
     },
