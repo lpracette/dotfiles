@@ -115,7 +115,7 @@ return {
       { '<leader>dt', function() require('dap').terminate() end, desc = '[d]ebug [t]erminate' },
       { '<leader>dw', function() require('dap.ui.widgets').hover() end, desc = '[d]ebug [w]idgets' },
     },
-    config = function(_, opts)
+    config = function(_, _)
       vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DiagnosticSignError', linehl = '', numhl = '' })
       vim.api.nvim_create_autocmd('filetype', {
         pattern = 'dap-float',

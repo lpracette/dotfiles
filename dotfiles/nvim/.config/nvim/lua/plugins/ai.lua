@@ -17,14 +17,6 @@ return {
     end,
   },
   {
-    -- Make sure to set this up properly if you have lazy=true
-    'MeanderingProgrammer/render-markdown.nvim',
-    opts = {
-      file_types = { 'markdown', 'Avante', 'copilot-chat', 'codecompanion' },
-    },
-    ft = { 'markdown', 'Avante', 'copilot-chat', 'codecompanion' },
-  },
-  {
     'olimorris/codecompanion.nvim',
     opts = {
       prompt_library = {
@@ -81,8 +73,7 @@ return {
       { '<leader>cc', ':CodeCompanionChat<CR>', desc = 'CodeCompanion: Chat' },
       { '<leader>cp', ':CodeCompanion<CR>', desc = 'CodeCompanion: prompt' },
       { '<leader>ca', ':CodeCompanionActions<CR>', mode = { 'v', 'n' }, desc = 'CodeCompanion: actions' },
-      { '<leader>c:', ':CodeCompanionCmd<CR>', desc = 'CodeCompanion: cmd' },
-      { '<leader>ce', ':CodeCompanion /doc<CR>', mode = 'v', desc = 'CodeCompanion: Explain selection' },
+      { '<leader>ce', ':CodeCompanion /doc<CR>', mode = 'v', desc = 'CodeCompanion: add documentation to selection' },
       { '<leader>cm', ':CodeCompanion /commit_message<CR>', desc = 'CodeCompanion: Write commit message' },
     },
     cmd = {
