@@ -61,6 +61,37 @@ return {
             },
           },
         },
+        ['PR description'] = {
+          strategy = 'chat',
+          description = 'Generate a PR description',
+          opts = {
+            short_name = 'pr_description',
+            auto_submit = true,
+          },
+          prompts = {
+            {
+              role = 'user',
+              content = function()
+                local code_review_prompt = require('plugins.codecompanion.prompts.pr_description')
+                -- use a regexp to extract jira key from branch name
+                local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD')
+                local jiraKey = string.match(branch, '%u+%-%d+')
+                -- ask for jira key if not found or to confirm the extracted one
+                if not jiraKey or jiraKey == '' then
+                  jiraKey = vim.fn.input('Jira Key: ')
+                else
+                  local confirm = vim.fn.input('Jira Key (' .. jiraKey .. '): ')
+                  if confirm ~= '' then jiraKey = confirm end
+                end
+                local jira = vim.fn.system('zsh -ic "jiraIssue ' .. jiraKey .. '"')
+                return code_review_prompt(jira, vim.fn.system("git fetch --all && git diff --no-ext-diff origin/master... -- ':!*.lock' ':!*.sum' "))
+              end,
+              opts = {
+                contains_code = true,
+              },
+            },
+          },
+        },
       },
     },
     dependencies = {

@@ -141,4 +141,23 @@ return {
     'theHamsta/nvim-dap-virtual-text',
     opts = {},
   },
+
+  {
+    'andythigpen/nvim-coverage',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('coverage').setup({
+        auto_reload = true,
+        lang = {
+          go = {
+            coverage_file = vim.fn.getcwd() .. '/coverage.out',
+          },
+        },
+      })
+    end,
+    keys = {
+      { '<leader>cv', function() require('coverage').toggle() end, desc = 'Toggle coverage signs' },
+      { '<leader>cs', function() require('coverage').summary() end, desc = 'Show coverage summary' },
+    },
+  },
 }

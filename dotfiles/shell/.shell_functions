@@ -7,41 +7,39 @@
 #    0x08-0x0F:  high intensity colors (as in ESC [ 90–97 m)
 #    0x10-0xE7:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b (0 ≤ r, g, b ≤ 5)
 #    0xE8-0xFF:  grayscale from black to white in 24 steps
-function term-256-color-test()
-{
-    for fgbg in 38 48 ; do #Foreground/Background
+function term-256-color-test() {
+    for fgbg in 38 48; do #Foreground/Background
         echo "Standard colors"
-        for ((color=0; color<8; color++)); do
-            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color}|tail -c 4)\e[0m"
+        for ((color = 0; color < 8; color++)); do
+            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color} | tail -c 4)\e[0m"
         done
         echo #New line
         echo #New line
         echo "High-intensity colors"
-        for ((color=8; color<16; color++)); do
-            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color}|tail -c 4)\e[0m"
+        for ((color = 8; color < 16; color++)); do
+            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color} | tail -c 4)\e[0m"
         done
         echo #New line
         echo #New line
-        for ((color=16; color<232; color++)); do
+        for ((color = 16; color < 232; color++)); do
             #Display the color
-            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color}|tail -c 4)\e[0m"
+            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color} | tail -c 4)\e[0m"
             #Display 36 colors per lines
-            if [ $((($color - 15) % 36)) = 0 ] ; then
+            if [ $((($color - 15) % 36)) = 0 ]; then
                 echo #New line
             fi
         done
         echo #New line
         echo "Grayscale colors"
-        for ((color=232; color<256; color++)); do
-            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color}|tail -c 4)\e[0m"
+        for ((color = 232; color < 256; color++)); do
+            echo -en "\e[${fgbg};5;${color}m $(echo '   '${color} | tail -c 4)\e[0m"
         done
         echo #New line
         echo #New line
     done
 }
 
-function term-truecolor-test()
-{
+function term-truecolor-test() {
     printf "\x1b[38;2;255;100;0mTRUECOLOR\x1b[0m\n"
     awk 'BEGIN{
         s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;
@@ -63,36 +61,36 @@ function randomWordSpace() {
 
 function wttr() {
     if [ -z "$1" ]; then
-        curl -s 'http://wttr.in/Montreal?mpq&lang=fr' | head -n 38 
+        curl -s 'http://wttr.in/Montreal?mpq&lang=fr' | head -n 38
     else
         if [[ "$1" == "-h" || "$1" == "--help" ]]; then
             curl -s http://wttr.in/:help
         else
-            curl -s "http://wttr.in/$1?pqm&lang=fr" | head -n 38 
+            curl -s "http://wttr.in/$1?pqm&lang=fr" | head -n 38
         fi
     fi
 
 }
 
 function checksum() {
-    bash -c "echo \"echo \"`md5sum $1`\" | md5sum -c\"  | tmux loadb -"
+    bash -c "echo \"echo \"$(md5sum $1)\" | md5sum -c\"  | tmux loadb -"
 }
 
 function git-cp {
     PATCH_DIR="$HOME/backup/patch/$(basename $(pwd))_$(date +'%Y_%m_%d_%H_%M_%S')/"
     mkdir -p PATCH_DIR
     echo "Backing up to $PATCH_DIR..."
-    
+
     # Local commits
-    git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}` -o $PATCH_DIR
+    git format-patch -p $(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR
     git submodule --quiet foreach --recursive "git format-patch -p \$(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR"
-    
+
     # Work in Progress
-    if ! git diff --exit-code  --ignore-submodules --quiet; then
-        git diff --ignore-submodules > $PATCH_DIR/wip_$(basename `git rev-parse --show-toplevel`)_$(date +"%Y_%m_%d_%H_%M_%S").patch
+    if ! git diff --exit-code --ignore-submodules --quiet; then
+        git diff --ignore-submodules >$PATCH_DIR/wip_$(basename $(git rev-parse --show-toplevel))_$(date +"%Y_%m_%d_%H_%M_%S").patch
     fi
     git submodule --quiet foreach --recursive \
-    "if ! git diff --exit-code  --ignore-submodules --quiet; then \
+        "if ! git diff --exit-code  --ignore-submodules --quiet; then \
         git diff --ignore-submodules --src-prefix=\"a/\${path}/\" --dst-prefix=\"b/\${path}/\" >\
         $PATCH_DIR/wip_\$(basename \$path)_$(date +\"%Y_%m_%d_%H_%M_%S\").patch; \
      fi"
@@ -108,33 +106,48 @@ function toggle_dark_mode() {
     fi
 }
 
-function jira() {
-    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' < ~/.jira)
-    JIRA_DOMAIN=$(jq -r .servers.production.url < ~/.jira)
+# Search jira with JQL
+function jql() {
+    jql=$(printf '%s' "$1" | jq -sRr @uri)
+    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' "$HOME/.jira")
+    JIRA_DOMAIN=$(jq -r '.servers.production.url' "$HOME/.jira")
+    curl -su "$JIRA_BASIC_AUTH" -H 'Accept: application/json' \
+        "$JIRA_DOMAIN/rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields"
+}
 
-    jql='assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate'
-    jql=$(echo "$jql" | jq -sRr @uri)
+function jiraIssue() {
+    jql "issue = $1" | jq -r '.issues[0] | 
+        {key: .key, summary: .fields.summary,  description: .renderedFields.description}'
+}
+
+function jira() {
+    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' <~/.jira)
+    JIRA_DOMAIN=$(jq -r .servers.production.url <~/.jira)
     tmpfile=$(mktemp)
+    jql "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate" >$tmpfile
+
     COLOR='\u001b[1;34m'
     C_END='\u001b[0m'
     preview="cat $tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '.issues[] | select(.key == \$KEY) | \
-        \"\\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" + \
-        \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created + 
-        \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated + 
-        \"\n\"+ \"${COLOR}Due date$C_END: \"    + .fields.duedate + 
-        \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName + 
-        \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name + 
-        \"\n${COLOR}Description$C_END:\n\" + .fields.description '"
-    curl -su $JIRA_BASIC_AUTH "$JIRA_DOMAIN/rest/api/2/search?jql=$jql" -o $tmpfile
+        \"\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" + \
+        \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created +
+        \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated +
+        \"\n\"+ \"${COLOR}Due date$C_END: \"    + .fields.duedate +
+        \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName +
+        \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name +
+        \"\n${COLOR}Description$C_END:\n\" + .renderedFields.description '"
     cat $tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
     rm $tmpfile
 }
 
 function jiraBrowse() {
     case "$(uname)" in
-        (*Linux*) open='xdg-open' ;;
-        (*Darwin*) open='open' ;;
-        (*) echo 'Error: open command is undefined'; return 1
+    *Linux*) open='xdg-open' ;;
+    *Darwin*) open='open' ;;
+    *)
+        echo 'Error: open command is undefined'
+        return 1
+        ;;
     esac
     ${open} "${JIRA_URL}/browse/$(jira)"
 }
@@ -144,29 +157,29 @@ function redact_env() {
 }
 
 function vimdiffDir() {
-    for files in $(diff -rq $1 $2|grep 'differ$'|sed "s/^Files //g;s/ differ$//g;s/ and /:/g"); do 
-        nvim -d ${files%:*} ${files#*:}; 
+    for files in $(diff -rq $1 $2 | grep 'differ$' | sed "s/^Files //g;s/ differ$//g;s/ and /:/g"); do
+        nvim -d ${files%:*} ${files#*:}
     done
 }
 
 function decodeJwt() {
-    jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$1"
+    jq -R 'split(".") | .[1] | @base64d | fromjson' <<<"$1"
 }
 
 function encrypt() {
     for file in "$@"; do
-        cat $file |  gpg --symmetric --cipher-algo AES256 -o $file.gpg
+        cat $file | gpg --symmetric --cipher-algo AES256 -o $file.gpg
     done
 }
 
 function decrypt() {
     for file in "$@"; do
-        gpg -d $file > ${file%.gpg}
+        gpg -d $file >${file%.gpg}
     done
 }
 
 function lazyvim() {
- docker run -w /root -it -v ~/code:/code --rm alpine:edge sh -uelic '
+    docker run -w /root -it -v ~/code:/code --rm alpine:edge sh -uelic '
   apk add go git lazygit fzf curl neovim ripgrep alpine-sdk --update
   git clone https://github.com/LazyVim/starter ~/.config/nvim
   cd ~/.config/nvim

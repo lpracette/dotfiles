@@ -88,37 +88,19 @@ return {
       formatters_by_ft = {
         lua = { 'stylua' },
         go = { 'gofmt', 'goimports' },
-        python = { 'isort', 'black' },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        python = { 'ruff' },
+        javascript = { 'prettier' },
+        groovy = { 'npm-groovy-lint' },
+        sh = { 'shfmt' },
+        bash = { 'shfmt' },
       },
       default_format_opts = { lsp_format = 'fallback' },
       format_on_save = { timeout_ms = 5000 },
-      formatters = { shfmt = { prepend_args = { '-i', '2' } } },
+      formatters = {
+        shfmt = { prepend_args = { '-i', '2' } },
+        ['npm-groovy-lint'] = { timeout_ms = 10000 },
+      },
     },
     init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
-  },
-
-  -- Outline
-  {
-    'hedyhli/outline.nvim',
-    lazy = true,
-    cmd = { 'Outline', 'OutlineOpen' },
-    keys = { { '<leader>o', '<cmd>Outline<CR>', desc = 'Toggle outline' } },
-    opts = {},
-  },
-
-  -- Folds
-  {
-    'kevinhwang91/nvim-ufo',
-    dependencies = { 'kevinhwang91/promise-async' },
-    opts = {
-      provider_selector = function(_, _, _) return { 'lsp', 'indent' } end,
-    },
-    config = function(_, opts)
-      vim.o.foldcolumn = '1'
-      vim.o.foldlevel = 99
-      vim.o.foldenable = true
-      require('ufo').setup(opts)
-    end,
   },
 }
