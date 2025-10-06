@@ -83,7 +83,7 @@ return {
                   local confirm = vim.fn.input('Jira Key (' .. jiraKey .. '): ')
                   if confirm ~= '' then jiraKey = confirm end
                 end
-                local jira = vim.fn.system('zsh -ic "jiraIssue ' .. jiraKey .. '"')
+                local jira = vim.fn.system('acli jira workitem view ' .. jiraKey)
                 return code_review_prompt(jira, vim.fn.system("git fetch --all && git diff --no-ext-diff origin/master... -- ':!*.lock' ':!*.sum' "))
               end,
               opts = {

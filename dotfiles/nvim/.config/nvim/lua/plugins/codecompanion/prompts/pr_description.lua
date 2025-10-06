@@ -14,7 +14,7 @@ Your generated output **must** synthesize technical details from the provided co
 ### **Provided Context Data**
 
 **$JIRA_TICKET_DATA:** The full content of the associated Jira ticket, including its **Key**, **Summary**, and **Description**.
-```json
+```yaml
 %s
 ```
 

@@ -121,8 +121,6 @@ function jiraIssue() {
 }
 
 function jira() {
-    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' <~/.jira)
-    JIRA_DOMAIN=$(jq -r .servers.production.url <~/.jira)
     tmpfile=$(mktemp)
     jql "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate" >$tmpfile
 
@@ -138,6 +136,18 @@ function jira() {
         \"\n${COLOR}Description$C_END:\n\" + .renderedFields.description '"
     cat $tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
     rm $tmpfile
+}
+
+# Function: create_jira_task
+# Description: Creates a Jira Task issue and assigns it to the user.
+# Usage: create_jira_task <project_key> <summary> <description>
+# Requires: JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_ASSIGNEE_ID environment variables, and 'jq' tool.
+function create_jira_task() {
+    local project_key="$1"
+    local summary="$2"
+    local description="$3"
+
+    acli jira workitem create -t 'Task' -a '@me' -p "$1" -s "$2" -d "$3"
 }
 
 function jiraBrowse() {

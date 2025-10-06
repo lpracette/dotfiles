@@ -1,5 +1,7 @@
 tap "aws/tap"
+tap "atlassian/homebrew-acli"
 
+brew "acli"
 brew "awscli"
 brew "bash"
 brew "bat"
