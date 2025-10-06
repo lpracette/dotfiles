@@ -106,7 +106,7 @@ function toggle_dark_mode() {
     fi
 }
 
-# Search jira with JQL
+# Search jira with JQL, REST-API allows more fields than the default jira cli
 function jql() {
     jql=$(printf '%s' "$1" | jq -sRr @uri)
     JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' "$HOME/.jira")
@@ -115,14 +115,16 @@ function jql() {
         "$JIRA_DOMAIN/rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields"
 }
 
-function jiraIssue() {
-    jql "issue = $1" | jq -r '.issues[0] | 
-        {key: .key, summary: .fields.summary,  description: .renderedFields.description}'
-}
-
-function jira() {
+# jira_select - Interactively select and preview Jira issues using fzf
+# Usage: selJira "<JQL_QUERY>"
+# This function queries Jira issues using the provided JQL query, displays them in an interactive fzf menu with a rich preview (including key details and description), and outputs the full JSON of the selected issue.
+# Arguments:
+#   $1 - JQL query string to filter Jira issues.
+# Example:
+#   selJira "assignee = currentUser() AND status != Done"
+function jira_select() {
     tmpfile=$(mktemp)
-    jql "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate" >$tmpfile
+    jql "$1" >$tmpfile
 
     COLOR='\u001b[1;34m'
     C_END='\u001b[0m'
@@ -134,23 +136,32 @@ function jira() {
         \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName +
         \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name +
         \"\n${COLOR}Description$C_END:\n\" + .renderedFields.description '"
-    cat $tmpfile | jq -r '.issues[] | .key + " - " + .fields.summary' | fzf --ansi --preview "$preview" | cut -d ' ' -f 1
+
+    selectedKey=$(jq -r '.issues[] | .key + " - " + .fields.summary' <"$tmpfile" |
+        fzf --ansi --preview "$preview" | cut -d ' ' -f 1)
+    cat $tmpfile | jq -r --arg KEY $selectedKey '.issues[] | select(.key == $KEY)'
     rm $tmpfile
+}
+
+function jira() {
+    issue=$(jira_select "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate")
+    echo $issue | jq -r '.key'
+}
+
+function jira_branch() {
+    issue=$(jira_select "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate")
+    branch_name=$(echo $issue | jq -r '.key + "_" + .fields.summary' | tr 'A-Z' 'a-z' | tr ' \-' '_' | tr -cd '[:alnum:]_')
+    echo $branch_name
 }
 
 # Function: create_jira_task
 # Description: Creates a Jira Task issue and assigns it to the user.
 # Usage: create_jira_task <project_key> <summary> <description>
-# Requires: JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, JIRA_ASSIGNEE_ID environment variables, and 'jq' tool.
-function create_jira_task() {
-    local project_key="$1"
-    local summary="$2"
-    local description="$3"
-
+function jira_create_task() {
     acli jira workitem create -t 'Task' -a '@me' -p "$1" -s "$2" -d "$3"
 }
 
-function jiraBrowse() {
+function jira_browse() {
     case "$(uname)" in
     *Linux*) open='xdg-open' ;;
     *Darwin*) open='open' ;;
