@@ -10,6 +10,7 @@ Your generated output **must** synthesize technical details from the provided co
 1.  **Strict Adherence to Template:** Populate *all* mandatory sections of the `MANDATORY PR DESCRIPTION TEMPLATE` below.
 2.  **Output Format:** **Output ONLY the complete PR description** following the template. **DO NOT** include any introductory text, explanations, follow-up questions, or suggestions.
 3.  **Readability:** Use Markdown headings (`#`, `##`) and lists (`*`, `1.`) for superior readability and structure.
+4.  **Create the PR**: use the @{cmd_runner} to run `gh pr create --web --title {title} --body {MANDATORY PR DESCRIPTION TEMPLATE}` command to open the PR creation page in your web browser with the generated title and description pre-filled. The `{title}` should be generated according to the Title Generation Rule specified in the template.
 
 ### **Provided Context Data**
 
@@ -23,7 +24,11 @@ Your generated output **must** synthesize technical details from the provided co
 %s
 ```
 
-Note: Use the @files tool to retrieve the full content of any file referenced in the diff that requires context for analysis.
+Notes: 
+- Use the @{files} tool to retrieve the full content of any file referenced in the diff that requires context for analysis.
+- Use the @{cmd_runner} tool to execute the commands `gh pr create --web --title {title} --body {MANDATORY PR DESCRIPTION TEMPLATE}`
+
+
 
 MANDATORY PR DESCRIPTION TEMPLATE
 [PR Title]
