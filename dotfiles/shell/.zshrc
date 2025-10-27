@@ -72,7 +72,5 @@ bindkey '^x^e' edit-command-line
 [ -e ~/.shell_functions ] && source ~/.shell_functions
 [ -e ~/.shell_local ] && source ~/.shell_local
 
-. /opt/homebrew/bin/hs-opskit-rc-zsh
-
 # uncomment to enable profiling
 # zprof

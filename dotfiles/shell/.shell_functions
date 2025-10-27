@@ -106,13 +106,61 @@ function toggle_dark_mode() {
     fi
 }
 
+# Call Jira REST API
+# Usage: jira_rest_api endpoint <method> <data>
+function jira_rest_api() {
+    endpoint=$1
+    if [ -z "$endpoint" ]; then
+        echo "Usage: jira_rest_api endpoint"
+        return 1
+    fi
+    if [ ! -f "$HOME/.jira" ]; then
+        echo "Error: $HOME/.jira file not found"
+        return 1
+    fi
+    if ! jq -e '.servers.production | .email and .token and .url' "$HOME/.jira" >/dev/null; then
+        echo "Error: $HOME/.jira file is invalid"
+        return 1
+    fi
+    if [ -n "$2" ]; then
+        method=$2
+    else
+        method="GET"
+    fi
+    if [ -n "$3" ]; then
+        data=(--data "$3")
+    else
+        data=()
+    fi
+    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' "$HOME/.jira")
+    JIRA_DOMAIN=$(jq -r '.servers.production.url' "$HOME/.jira")
+    curl -su "$JIRA_BASIC_AUTH" -H 'Accept: application/json' -H 'Content-Type: application/json' -X "$method" "${data[@]}" "$JIRA_DOMAIN/$endpoint"
+}
+
 # Search jira with JQL, REST-API allows more fields than the default jira cli
 function jql() {
     jql=$(printf '%s' "$1" | jq -sRr @uri)
-    JIRA_BASIC_AUTH=$(jq -r '.servers.production | .email + ":" + .token' "$HOME/.jira")
-    JIRA_DOMAIN=$(jq -r '.servers.production.url' "$HOME/.jira")
-    curl -su "$JIRA_BASIC_AUTH" -H 'Accept: application/json' \
-        "$JIRA_DOMAIN/rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields"
+    jira_rest_api "rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields&&maxResults=150"
+}
+
+function jira_transition() {
+    key=$1
+    if [ -z "$key" ]; then
+        echo "Usage: jira_transition <issue_key>"
+        return 1
+    fi
+    transitions=$(jira_rest_api "rest/api/3/issue/$key/transitions" | jq -r '.transitions[] | "\(.id) \(.name)"')
+    if [ -z "$transitions" ]; then
+        echo "Error: No transitions found for issue $key"
+        return 1
+    fi
+    selected=$(echo "$transitions" | fzf --prompt="Select transition for $key: " | awk '{print $1}')
+    if [ -z "$selected" ]; then
+        echo "No transition selected"
+        return 1
+    fi
+    json_body=$(jq -c -n --arg id "$selected" '{transition: {id: $id}}')
+    jira_rest_api "rest/api/3/issue/$key/transitions" "POST" "$json_body"
 }
 
 # jira_select - Interactively select and preview Jira issues using fzf
@@ -139,26 +187,49 @@ function jira_select() {
 
     selectedKey=$(jq -r '.issues[] | .key + " - " + .fields.summary' <"$tmpfile" |
         fzf --ansi --preview "$preview" | cut -d ' ' -f 1)
-    cat $tmpfile | jq -r --arg KEY $selectedKey '.issues[] | select(.key == $KEY)'
+    cat $tmpfile | jq -a -r --arg KEY $selectedKey '.issues[] | select(.key == $KEY)'
     rm $tmpfile
 }
 
 function jira() {
     issue=$(jira_select "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate")
-    echo $issue | jq -r '.key'
+    echo $issue | tr -d '\000-\031' | jq -r '.key'
 }
 
 function jira_branch() {
-    issue=$(jira_select "assignee=currentUser() and resolution=Unresolved ORDER BY updatedDate")
-    branch_name=$(echo $issue | jq -r '.key + "_" + .fields.summary' | tr 'A-Z' 'a-z' | tr ' \-' '_' | tr -cd '[:alnum:]_')
+    key=$1
+    if [ -z "$key" ]; then
+        echo "Usage: jira_branch <issue_key>"
+        return 1
+    fi
+    issue=$(jira_rest_api "rest/api/3/issue/$key")
+    issue=$(echo "$issue" | tr -d '\000-\031')
+    summary=$(echo "$issue" | jq -r '.fields.summary')
+    summary=$(echo "${summary}" | tr 'A-Z' 'a-z' | tr ' \-' '_' | tr -cd '[:alnum:]_')
+    branch_name=$(echo "${key}_${summary}" | cut -c -1-48)
     echo $branch_name
 }
 
 # Function: create_jira_task
 # Description: Creates a Jira Task issue and assigns it to the user.
 # Usage: create_jira_task <project_key> <summary> <description>
+# Note: If no arguments are provided, the function will prompt for input interactively.
 function jira_create_task() {
-    acli jira workitem create -t 'Task' -a '@me' -p "$1" -s "$2" -d "$3"
+    if [ "$#" -ne 3 ]; then
+        echo -n "Project Key: "
+        read project_key
+        echo -n "Summary: "
+        read summary
+        echo -n "Description: "
+        read description
+    else
+        project_key="$1"
+        summary="$2"
+        description="$3"
+    fi
+
+    acli jira workitem create -t 'Task' -a '@me' \
+        -p "$project_key" -s "$summary" -d "$description"
 }
 
 function jira_browse() {

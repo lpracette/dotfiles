@@ -10,6 +10,7 @@
     prompt = false
 [alias]
     d = difftool
+    b = rev-parse --abbrev-ref HEAD
     l = log --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ci) %C(cyan bold)<%an>%Creset %G? ' --abbrev-commit
     lg = log --graph --pretty=format:'%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cd) %C(cyan)<%an>%Creset %G? ' --abbrev-commit
     st = status -bs
