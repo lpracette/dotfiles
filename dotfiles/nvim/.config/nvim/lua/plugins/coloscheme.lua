@@ -1,18 +1,18 @@
 -- Randomly select and set a colorscheme
 local colorschemes = {
   'vscode',
-  'tokyonight',
-  'github_dark_default', -- for github-theme, adjust if you use a different variant
-  'nightfox',
-  'catppuccin',
-  'cyberdream',
-  'rose-pine',
+  -- 'tokyonight',
+  -- 'github_dark_default', -- for github-theme, adjust if you use a different variant
+  -- 'nightfox',
+  -- 'catppuccin',
+  -- 'cyberdream',
+  -- 'rose-pine',
   -- 'onedark',
-  'kanagawa',
-  'everforest',
-  'gruvbox-material',
-  'sonokai',
-  'edge',
+  -- 'kanagawa',
+  -- 'everforest',
+  -- 'gruvbox-material',
+  -- 'sonokai',
+  -- 'edge',
   -- 'oxocarbon',
 }
 

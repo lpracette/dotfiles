@@ -31,6 +31,15 @@ return {
         },
         branch = 'main',
       },
+      {
+        'nvim-neotest/neotest-jest',
+        dependencies = {
+          {
+            'mxsdev/nvim-dap-vscode-js',
+            opts = {},
+          },
+        },
+      },
     },
     opts = function(_, opts)
       opts.adapters = opts.adapters or {}
@@ -44,6 +53,12 @@ return {
       opts.adapters['neotest-python'] = {
         dap = { justMyCode = false },
         runner = 'pytest',
+      }
+      opts.adapters['neotest-jest'] = {
+        jestCommand = 'npm test --',
+        jestConfigFile = 'jest.config.js',
+        env = { CI = true },
+        cwd = function(path) return vim.fn.getcwd() end,
       }
     end,
     config = function(_, opts)

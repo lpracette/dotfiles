@@ -38,7 +38,7 @@
 [log]
 	date = local
 [gpg]
-	program = gpg
+	program = /opt/homebrew/bin/gpg
 [init]
 	defaultBranch = main
 [fetch]
@@ -47,3 +47,5 @@
     fetch = +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*
 [pull]
 	rebase = true
+[commit]
+	gpgsign = true

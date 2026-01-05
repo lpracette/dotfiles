@@ -1,0 +1,19 @@
+description: "Global System Preferences"
+
+# Killing cfprefsd forces macOS to reload plist files from disk instead of using cached values.
+kill: ["cfprefsd"]
+
+data:
+  NSGlobalDomain:
+    # Disable "Press and Hold" for keys (Vital for Vim/Tmux repeats)
+    ApplePressAndHoldEnabled: false
+    # Fast repeat rate (1 is fastest)
+    KeyRepeat: 1
+    # Short delay before repeat starts (10-15 is sweet spot)
+    InitialKeyRepeat: 10
+    # Disable window opening/closing animations
+    NSAutomaticWindowAnimationsEnabled: false
+    # Speed up window resizing (effectively instant)
+    NSWindowResizeTime: 0.001
+    # Show hidden files in Open/Save dialog boxes
+    AppleShowAllFiles: true

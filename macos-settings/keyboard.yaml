@@ -1,0 +1,20 @@
+description: "Keyboard & Language"
+kill: ["cfprefsd"]
+data:
+  com.apple.symbolichotkeys:
+    AppleSymbolicHotKeys:
+      # Disable default language switch shortcut (prevent conflicts with tmux)
+      "60":
+        enabled: false
+  com.apple.HIToolbox:
+    AppleEnabledInputSources:
+      - InputSourceKind: "Keyboard Layout"
+        "KeyboardLayout ID": 0
+        "KeyboardLayout Name": "ABC"
+      - InputSourceKind: "Keyboard Layout"
+        "KeyboardLayout ID": -19336
+        "KeyboardLayout Name": "CanadianFrench-PC"
+    AppleSelectedInputSources:
+      - InputSourceKind: "Keyboard Layout"
+        "KeyboardLayout ID": 0
+        "KeyboardLayout Name": "ABC"

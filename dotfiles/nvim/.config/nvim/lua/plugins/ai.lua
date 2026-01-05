@@ -18,7 +18,34 @@ return {
   },
   {
     'olimorris/codecompanion.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'j-hui/fidget.nvim',
+    },
     opts = {
+      opts = {
+        log_level = 'DEBUG',
+      },
+      -- strategies = {
+      --   chat = {
+      --     adapter = 'gemini',
+      --   },
+      --   inline = {
+      --     adapter = 'gemini',
+      --   },
+      -- },
+      adapters = {
+        gemini = function()
+          return require('codecompanion.adapters').extend('gemini', {
+            schema = {
+              model = {
+                default = 'gemini-2.5-flash', -- New default for V18 is gemini-2.0-flash
+              },
+            },
+          })
+        end,
+      },
       prompt_library = {
         ['Commit Message'] = {
           strategy = 'inline',
@@ -73,10 +100,8 @@ return {
               role = 'user',
               content = function()
                 local code_review_prompt = require('plugins.codecompanion.prompts.pr_description')
-                -- use a regexp to extract jira key from branch name
                 local branch = vim.fn.system('git rev-parse --abbrev-ref HEAD')
                 local jiraKey = string.match(branch, '%u+%-%d+')
-                -- ask for jira key if not found or to confirm the extracted one
                 if not jiraKey or jiraKey == '' then
                   jiraKey = vim.fn.input('Jira Key: ')
                 else
@@ -93,11 +118,6 @@ return {
           },
         },
       },
-    },
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'j-hui/fidget.nvim',
     },
     init = function() require('plugins.codecompanion.fidget-spinner'):init() end,
     keys = {

@@ -1,0 +1,16 @@
+description: "Finder Configuration"
+kill: ["Finder"]
+data:
+  com.apple.finder:
+    # Show hidden (dot) files by default in Finder
+    AppleShowAllFiles: true
+    # Always show file extensions
+    AppleShowAllExtensions: true
+    # Show path bar at the bottom
+    ShowPathbar: true
+    # Show status bar (free space/item count)
+    ShowStatusBar: true
+    # Keep folders on top when sorting
+    _FXSortFoldersFirst: true
+    # Search the current folder by default (not the whole Mac)
+    FXDefaultSearchScope: "SCcf"

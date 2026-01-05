@@ -1,8 +1,8 @@
 -- lua/plugins/codecompanion/fidget-spinner.lua
 -- from https://github.com/olimorris/codecompanion.nvim/discussions/813#discussioncomment-12031954
 
+-- lua/plugins/codecompanion/fidget-spinner.lua
 local progress = require('fidget.progress')
-
 local M = {}
 
 function M:init()
@@ -41,8 +41,11 @@ function M:pop_progress_handle(id)
 end
 
 function M:create_progress_handle(request)
+  -- V18: Fallback to 'interaction' as 'strategy' is being deprecated
+  local interaction_type = request.data.interaction or request.data.strategy or 'request'
+
   return progress.handle.create({
-    title = ' Requesting assistance (' .. request.data.strategy .. ')',
+    title = ' Requesting assistance (' .. interaction_type .. ')',
     message = 'In progress...',
     lsp_client = {
       name = M:llm_role_title(request.data.adapter),
@@ -52,7 +55,8 @@ end
 
 function M:llm_role_title(adapter)
   local parts = {}
-  table.insert(parts, adapter.formatted_name)
+  -- Adapter structure changed slightly, ensuring we handle the new preset/default logic
+  table.insert(parts, adapter.formatted_name or adapter.name or 'LLM')
   if adapter.model and adapter.model ~= '' then table.insert(parts, '(' .. adapter.model .. ')') end
   return table.concat(parts, ' ')
 end
