@@ -20,7 +20,7 @@ local function set_random_colorscheme()
   math.randomseed(os.time())
   local choice = colorschemes[math.random(#colorschemes)]
   vim.cmd.colorscheme(choice)
-  vim.notify('Colorscheme set to: ' .. choice, vim.log.levels.INFO)
+  -- vim.notify('Colorscheme set to: ' .. choice, vim.log.levels.INFO)
 end
 
 -- Uncomment the next line to set a random colorscheme on startup
