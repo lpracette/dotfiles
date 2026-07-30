@@ -9,6 +9,55 @@ return {
         numbers = 'buffer_id',
       },
     },
+    config = function(_, opts)
+      require('bufferline').setup(opts)
+
+      local function set_bufferline_highlights()
+        local normal = vim.api.nvim_get_hl(0, { name = 'Normal' })
+        local cursorline = vim.api.nvim_get_hl(0, { name = 'CursorLine' })
+        local string_hl = vim.api.nvim_get_hl(0, { name = 'String' })
+        local tabline = vim.api.nvim_get_hl(0, { name = 'TabLine' })
+
+        local selected_fg = normal.fg or string_hl.fg
+        local selected_bg = cursorline.bg or normal.bg
+        local inactive_fg = tabline.fg or normal.fg
+        local inactive_bg = tabline.bg or normal.bg
+        local indicator_fg = string_hl.fg or selected_fg
+
+        vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', {
+          fg = selected_fg,
+          bg = selected_bg,
+          bold = true,
+        })
+        vim.api.nvim_set_hl(0, 'BufferLineNumbersSelected', {
+          fg = selected_fg,
+          bg = selected_bg,
+          bold = true,
+        })
+        vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', {
+          fg = indicator_fg,
+          bg = selected_bg,
+        })
+        vim.api.nvim_set_hl(0, 'BufferLineBufferVisible', {
+          fg = inactive_fg,
+          bg = inactive_bg,
+        })
+        vim.api.nvim_set_hl(0, 'BufferLineNumbersVisible', {
+          fg = inactive_fg,
+          bg = inactive_bg,
+        })
+        vim.api.nvim_set_hl(0, 'BufferLineBackground', {
+          fg = inactive_fg,
+          bg = inactive_bg,
+        })
+      end
+
+      set_bufferline_highlights()
+
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        callback = set_bufferline_highlights,
+      })
+    end,
   },
   {
     'nvim-lualine/lualine.nvim',

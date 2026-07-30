@@ -7,13 +7,12 @@
 # Load zplug
 source ~/.zplug/init.zsh
 
-zplug "zplug/zplug"                                     # Let zplug manage zplug
+zplug 'zplug/zplug', at:main, hook-build:'zplug --self-manage'    # Let zplug manage zplug
 zplug "Aloxaf/fzf-tab"
-zplug "zsh-users/zsh-completions"                       # Additional completion definitions for Zsh
-zplug "chitoku-k/fzf-zsh-completions"                   # Fuzzy completions for fzf and Zsh that can be triggered by the trigger sequence that defaults to **.
-zplug "chriskempson/base16-shell"                       # Color palette
-zplug 'christoomey/vim-tmux-navigator'
-zplug "zsh-users/zsh-autosuggestions"                   # suggest commands from history
+zplug "zsh-users/zsh-completions"                        # Additional completion definitions for Zsh
+zplug "chitoku-k/fzf-zsh-completions"                    # Fuzzy completions for fzf and Zsh that can be triggered by the trigger sequence that defaults to **.
+zplug "chriskempson/base16-shell"                        # Color palette
+zplug "zsh-users/zsh-autosuggestions"                    # suggest commands from history
 zplug "zsh-users/zsh-syntax-highlighting", defer:2       # Syntax highlighting
 zplug "zsh-users/zsh-history-substring-search", defer:3  # ZSH port of Fish shell's history search feature
 
@@ -57,8 +56,6 @@ bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # completion
 # [ $commands[poetry]   ] && eval $(poetry completions zsh)
 # [ $commands[kubectl]   ] && source <(kubectl completion zsh)
@@ -66,6 +63,7 @@ bindkey '^x^e' edit-command-line
 # [ $commands[aws-vault] ] && eval "$(aws-vault --completion-script-zsh)"
 # [ $commands[npm]       ] && eval "$(npm completion)"
 # [ $commands[glab]      ] && eval "$(glab completion -s zsh)"; compdef _glab glab
+[ $commands[gh]      ] && eval "$(gh completion -s zsh)";
 
 [ -e ~/.shell_alias ] && source ~/.shell_alias 
 [ -e ~/.shell_env ] && source ~/.shell_env
@@ -74,3 +72,11 @@ bindkey '^x^e' edit-command-line
 
 # uncomment to enable profiling
 # zprof
+
+# pnpm
+export PNPM_HOME="/Users/LouisPoudrierRacette/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

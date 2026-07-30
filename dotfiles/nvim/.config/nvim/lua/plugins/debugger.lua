@@ -205,7 +205,10 @@ return {
 
   {
     'igorlfs/nvim-dap-view',
-    opts = { winbar = { controls = { enabled = true } } },
+    opts = { winbar = {
+      controls = { enabled = true },
+      sections = { 'console', 'watches', 'scopes', 'breakpoints', 'threads', 'repl' },
+    } },
     config = function(_, opts)
       local dap = require('dap')
       local dap_view = require('dap-view')

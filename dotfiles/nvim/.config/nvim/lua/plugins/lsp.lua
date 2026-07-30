@@ -64,6 +64,7 @@ return {
   -- Completion
   {
     'saghen/blink.cmp',
+    branch = 'v1',
     dependencies = { 'rafamadriz/friendly-snippets' },
     opts = {
       completion = {
@@ -87,7 +88,7 @@ return {
     opts = {
       formatters_by_ft = {
         lua = { 'stylua' },
-        go = { 'gofmt', 'goimports' },
+        go = { 'gofumpt' },
         python = { 'ruff' },
         javascript = { 'prettier' },
         groovy = { 'npm-groovy-lint' },
@@ -102,5 +103,16 @@ return {
       },
     },
     init = function() vim.o.formatexpr = "v:lua.require'conform'.formatexpr()" end,
+  },
+  {
+    'retran/meow.yarn.nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    opts = {}, -- Use defaults
+    keys = {
+      { '<leader>yt', function() require('meow.yarn').open_tree('type_hierarchy', 'supertypes') end, desc = 'Yarn: Type Hierarchy (Super)' },
+      { '<leader>yT', function() require('meow.yarn').open_tree('type_hierarchy', 'subtypes') end, desc = 'Yarn: Type Hierarchy (Sub)' },
+      { '<leader>yc', function() require('meow.yarn').open_tree('call_hierarchy', 'callers') end, desc = 'Yarn: Call Hierarchy (Callers)' },
+      { '<leader>yC', function() require('meow.yarn').open_tree('call_hierarchy', 'callees') end, desc = 'Yarn: Call Hierarchy (Callees)' },
+    },
   },
 }

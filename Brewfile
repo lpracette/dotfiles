@@ -1,6 +1,8 @@
 tap "atlassian/homebrew-acli"
 tap "dsully/tap"
-tap "nikitabobko/tap"
+#tap "nikitabobko/tap"
+tap "darrylmorley/whatcable"
+
 
 brew "dsully/tap/macos-defaults"
 brew "atlassian/homebrew-acli/acli"
@@ -50,10 +52,12 @@ cask "google-drive"
 cask "iterm2"
 cask "stats"
 cask "meld"
-cask "visual-studio-code"
+# cask "visual-studio-code"
 cask "dbeaver-community"
+# cask "cursor"
+cask "darrylmorley/whatcable/whatcable"
 
-cask "nikitabobko/tap/aerospace"
+# cask "nikitabobko/tap/aerospace"
 
 # cask "google-chrome"
 # cask "slack"

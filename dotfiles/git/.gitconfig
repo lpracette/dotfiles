@@ -20,6 +20,7 @@
 	meld = !git difftool -t meld --dir-diff
     fp =!git format-patch -p `git rev-parse --abbrev-ref --symbolic-full-name @{u}`
     del-gone = "!git branch -vvv | awk '/: gone]/{print $1}' | xargs git branch -D"
+    cb = "!f() { git checkout -b jira_branch }; f"
 [difftool "nvimdiff"]
     cmd = "nvim -d -R  ${REMOTE} -c ':se noreadonly' ${LOCAL}"
 [mergetool "nvimdiff3"]
@@ -49,3 +50,5 @@
 	rebase = true
 [commit]
 	gpgsign = true
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/

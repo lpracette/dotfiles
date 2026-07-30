@@ -39,6 +39,11 @@ for cmd in stow nvim zsh hidutil macos-defaults tmux; do
     require_cmd "$cmd"
 done
 
+# Ensure directory structure is created so symlinks are not created for base directories
+echo -e "\n📂 Creating necessary directories... 📂\n"
+mkdir -p "$HOME/.config"
+mkdir -p "$HOME/Library/Application Support/iTerm2/DynamicProfiles"
+
 # Symlink dotfiles using GNU Stow
 echo -e "\n📁 Symlink dotfiles... 📁\n"
 for pkg in $(ls "$DOTFILES/dotfiles"); do
@@ -73,7 +78,7 @@ fi
 
 # Apply macOS settings
 echo -e "\n🍏 Applying macOS settings... 🍏\n"
-macos-defaults apply -vv macos-settings
+macos-defaults apply -vv $DOTFILES/macos-settings
 
 # remap caps lock to escape
 # 0x700000039 is the HID usage ID for Caps Lock

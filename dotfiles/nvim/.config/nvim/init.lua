@@ -42,6 +42,13 @@ vim.opt.spelllang = { 'en_us' }
 vim.opt.laststatus = 2
 vim.opt.winborder = 'rounded'
 
+-- Load cfilter plugin for enhanced quickfix filtering
+vim.cmd('packadd cfilter')
+
+-- interactive shell, allows for aliases and functions in !commands
+vim.opt.shell = 'zsh'
+vim.opt.shellcmdflag = '-ic'
+
 -- Key mappings
 vim.api.nvim_set_keymap('i', 'jk', '<esc>', { noremap = true })
 vim.api.nvim_set_keymap('c', 'bb', 'b#', { noremap = true })
@@ -82,6 +89,20 @@ vim.keymap.set('x', '<leader>ty', ":'<,'>!python3 -c 'import sys, json, yaml; ya
 -- Convert YAML to JSON with python3
 vim.keymap.set('x', '<leader>tj', ":'<,'>!python3 -c 'import sys, json, yaml;print(json.dumps(yaml.load(sys.stdin,Loader=yaml.FullLoader), indent=2,default=str))'<CR>", { silent = true, noremap = true, expr = false })
 
+-- Smart gF: jump to file|line col or fallback to normal gF
+vim.keymap.set('n', 'gF', function()
+  local line = vim.fn.getline('.')
+  -- Try to match: file|line col col|...
+  local file, lnum, col = string.match(line, '([^|]+)|(%d+)%s*col%s*(%d+)')
+  if file and lnum and col then
+    vim.cmd('edit ' .. file)
+    vim.api.nvim_win_set_cursor(0, { tonumber(lnum), tonumber(col) - 1 })
+  else
+    -- Fallback to normal gF
+    vim.cmd('normal! gF')
+  end
+end, { desc = 'Smart gF: jump to file|line|col or fallback' })
+
 -- Highlighting
 vim.api.nvim_set_hl(0, 'CopilotSuggestion', { fg = '#808080' })
 
@@ -111,6 +132,39 @@ vim.diagnostic.config({
     },
   },
 })
+
+local function gh_code_search(opts)
+  local query = opts.args
+  if query == '' then
+    print('Please provide a search term.')
+    return
+  end
+
+  -- Construct the shell command
+  -- We use jq to format: filename:line: fragment (with newlines replaced by spaces)
+  local cmd = string.format('gh search code %q --extension go --json path,textMatches | ' .. 'jq -r \'.[] | .path as $p | .textMatches[] | "\\($p):1: \\(.fragment | gsub("\\n"; " ") | gsub("\\r"; " ") )"\'', query)
+
+  print('Searching GitHub...')
+
+  -- Execute and capture output
+  local output = vim.fn.systemlist(cmd)
+
+  if vim.v.shell_error ~= 0 or #output == 0 then
+    print('No results found or error executing gh.')
+    return
+  end
+
+  -- Load results into Quickfix
+  vim.fn.setqflist({}, 'r', {
+    title = 'GH Search: ' .. query,
+    lines = output,
+  })
+
+  vim.cmd('copen')
+end
+
+-- Create the user command :GHSearch
+vim.api.nvim_create_user_command('GHSearch', gh_code_search, { nargs = 1 })
 
 -- Source local configuration
 vim.cmd([[source ~/.vimrc.local]])

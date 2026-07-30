@@ -77,23 +77,27 @@ function checksum() {
 }
 
 function git-cp {
-    PATCH_DIR="$HOME/backup/patch/$(basename $(pwd))_$(date +'%Y_%m_%d_%H_%M_%S')/"
-    mkdir -p PATCH_DIR
+    PATCH_DIR="$HOME/backup/patch/$(basename $(pwd))_$(date +'%Y_%m_%d_%H_%M_%S')"
+    mkdir -p "$PATCH_DIR"
     echo "Backing up to $PATCH_DIR..."
 
-    # Local commits
-    git format-patch -p $(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR
-    git submodule --quiet foreach --recursive "git format-patch -p \$(git rev-parse --abbrev-ref --symbolic-full-name @{u}) -o $PATCH_DIR"
+    # Helper to get upstream or fallback to a default (e.g., main/master)
+    # This prevents the "no upstream configured" fatal error.
+    get_upstream() {
+        git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "origin/master"
+    }
 
-    # Work in Progress
+    # Backup Local Commits
+    UPSTREAM=$(get_upstream)
+    echo "Comparing against $UPSTREAM..."
+    git format-patch "$UPSTREAM" -o "$PATCH_DIR"
+    
+    # Backup Work in Progress (Dirty changes)
     if ! git diff --exit-code --ignore-submodules --quiet; then
-        git diff --ignore-submodules >$PATCH_DIR/wip_$(basename $(git rev-parse --show-toplevel))_$(date +"%Y_%m_%d_%H_%M_%S").patch
+        git diff --ignore-submodules > "$PATCH_DIR/wip_root_$(date +'%H%M%S').patch"
     fi
-    git submodule --quiet foreach --recursive \
-        "if ! git diff --exit-code  --ignore-submodules --quiet; then \
-        git diff --ignore-submodules --src-prefix=\"a/\${path}/\" --dst-prefix=\"b/\${path}/\" >\
-        $PATCH_DIR/wip_\$(basename \$path)_$(date +\"%Y_%m_%d_%H_%M_%S\").patch; \
-     fi"
+
+    echo "Done! Patches saved in $PATCH_DIR"
 }
 
 function toggle_dark_mode() {
@@ -139,8 +143,9 @@ function jira_rest_api() {
 
 # Search jira with JQL, REST-API allows more fields than the default jira cli
 function jql() {
-    jql=$(printf '%s' "$1" | jq -sRr @uri)
-    jira_rest_api "rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields&&maxResults=150"
+    # jql=$(printf '%s' "$1" | jq -sRr @uri)
+    # jira_rest_api "rest/api/3/search/jql?jql=$jql&&fields=summary,comment,description,created,updated,duedate,reporter,status&expand=renderedFields&&maxResults=150"
+    acli jira workitem search --jql "$1" --json --fields "summary,description,reporter,status"
 }
 
 function jira_transition() {
@@ -176,18 +181,45 @@ function jira_select() {
 
     COLOR='\u001b[1;34m'
     C_END='\u001b[0m'
-    preview="cat $tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '.issues[] | select(.key == \$KEY) | \
-        \"\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" + \
-        \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created +
-        \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated +
-        \"\n\"+ \"${COLOR}Due date$C_END: \"    + .fields.duedate +
-        \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName +
-        \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name +
-        \"\n${COLOR}Description$C_END:\n\" + .renderedFields.description '"
+    preview="cat $tmpfile | jq -r --arg KEY \$(echo {} | cut -d ' ' -f 1) '
+      .[] | select(.key == \$KEY) |
+      \"\u001b[30;104m\" +.key + \" - \"     + .fields.summary + \"$C_END\n\" +
+      \"\n\"+ \"${COLOR}Created at$C_END: \"  + .fields.created +
+      \"\n\"+ \"${COLOR}Updated at$C_END: \"  + .fields.updated +
+      \"\n\"+ \"${COLOR}Due date$C_END: \"    + .fields.duedate +
+      \"\n\"+ \"${COLOR}Reported by$C_END: \" + .fields.reporter.displayName +
+      \"\n\"+ \"${COLOR}Status$C_END: \"      + .fields.status.name +
+      \"\n${COLOR}Description$C_END:\n\" +
+      (
+        def adf_text:
+          if type == \"object\" then
+            if .type == \"paragraph\" then
+              (.content // [] | map(adf_text) | join(\"\")) + \"\n\"
+            elif .type == \"bulletList\" then
+              (.content // [] | map(adf_text) | join(\"\"))
+            elif .type == \"listItem\" then
+              \"- \" + (.content // [] | map(adf_text) | join(\"\")) + \"\n\"
+            elif .type == \"text\" then
+              .text
+            elif .type == \"link\" then
+              (.text // \"\") + \" (\" + (.marks[]?.attrs.href // \"\") + \")\"
+            elif .type == \"inlineCard\" then
+              (.attrs.url // \"\")
+            else
+              (.content // [] | map(adf_text) | join(\"\"))
+            end
+          elif type == \"array\" then
+            map(adf_text) | join(\"\")
+          else
+            \"\"
+          end;
+        .fields.description | adf_text
+      )
+    '"
 
-    selectedKey=$(jq -r '.issues[] | .key + " - " + .fields.summary' <"$tmpfile" |
+    selectedKey=$(jq -r '.[] | .key + " - " + .fields.summary' <"$tmpfile" |
         fzf --ansi --preview "$preview" | cut -d ' ' -f 1)
-    cat $tmpfile | jq -a -r --arg KEY $selectedKey '.issues[] | select(.key == $KEY)'
+    cat $tmpfile | jq -a -r --arg KEY $selectedKey '.[] | select(.key == $KEY)'
     rm $tmpfile
 }
 
@@ -197,17 +229,39 @@ function jira() {
 }
 
 function jira_branch() {
-    key=$1
-    if [ -z "$key" ]; then
-        echo "Usage: jira_branch <issue_key>"
-        return 1
-    fi
-    issue=$(jira_rest_api "rest/api/3/issue/$key")
-    issue=$(echo "$issue" | tr -d '\000-\031')
-    summary=$(echo "$issue" | jq -r '.fields.summary')
-    summary=$(echo "${summary}" | tr 'A-Z' 'a-z' | tr ' \-' '_' | tr -cd '[:alnum:]_')
-    branch_name=$(echo "${key}_${summary}" | cut -c -1-48)
+
+    key=$(jira)
+    prefix=$(branch_prefix)
+    summary=$(jql "key=$key" | jq '.[].fields.summary')
+    summary=$(echo "${summary}" | tr 'A-Z' 'a-z' | tr ' /\-' '_' | tr -cd '[:alnum:]_')
+    branch_name=$(echo "${prefix}/${key}/${summary}" | cut -c -1-64)
     echo $branch_name
+}
+
+function branch_prefix() {
+    # Path to the custom prefix file
+    local prefix_file="$HOME/.branch-prefix-do-not-use"
+
+    # Default prefixes as a JSON array
+    local default_prefixes='[
+        {"prefix": "feat", "description": "Feature", "explanation": "A new feature"},
+        {"prefix": "fix", "description": "Bugfix", "explanation": "A bug fix"},
+        {"prefix": "chore", "description": "Chore", "explanation": "Routine task"}
+    ]'
+
+    # Use custom prefixes if the file exists, otherwise use defaults
+    local prefixes
+    if [ -f "$prefix_file" ]; then
+        prefixes=$(cat "$prefix_file")
+    else
+        prefixes="$default_prefixes"
+    fi
+
+    # Present options with fzf, preview explanation, and output selected prefix
+    echo "$prefixes" | jq -r '.[] | "\(.prefix)\t\(.description)\t\(.explanation)"' \
+        | fzf --with-nth=1,2 --delimiter='\t' \
+              --preview="echo {3}" --preview-window=wrap \
+        | cut -f1 -d $'\t'
 }
 
 # Function: create_jira_task
@@ -277,4 +331,10 @@ function lazyvim() {
   cd ~/.config/nvim
   nvim
 '
+}
+
+function ghsearch() {
+    gh search code "$1" --extension go --json path,textMatches | \
+        jq -r '.[] | .path as $p | .textMatches[] | "\($p):1: \(.fragment | gsub("\n"; " "))"' | \
+        sed 's/  */ /g'
 }
