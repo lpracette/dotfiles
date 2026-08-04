@@ -1,57 +1,61 @@
 -- Setup lazy.nvim plugin manager
 require('config.lazy')
 
--- Filetype settings
-vim.cmd('syntax on')
-vim.cmd('filetype on')
-vim.cmd('filetype plugin on')
-vim.cmd('filetype indent on')
-
 -- General settings
-vim.opt.compatible = false
 vim.opt.number = true
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.wrap = false
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
 vim.opt.visualbell = true
-vim.opt.encoding = 'UTF-8'
 vim.opt.path:append('**')
-vim.opt.hidden = true
 vim.opt.splitright = true
 vim.opt.wildmode = { 'longest', 'list', 'full' }
-vim.opt.wildmenu = true
-vim.opt.omnifunc = 'syntaxcomplete#Complete'
-vim.opt.foldmethod = 'indent'
 vim.opt.foldlevelstart = 99
-vim.opt.backspace = { 'indent', 'eol', 'start' }
 vim.opt.undofile = true
-vim.opt.undodir = vim.fs.normalize('~/.vim/undo//')
-vim.opt.backupdir = { vim.fs.normalize('~/.vim/swap//'), '/tmp//' }
-vim.opt.directory = { vim.fs.normalize('~/.vim/swap//'), '/tmp//' }
+-- Preserve trailing "//" so swap/undo names encode the full path (do not normalize).
+-- vim.fs.normalize collapses "//" and causes collisions like init.lua.swp across repos.
+local state = vim.fn.stdpath('state')
+vim.fn.mkdir(state .. '/undo', 'p')
+vim.fn.mkdir(state .. '/swap', 'p')
+vim.fn.mkdir(state .. '/backup', 'p')
+vim.opt.undodir = state .. '/undo//'
+vim.opt.directory = state .. '/swap//'
+vim.opt.backupdir = state .. '/backup//'
+-- Don't block plugins (e.g. Diffview) with the ATTENTION swap prompt
+vim.opt.shortmess:append('A')
 vim.opt.showmode = false
 vim.opt.showcmd = true
 vim.opt.virtualedit = 'block'
 vim.opt.mouse = 'a'
 vim.opt.mousemoveevent = true
 vim.opt.scrolloff = 10
-vim.opt.spell = true
 vim.opt.spelllang = { 'en_us' }
 vim.opt.laststatus = 2
 vim.opt.winborder = 'rounded'
 
+-- Spell only for prose / commit messages
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'gitcommit', 'text' },
+  callback = function() vim.opt_local.spell = true end,
+})
+
+-- Brief highlight after yank
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function() vim.highlight.on_yank({ timeout = 150 }) end,
+})
+
+
 -- Load cfilter plugin for enhanced quickfix filtering
 vim.cmd('packadd cfilter')
 
--- interactive shell, allows for aliases and functions in !commands
+-- interactive shell was -ic; -i sources full .zshrc (~seconds) on every :! / filter
 vim.opt.shell = 'zsh'
-vim.opt.shellcmdflag = '-ic'
+vim.opt.shellcmdflag = '-c'
 
 -- Key mappings
-vim.api.nvim_set_keymap('i', 'jk', '<esc>', { noremap = true })
-vim.api.nvim_set_keymap('c', 'bb', 'b#', { noremap = true })
+vim.keymap.set('i', 'jk', '<esc>', { noremap = true })
+vim.keymap.set('c', 'bb', 'b#', { noremap = true })
 
 -- Insert current date-time in normal mode
 vim.keymap.set('n', '<leader>idn', function() vim.api.nvim_put({ os.date('%c') }, 'c', true, true) end, { silent = true, desc = '[i]nsert current [d]ate-time' })
@@ -84,21 +88,19 @@ vim.keymap.set('n', '<leader>v', function()
 end, { silent = true })
 
 -- Convert JSON to YAML with python3
-vim.keymap.set('x', '<leader>ty', ":'<,'>!python3 -c 'import sys, json, yaml; yaml.safe_dump(json.load(sys.stdin), sys.stdout, default_flow_style=False)'<CR>", { silent = true, noremap = true, expr = false })
+vim.keymap.set('x', '<leader>ty', ":'<,'>!python3 -c 'import sys, json, yaml; yaml.safe_dump(json.load(sys.stdin), sys.stdout, default_flow_style=False)'<CR>", { silent = true, noremap = true })
 
 -- Convert YAML to JSON with python3
-vim.keymap.set('x', '<leader>tj', ":'<,'>!python3 -c 'import sys, json, yaml;print(json.dumps(yaml.load(sys.stdin,Loader=yaml.FullLoader), indent=2,default=str))'<CR>", { silent = true, noremap = true, expr = false })
+vim.keymap.set('x', '<leader>tj', ":'<,'>!python3 -c 'import sys, json, yaml;print(json.dumps(yaml.load(sys.stdin,Loader=yaml.FullLoader), indent=2,default=str))'<CR>", { silent = true, noremap = true })
 
 -- Smart gF: jump to file|line col or fallback to normal gF
 vim.keymap.set('n', 'gF', function()
   local line = vim.fn.getline('.')
-  -- Try to match: file|line col col|...
   local file, lnum, col = string.match(line, '([^|]+)|(%d+)%s*col%s*(%d+)')
   if file and lnum and col then
     vim.cmd('edit ' .. file)
     vim.api.nvim_win_set_cursor(0, { tonumber(lnum), tonumber(col) - 1 })
   else
-    -- Fallback to normal gF
     vim.cmd('normal! gF')
   end
 end, { desc = 'Smart gF: jump to file|line|col or fallback' })
@@ -134,19 +136,36 @@ vim.diagnostic.config({
 })
 
 local function gh_code_search(opts)
-  local query = opts.args
-  if query == '' then
-    print('Please provide a search term.')
+  local fargs = opts.fargs
+  local query = fargs[1]
+  if not query or query == '' then
+    vim.notify('Usage: :GHSearch <query> [extension]', vim.log.levels.WARN)
     return
   end
 
-  -- Construct the shell command
-  -- We use jq to format: filename:line: fragment (with newlines replaced by spaces)
-  local cmd = string.format('gh search code %q --extension go --json path,textMatches | ' .. 'jq -r \'.[] | .path as $p | .textMatches[] | "\\($p):1: \\(.fragment | gsub("\\n"; " ") | gsub("\\r"; " ") )"\'', query)
+  local extension = fargs[2]
+  if not extension or extension == '' then
+    local ft_to_ext = {
+      javascript = 'js',
+      typescript = 'ts',
+      typescriptreact = 'tsx',
+      javascriptreact = 'jsx',
+      python = 'py',
+      markdown = 'md',
+      make = 'Makefile',
+    }
+    local ft = vim.bo.filetype
+    extension = ft_to_ext[ft] or (ft ~= '' and ft or 'go')
+  end
 
-  print('Searching GitHub...')
+  local cmd = string.format(
+    'gh search code %q --extension %s --json path,textMatches | jq -r \'.[] | .path as $p | .textMatches[] | "\\($p):1: \\(.fragment | gsub("\\n"; " ") | gsub("\\r"; " ") )"\'',
+    query,
+    extension
+  )
 
-  -- Execute and capture output
+  print(string.format('Searching GitHub (ext=%s)...', extension))
+
   local output = vim.fn.systemlist(cmd)
 
   if vim.v.shell_error ~= 0 or #output == 0 then
@@ -154,17 +173,18 @@ local function gh_code_search(opts)
     return
   end
 
-  -- Load results into Quickfix
   vim.fn.setqflist({}, 'r', {
-    title = 'GH Search: ' .. query,
+    title = string.format('GH Search [%s]: %s', extension, query),
     lines = output,
   })
 
   vim.cmd('copen')
 end
 
--- Create the user command :GHSearch
-vim.api.nvim_create_user_command('GHSearch', gh_code_search, { nargs = 1 })
+vim.api.nvim_create_user_command('GHSearch', gh_code_search, {
+  nargs = '+',
+  desc = 'Search GitHub code (uses buffer filetype extension; optional 2nd arg overrides)',
+})
 
 -- Source local configuration
 vim.cmd([[source ~/.vimrc.local]])
