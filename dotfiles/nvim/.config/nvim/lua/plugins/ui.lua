@@ -96,17 +96,12 @@ return {
         'latex',
         'lua',
         'markdown',
-        'norg',
         'python',
         'regex',
-        'scss',
-        'svelte',
         'toml',
         'tsx',
         'typescript',
-        'typst',
         'vim',
-        'vue',
         'yaml',
       }
       require 'nvim-treesitter'.install { languages }

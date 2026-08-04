@@ -1,14 +1,11 @@
 return {
-
-  -- Handling of the envFile field is, apparently, VS Code-specific.
-  -- nvim-dap doesn't support it by default, so this plugin provides that functionality.
+  -- VS Code launch.json envFile support for nvim-dap
   {
     'ravsii/nvim-dap-envfile',
     dependencies = { 'mfussenegger/nvim-dap' },
-    opts = {}, -- This automatically sets up the listener
+    opts = {},
   },
 
-  -- Neotest setup
   {
     'nvim-neotest/neotest',
     event = 'VeryLazy',
@@ -16,8 +13,6 @@ return {
       'nvim-neotest/nvim-nio',
       'nvim-lua/plenary.nvim',
       { 'nvim-treesitter/nvim-treesitter', branch = 'main' },
-      'nvim-neotest/neotest-plenary',
-      'nvim-neotest/neotest-vim-test',
       {
         'nvim-neotest/neotest-python',
         dependencies = {
@@ -66,7 +61,7 @@ return {
         jestCommand = 'npm test --',
         jestConfigFile = 'jest.config.js',
         env = { CI = true },
-        cwd = function(path) return vim.fn.getcwd() end,
+        cwd = function() return vim.fn.getcwd() end,
       }
     end,
     config = function(_, opts)
@@ -115,7 +110,6 @@ return {
     },
   },
 
-  -- DAP setup
   {
     'mfussenegger/nvim-dap',
     event = 'VeryLazy',
@@ -138,62 +132,20 @@ return {
       { '<leader>dt', function() require('dap').terminate() end, desc = '[d]ebug [t]erminate' },
       { '<leader>dw', function() require('dap.ui.widgets').hover() end, desc = '[d]ebug [w]idgets' },
     },
-    config = function(_, _)
+    config = function()
       local dap = require('dap')
 
-      -- -- Helper to find the directory containing go.mod upward from a path
-      -- local function find_go_mod(start_path)
-      --   if not start_path or start_path == '' then return nil end
-      --   -- Expand variables like ${workspaceRoot} manually if they survived
-      --   local expanded_path = start_path:gsub('%${workspaceRoot}', vim.fn.getcwd())
-      --   expanded_path = start_path:gsub('%${workspaceFolder}', vim.fn.getcwd())
-      --
-      --   local search_dir = vim.fn.isdirectory(expanded_path) == 1 and expanded_path or vim.fs.dirname(expanded_path)
-      --   local found = vim.fs.find('go.mod', { path = search_dir, upward = true })[1]
-      --   return found and vim.fs.dirname(found) or nil
-      -- end
-
+      -- Expand VS Code-style ${workspaceRoot} in launch.json configs
       local function fix_config(config)
         local root_cwd = vim.fn.getcwd()
-
-        -- 1. Handle VS Code variables first
         for k, v in pairs(config) do
-          if type(v) == 'string' then
-            v = v:gsub('%${workspaceRoot}', root_cwd)
-            config[k] = v
-          end
+          if type(v) == 'string' then config[k] = v:gsub('%${workspaceRoot}', root_cwd) end
         end
-
-        -- -- 2. Find the absolute path to the go.mod directory
-        -- local program_full_path = vim.fn.fnamemodify(config.program, ':p')
-        -- local mod_root = find_go_mod(program_full_path)
-        --
-        -- if mod_root then
-        --   -- 3. Set the CWD to the folder containing go.mod
-        --   config.cwd = mod_root
-        --
-        --   -- 4. CRITICAL: Make the program path relative to the mod_root
-        --   -- Go build behaves better when the target is relative to the module root
-        --   local relative_program = vim.fn.fnamemodify(program_full_path, ':.' .. mod_root)
-        --
-        --   -- If the path is the current dir, use "." otherwise ensure it's a relative path
-        --   if relative_program == mod_root then
-        --     config.program = '.'
-        --   else
-        --     -- Ensure it starts with ./ if it's a subfolder
-        --     config.program = './' .. relative_program:gsub('^%./', '')
-        --   end
-        -- end
-
         return config
       end
 
-      -- Intercept the launch request
       local original_run = dap.run
-      dap.run = function(config, opts)
-        local new_config = fix_config(vim.deepcopy(config))
-        original_run(new_config, opts)
-      end
+      dap.run = function(config, opts) original_run(fix_config(vim.deepcopy(config)), opts) end
 
       vim.fn.sign_define('DapBreakpoint', { text = '●', texthl = 'DiagnosticSignError', linehl = '', numhl = '' })
       vim.api.nvim_create_autocmd('filetype', {
@@ -205,10 +157,12 @@ return {
 
   {
     'igorlfs/nvim-dap-view',
-    opts = { winbar = {
-      controls = { enabled = true },
-      sections = { 'console', 'watches', 'scopes', 'breakpoints', 'threads', 'repl' },
-    } },
+    opts = {
+      winbar = {
+        controls = { enabled = true },
+        sections = { 'console', 'watches', 'scopes', 'breakpoints', 'threads', 'repl' },
+      },
+    },
     config = function(_, opts)
       local dap = require('dap')
       local dap_view = require('dap-view')

@@ -19,6 +19,18 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+-- Shared LSP capabilities (blink + UFO folding)
+local function lsp_capabilities()
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true,
+  }
+  local ok, blink = pcall(require, 'blink.cmp')
+  if ok then capabilities = blink.get_lsp_capabilities(capabilities) end
+  return capabilities
+end
+
 return {
   -- Mouse over floating window for LSP/diagnostics
   {
@@ -26,39 +38,49 @@ return {
     opts = {
       notify = {
         enabled = true,
-        timeout = 3000, -- Show for 3 seconds
+        timeout = 3000,
         position = 'top',
         style = 'warning',
       },
     },
   },
 
-  -- LSP servers and installer
+  -- LSP: nvim-lspconfig provides vim.lsp.config defaults; mason installs/enables servers
   { 'neovim/nvim-lspconfig' },
   {
-    'williamboman/mason.nvim',
+    'mason-org/mason.nvim',
+    opts = {},
+  },
+  {
+    'mason-org/mason-lspconfig.nvim',
     dependencies = {
-      { 'williamboman/mason-lspconfig.nvim' },
+      'mason-org/mason.nvim',
+      'neovim/nvim-lspconfig',
+      'saghen/blink.cmp',
     },
-    config = function()
+    opts = {
+      ensure_installed = { 'pyright', 'tflint', 'gopls', 'golangci_lint_ls', 'lua_ls', 'marksman', 'jsonls', 'yamlls' },
+      automatic_enable = true,
+    },
+    config = function(_, opts)
+      vim.lsp.config('*', { capabilities = lsp_capabilities() })
       require('mason').setup()
-      require('mason-lspconfig').setup({
-        ensure_installed = { 'pyright', 'tflint', 'gopls', 'golangci_lint_ls', 'lua_ls', 'marksman', 'jsonls', 'yamlls' },
-        handlers = {
-          function(server_name)
-            -- Set the foldingRange capability
-            local capabilities = vim.lsp.protocol.make_client_capabilities()
-            capabilities.textDocument.foldingRange = {
-              dynamicRegistration = false,
-              lineFoldingOnly = true,
-            }
-            require('lspconfig')[server_name].setup({
-              capabilities = capabilities,
-            })
-          end,
-        },
-      })
+      require('mason-lspconfig').setup(opts)
     end,
+  },
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    dependencies = { 'mason-org/mason.nvim' },
+    opts = {
+      ensure_installed = {
+        'stylua',
+        'gofumpt',
+        'ruff',
+        'prettier',
+        'shfmt',
+        'npm-groovy-lint',
+      },
+    },
   },
 
   -- Completion
@@ -107,7 +129,7 @@ return {
   {
     'retran/meow.yarn.nvim',
     dependencies = { 'MunifTanjim/nui.nvim' },
-    opts = {}, -- Use defaults
+    opts = {},
     keys = {
       { '<leader>yt', function() require('meow.yarn').open_tree('type_hierarchy', 'supertypes') end, desc = 'Yarn: Type Hierarchy (Super)' },
       { '<leader>yT', function() require('meow.yarn').open_tree('type_hierarchy', 'subtypes') end, desc = 'Yarn: Type Hierarchy (Sub)' },
