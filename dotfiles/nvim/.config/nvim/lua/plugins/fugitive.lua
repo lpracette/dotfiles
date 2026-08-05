@@ -40,39 +40,18 @@ return {
       { '<leader>gH', '<cmd>DiffviewFileHistory<cr>', desc = 'Diffview: repo history' },
       { '<leader>gQ', '<cmd>DiffviewClose<cr>', desc = 'Diffview: close' },
     },
-    opts = {
-      enhanced_diff_hl = false,
-      view = {
-        default = {
-          disable_diagnostics = true,
-          winbar_info = false,
+    opts = function()
+      local actions = require('diffview.actions')
+      return {
+        keymaps = {
+          file_panel = {
+            { 'n', 's', actions.toggle_stage_entry, { desc = 'Stage / unstage the selected file' } },
+            { 'n', 'cc', '<Cmd>Git commit <bar> wincmd J<CR>', { desc = 'Commit staged changes' } },
+            { 'n', 'ca', '<Cmd>Git commit --amend <bar> wincmd J<CR>', { desc = 'Amend the last commit' } },
+            { 'n', 'c<space>', ':Git commit ', { desc = 'Populate command line with :Git commit ' } },
+          },
         },
-        merge_tool = {
-          disable_diagnostics = true,
-        },
-        file_history = {
-          disable_diagnostics = true,
-          winbar_info = false,
-        },
-      },
-      hooks = {
-        -- Trim buffer-local work so opening a file from the panel stays snappy
-        diff_buf_read = function(bufnr)
-          vim.bo[bufnr].swapfile = false
-          pcall(vim.diagnostic.enable, false, { bufnr = bufnr })
-          for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-            pcall(vim.lsp.buf_detach_client, bufnr, client.id)
-          end
-          pcall(vim.treesitter.stop, bufnr)
-        end,
-      },
-      keymaps = {
-        file_panel = {
-          { 'n', 'cc', '<Cmd>Git commit <bar> wincmd J<CR>', { desc = 'Commit staged changes' } },
-          { 'n', 'ca', '<Cmd>Git commit --amend <bar> wincmd J<CR>', { desc = 'Amend the last commit' } },
-          { 'n', 'c<space>', ':Git commit ', { desc = 'Populate command line with :Git commit ' } },
-        },
-      },
-    },
+      }
+    end,
   },
 }
