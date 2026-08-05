@@ -23,11 +23,9 @@ elif [ -x /usr/local/bin/brew ]; then
   export HOMEBREW_CELLAR=/usr/local/Cellar
   export HOMEBREW_REPOSITORY=/usr/local/Homebrew
 fi
+# Always prepend — path_helper / login PATH may already include brew *after* /bin
 if [ -n "${HOMEBREW_PREFIX:-}" ]; then
-  case ":$PATH:" in
-    *":$HOMEBREW_PREFIX/bin:"*) ;;
-    *) export PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH" ;;
-  esac
+  export PATH="$HOMEBREW_PREFIX/bin:$HOMEBREW_PREFIX/sbin:$PATH"
 fi
 
 # Python / pyenv — shims on PATH; full init only on first `pyenv` call
