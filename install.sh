@@ -63,9 +63,9 @@ nvim --headless -c ":MasonUpdate" -c "quitall" || true
 
 # Install/update zsh plugins
 if [ -f ~/.zshrc ]; then
-    if grep -q zplug ~/.zshrc; then
+    if grep -q antidote ~/.zshrc; then
         echo -e "\n🐚 Installing/updating zsh plugins... 🐚\n"
-        zsh -c "source ~/.zshrc && zplug update"
+        zsh -c "source ~/.zshrc && antidote update"
     fi
 fi
 
@@ -84,7 +84,7 @@ macos-defaults apply -vv $DOTFILES/macos-settings
 # 0x700000039 is the HID usage ID for Caps Lock
 # 0x700000029 is the HID usage ID for Escape
 # https://developer.apple.com/library/archive/technotes/tn2450/_index.html
-hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}' > /dev/null
+hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}' >/dev/null
 
 # 12. Create local files if they don't exist
 for f in ~/.vimrc.local ~/.shell_local ~/.Brewfile.local; do
